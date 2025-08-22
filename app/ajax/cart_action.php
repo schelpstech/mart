@@ -14,7 +14,6 @@ if ($action === "add") {
     $product_id = intval($_POST['product_id'] ?? 0);
     $quantity   = intval($_POST['quantity'] ?? 1);
 
-    // Fetch price from products table
     $product = $model->getRows("products", [
         "where" => ["product_id" => $product_id],
         "return_type" => "single"
@@ -22,27 +21,18 @@ if ($action === "add") {
 
     if ($product) {
         $price = $product['price'];
-        $additemtoCart = $cart->addToCart($product_id, $quantity, $price);
-        if ($additemtoCart) {
-            // Fetch cart_item_id from cart_items table
-            $cartItem = $model->getRows("cart_items", [
-                "where" => [
-                    "cart_items.product_id" => $product_id,
-                    "cart.session_id"       => $session_id
-                ],
-                "join" => [
-                    "cart" => "ON cart.cart_id = cart_items.cart_id"
-                ],
-                "return_type" => "single"
-            ]);
-        }
 
+        // This now gives us the cart_item_id directly
+        $addtocart = $cart->addToCart($product_id, $quantity, $price);
+        $cartinfo = $cart->getCartItemID($product_id);
+        $item_id = $cartinfo['cart_item_id'];
         $count = $cart->getCartCount();
+
         $response = [
-            "status" => "success",
-            "msg" => "Added to cart",
-            "count" => $count,
-            "cart_item_id" => $cartItem['cart_item_id']
+            "status"       => "success",
+            "msg"          => "Added to cart",
+            "count"        => $count,
+            "item_id" => $item_id
         ];
     } else {
         $response = ["status" => "error", "msg" => "Product not found"];
@@ -51,6 +41,8 @@ if ($action === "add") {
     echo json_encode($response);
     exit;
 }
+
+
 
 if ($action === "count") {
     $count = $cart->getCartCount();
@@ -71,7 +63,7 @@ if ($_POST['action'] === 'get_cart_items') {
 
 
 if ($action === 'remove') {
-    $cartItemId = $_POST['cart_item_id'] ?? null;
+    $cartItemId = intval($_POST['cart_item_id'] ?? null);
 
     if ($cartItemId && $cart->removeFromCart($cartItemId)) {
         // Re-fetch items safely
@@ -98,14 +90,54 @@ if ($action === 'remove') {
             'total'    => '£' . number_format($total, 2),
         ];
     } else {
+        $cartItemId = $_POST['cart_item_id'] ?? "nothing";
         $response = [
             'status'  => 'error',
-            'message' => 'Failed to remove item.'
+            'message' => 'Failed to remove itemaa.' . $_POST['cart_item_id']
         ];
     }
 
     echo json_encode($response);
     exit;
 }
+
+if ($_POST['action'] === "update_quantity") {
+    $cart_item_id = intval($_POST['cart_item_id']);
+    $quantity = intval($_POST['quantity']);
+    if ($cart_item_id && $quantity > 0) {
+        // Update quantity
+        $updateQty = $model->update("cart_items", ["quantity" => $quantity], ["cart_item_id" => $cart_item_id]);
+
+        $line = $model->getRows("cart_items", [
+            "where" => ["cart_item_id" => $cart_item_id],
+            "return_type" => "single"
+        ]);
+
+        $linetotal = $line['quantity'] * $line['price'];
+
+        $items = $cart->getCartItems();
+        if (!$items) {
+            $items = [];
+        }
+
+        // Recalculate totals
+        $subTotal = 0.00;
+        foreach ($items as $item) {
+            $subTotal += ((float)$item['price']) * ((int)$item['quantity']);
+        }
+        $vat   = $subTotal * 0.20;
+        $total = $subTotal + $vat;
+        echo json_encode([
+            "status" => "success",
+            "line_total" => '£' .number_format($linetotal, 2),
+            "cart_subtotal" => '£' .number_format($subTotal, 2),
+            "cart_grandtotal" => '£' .number_format($total, 2)
+        ]);
+    } else {
+        echo json_encode(["status" => "error", "msg" => "Invalid update"]);
+    }
+    exit;
+}
+
 echo json_encode($response);
 exit;

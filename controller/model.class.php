@@ -166,6 +166,12 @@ class Model {
         return $stmt->fetchColumn() > 0;
     }
 
+    public function lastInsertId()
+{
+    return $this->db->lastInsertId();
+}
+
+
     public function countRows($table, $condition = "1 = 1") {
         $sql = "SELECT COUNT(*) FROM {$table} WHERE {$condition}";
         $stmt = $this->db->query($sql);

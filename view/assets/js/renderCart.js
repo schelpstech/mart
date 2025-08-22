@@ -8,7 +8,7 @@ $(document).on('click', '.ec-side-toggle', function(e){
 // Function to fetch and display cart items
 function loadCart() {
     $.ajax({
-        url: './app/ajax/get_cart_items.php',
+        url: '../app/ajax/get_cart_items.php',
         type: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -33,7 +33,7 @@ $(document).on('click', '.ec-pro-content .removed', function (e) {
     const $li = $(this).closest('li');
 
     $.ajax({
-        url: './app/ajax/cart_action.php',
+        url: '../app/ajax/cart_action.php',
         type: 'POST',
         data: { action: 'remove', cart_item_id: cartItemId },
         dataType: 'json',

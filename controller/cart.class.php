@@ -30,32 +30,60 @@ class Cart
         }
     }
 
+    public function getLatestCartItemId($product_id)
+    {
+        // Fetch latest cart_item_id for this session and product
+        $row = $this->db->getRows("cart_items", [
+            "join" => [
+                "cart" => "ON cart.cart_id = cart_items.cart_id"
+            ],
+            "where" => [
+                "cart.session_id" => $this->session_id,
+                "cart_items.product_id" => $product_id
+            ],
+            "order_by" => "cart_items.cart_item_id DESC",
+            "return_type" => "single"
+        ]);
+
+        if ($row) {
+            return $row['cart_item_id'];
+        }
+
+        return null; // No matching record found
+    }
+
+
     public function addToCart($product_id, $quantity, $price)
     {
-        $cart_id = $this->getCartId();
+        $cart_id = $this->getCartId(); // ensures cart exists for this session
 
-        // Check if product already exists in this cart
+        // Check if product already exists in cart_items
         $row = $this->db->getRows("cart_items", [
-            "where" => ["cart_id" => $cart_id, "product_id" => $product_id],
+            "where" => [
+                "cart_id" => $cart_id,
+                "product_id" => $product_id
+            ],
             "return_type" => "single"
         ]);
 
         if ($row) {
             // Update quantity
             $newQty = $row['quantity'] + $quantity;
-            $this->db->update("cart_items", ["quantity" => $newQty], [
-                "cart_item_id" => $row["cart_item_id"]
-            ]);
+            $this->db->update("cart_items", ["quantity" => $newQty], ["cart_item_id" => $row['cart_item_id']]);
+            return $row['cart_item_id']; // return the existing ID
         } else {
-            // Insert new item
+            // Insert new product into cart_items
             $this->db->insert("cart_items", [
                 "cart_id"    => $cart_id,
                 "product_id" => $product_id,
                 "quantity"   => $quantity,
                 "price"      => $price
             ]);
+
+            return $this->db->lastInsertId(); // return the new cart_item_id
         }
     }
+
 
     public function getCartCount()
     {
@@ -93,11 +121,26 @@ class Cart
         $rows = $this->db->getRows("cart c", $conditions);
         return $rows ?: [];
     }
+
+    public function getCartItemID($product_id)
+    {
+        $cart_id = $this->getCartId(); // ensures cart exists for this session
+        // Check if product already exists in cart_items
+        $row = $this->db->getRows("cart_items", [
+            "where" => [
+                "cart_id" => $cart_id,
+                "product_id" => $product_id
+            ],
+            "return_type" => "single"
+        ]);
+        return $row;
+    }
     public function removeFromCart($cart_item_id)
     {
         // Validate input
         if (!$cart_item_id) return false;
         // Use model->delete to remove item
-        return $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
+        $row = $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
+        return $row;
     }
 }

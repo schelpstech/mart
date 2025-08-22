@@ -1,12 +1,3 @@
-<body class="cart_page">
-    <div id="ec-overlay">
-        <div class="ec-ellipsis">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
 
     <!-- Header start  -->
     <header class="ec-header">
@@ -172,13 +163,13 @@
                     </a>
 
                     <ul style="color: white;">
-                        <li><a href="index.html" style="color: white;">HOME</a></li>
-                        <li><a href="grocery-store.html" style="color: white;">GROCERY STORE</a></li>
-                        <li><a href="fashion-store.html" style="color: white;">FASHION STORE</a></li>
-                        <li><a href="beauty-store.html" style="color: white;">BEAUTY STORE</a></li>
-                        <li><a href="salon.html" style="color: white;">SALON</a></li>
-                        <li><a href="hot-deals.html" style="color: white;">HOT DEALS</a></li>
-                        <li><a href="contact.html" style="color: white;">CONTACT</a></li>
+                        <li><a href="index.php" style="color: white;">HOME</a></li>
+                        <li><a href="grocery-store.php" style="color: white;">GROCERY STORE</a></li>
+                        <li><a href="fashion-store.php" style="color: white;">FASHION STORE</a></li>
+                        <li><a href="beauty-store.php" style="color: white;">BEAUTY STORE</a></li>
+                        <li><a href="salon.php" style="color: white;">SALON</a></li>
+                        <li><a href="hot-deals.php" style="color: white;">HOT DEALS</a></li>
+                        <li><a href="contact.php" style="color: white;">CONTACT</a></li>
                     </ul>
                 </div>
             </div>
