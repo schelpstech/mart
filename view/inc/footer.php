@@ -370,7 +370,6 @@
 <script src="assets/js/manageCart.js"></script>
 <script src="assets/js/renderCart.js"></script>
 
-    <script src="assets/js/main.js"></script>
 </body>
 
 </html>
