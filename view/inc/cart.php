@@ -24,10 +24,6 @@
                                 <td class="text-right" id="ajax-subtotal">£0.00</td>
                             </tr>
                             <tr>
-                                <td class="text-left">VAT (20%) :</td>
-                                <td class="text-right" id="ajax-vat">£0.00</td>
-                            </tr>
-                            <tr>
                                 <td class="text-left">Total :</td>
                                 <td class="text-right primary-color" id="ajax-total">£0.00</td>
                             </tr>

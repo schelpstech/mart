@@ -286,7 +286,7 @@ include './inc/mainhead.php';
                                                     <div class="ec-product-inner">
                                                         <div class="ec-pro-image-outer">
                                                             <div class="ec-pro-image">
-                                                                <a href="product-left-sidebar.html" class="image">
+                                                                <a href="viewproduct.php?id=<?= $productId ?>" class="image">
                                                                     <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                     <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                 </a>
@@ -312,7 +312,7 @@ include './inc/mainhead.php';
                                                             <a href="shop-left-sidebar-col-3.html">
                                                                 <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
                                                             </a>
-                                                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html"><?= $productName ?></a></h5>
+                                                            <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>
                                                             <div class="ec-pro-rat-price">
                                                                 <span class="ec-pro-rating">
                                                                     <i class="ecicon eci-star fill"></i>
@@ -367,7 +367,7 @@ include './inc/mainhead.php';
                                                     <div class="ec-product-inner">
                                                         <div class="ec-pro-image-outer">
                                                             <div class="ec-pro-image">
-                                                                <a href="product-left-sidebar.html" class="image">
+                                                                <a href="viewproduct.php?id=<?= $productId ?>" class="image">
                                                                     <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                     <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                 </a>
@@ -393,7 +393,7 @@ include './inc/mainhead.php';
                                                             <a href="shop-left-sidebar-col-3.html">
                                                                 <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
                                                             </a>
-                                                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html"><?= $productName ?></a></h5>
+                                                            <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>
                                                             <div class="ec-pro-rat-price">
                                                                 <span class="ec-pro-rating">
                                                                     <i class="ecicon eci-star fill"></i>
@@ -448,7 +448,7 @@ include './inc/mainhead.php';
                                                     <div class="ec-product-inner">
                                                         <div class="ec-pro-image-outer">
                                                             <div class="ec-pro-image">
-                                                                <a href="product-left-sidebar.html" class="image">
+                                                                <a href="viewproduct.php?id=<?= $productId ?>" class="image">
                                                                     <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                     <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                 </a>
@@ -474,7 +474,7 @@ include './inc/mainhead.php';
                                                             <a href="shop-left-sidebar-col-3.html">
                                                                 <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
                                                             </a>
-                                                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html"><?= $productName ?></a></h5>
+                                                            <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>
                                                             <div class="ec-pro-rat-price">
                                                                 <span class="ec-pro-rating">
                                                                     <i class="ecicon eci-star fill"></i>
@@ -528,7 +528,7 @@ include './inc/mainhead.php';
                                                     <div class="ec-product-inner">
                                                         <div class="ec-pro-image-outer">
                                                             <div class="ec-pro-image">
-                                                                <a href="product-left-sidebar.html" class="image">
+                                                                <a href="viewproduct.php?id=<?= $productId ?>" class="image">
                                                                     <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                     <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
                                                                 </a>
@@ -554,7 +554,7 @@ include './inc/mainhead.php';
                                                             <a href="shop-left-sidebar-col-3.html">
                                                                 <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
                                                             </a>
-                                                            <h5 class="ec-pro-title"><a href="product-left-sidebar.html"><?= $productName ?></a></h5>
+                                                            <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>
                                                             <div class="ec-pro-rat-price">
                                                                 <span class="ec-pro-rating">
                                                                     <i class="ecicon eci-star fill"></i>

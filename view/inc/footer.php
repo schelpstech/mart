@@ -363,11 +363,15 @@
 <script src="assets/js/plugins/click-to-call.js"></script>
 
 <!-- Main Js -->
+<script src="assets/js/vendor/jquery.magnific-popup.min.js"></script>
 <script src="assets/js/vendor/index.js"></script>
 <script src="assets/js/demo-9.js"></script>
 <script src="assets/js/populateQuickView.js"></script>
 <script src="assets/js/manageCart.js"></script>
 <script src="assets/js/renderCart.js"></script>
+
+    <script src="assets/js/main.js"></script>
 </body>
 
 </html>
+

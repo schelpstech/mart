@@ -250,3 +250,31 @@ $(document).on("change", ".cart-plus-minus", function () {
         },
     });
 });
+
+//
+$(document).on("click", ".add-to-cart", function () {
+    const product_id = $(this).data("productid");
+    const quantity = $(".qty-input").val() || 1;
+
+    $.ajax({
+        url: "ajax/cart_action.php",
+        type: "POST",
+        data: {
+            action: "add_to_cart",
+            product_id: product_id,
+            quantity: quantity
+        },
+        dataType: "json",
+        success: function (res) {
+            if (res.status === "success") {
+                showToast(res.msg || "Product added to cart!");
+            } else {
+                showToast(res.msg || "Error adding product", "error");
+            }
+        },
+        error: function (xhr) {
+            console.error("AJAX error:", xhr.responseText);
+            showToast("Network / server error", "error");
+        }
+    });
+});
