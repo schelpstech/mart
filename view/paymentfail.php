@@ -45,21 +45,28 @@ include './inc/head.php';
         <div class="container">
             <div class="ec-payment-fail">
                 <div class="row">
-                    <div class="col-lg-6offset-3 col-md-6 offset-3">
+                    <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
                         <!-- Payment Fail Start -->
-                        <div class="ec-payment-content">
-                            <div class="section-title">
-                                <h2 class="ec-title">Payment Error</h2>
-                                <p class="sub-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                        <div class="ec-payment-content text-center">
+                            <i class="ecicon eci-times-circle text-danger" style="font-size:60px;" aria-hidden="true"></i>
+                            <div class="section-title mt-3">
+                                <h2 class="ec-title text-danger">Payment Failed</h2>
+                                <p class="sub-title">
+                                    Unfortunately, your payment could not be completed.
+                                    Please check your payment details or try again with another method.
+                                    Your order has been saved but marked as <strong>Payment Failed</strong>.
+                                </p>
                             </div>
-                            <ul>
-                                <li><i class="ecicon eci-check-circle-o"></i>Items Added to Cart Successfully</li>
-                                <li><i class="ecicon eci-check-circle-o"></i>Order Created Successfully</li>
-                                <li><i class="ecicon eci-check-circle-o"></i>Payment Session created Successfully</li>
-                                <li><i class="ecicon eci-times-circle-o"></i>Payment Failed</li>
-                                <li><i class="ecicon eci-times-circle-o"></i>Order Status Set as Failed</li>
+                            <ul class="text-left mt-4">
+                                <li><i class="ecicon eci-check-circle-o text-success"></i> Items Added to Cart Successfully</li>
+                                <li><i class="ecicon eci-check-circle-o text-success"></i> Order Created Successfully</li>
+                                <li><i class="ecicon eci-check-circle-o text-success"></i> Payment Session Started</li>
+                                <li><i class="ecicon eci-times-circle-o text-danger"></i> Payment Failed</li>
+                                <li><i class="ecicon eci-times-circle-o text-danger"></i> Order Status Updated as Failed</li>
                             </ul>
-                            <a href="order.php" class="btn btn-primary">View Order history</a>
+                            <div class="mt-4">
+                                <a href="orders.php" class="btn btn-primary">View Order History</a>
+                            </div>
                         </div>
                         <!-- Payment Fail End -->
                     </div>
@@ -67,6 +74,7 @@ include './inc/head.php';
             </div>
         </div>
     </section>
+
 
 
     <!-- End User history section -->
