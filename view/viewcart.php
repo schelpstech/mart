@@ -125,7 +125,7 @@ include './inc/head.php';
                                         <div class="col-lg-12">
                                             <div class="ec-cart-update-bottom">
                                                 <a href="shop.php">Continue Shopping</a>
-                                                <button class="btn btn-primary">Check Out</button>
+                                                <a href="checkout.php" class="btn btn-primary">Check Out</a>
                                             </div>
                                         </div>
                                     </div>

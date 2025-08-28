@@ -152,7 +152,7 @@ include './inc/head.php';
                                             </div>
                                             <div class=" ec-single-quickview">
                                                     <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                                        title="Quick view" data-bs-toggle="modal"
+                                                        title="Quick view" data-bs-toggle="modal" data-id="<?= $product['product_id']; ?>"
                                                         data-bs-target="#ec_quickview_modal"><i class="fi-rr-eye"></i></a>
                                             </div>
                                         </div>

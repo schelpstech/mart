@@ -1,132 +1,271 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class User
 {
-    // Refer to database connection
+    private $model;
     private $db;
 
-    // Instantiate object with database connection
     public function __construct($db_conn)
     {
         $this->db = $db_conn;
+        $this->model = new Model($db_conn);
     }
 
-    // Register new user
-    public function registerUser($data)
+    /**
+     * Check if email already exists
+     */
+    public function emailExists($email)
     {
         try {
-            $sql = "INSERT INTO users (full_name, email, password, phone, role, status, date_registered) 
-                    VALUES (:full_name, :email, :password, :phone, :role, :status, NOW())";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":full_name", $data['full_name']);
-            $stmt->bindParam(":email", $data['email']);
-            $stmt->bindParam(":password", password_hash($data['password'], PASSWORD_DEFAULT));
-            $stmt->bindParam(":phone", $data['phone']);
-            $stmt->bindParam(":role", $data['role']);
-            $stmt->bindParam(":status", $data['status']);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            return false;
+            error_log("User::emailExists checking email={$email}");
+            $run = $this->db->exists("users_mart", "email = '{$email}'");
+            error_log("User::emailExists result=" . var_export($run, true));
+            return $run;
+        } catch (Exception $e) {
+            error_log("User::emailExists ERROR - " . $e->getMessage());
+            throw $e;
         }
     }
 
-    // Authenticate login
-    public function loginUser($email, $password)
+    /**
+     * Register user
+     */
+    public function register($email, $phone, $password)
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email AND status = 'active'");
-            $stmt->bindParam(":email", $email);
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("User::register started for email={$email}");
 
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['active'] = $user['email'];
-                $_SESSION['user_id'] = $user['id'];
-                return true;
-            } else {
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            $verificationToken = bin2hex(random_bytes(32));
+
+            $fields = [
+                "email"              => $email,
+                "phone"              => $phone,
+                "password_hash"           => $hashedPassword,
+                "verification_token" => $verificationToken,
+                "verified"        => 0,
+                "created_at"         => date("Y-m-d H:i:s"),
+                "updated_at"         => date("Y-m-d H:i:s")
+            ];
+
+            $run = $this->db->insert("users_mart", $fields);
+            error_log("User::register insert result=" . var_export($run, true));
+
+            return $run;
+        } catch (Exception $e) {
+            error_log("User::register ERROR - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Send verification email
+     */
+    public function sendVerificationEmail($email)
+    {
+        try {
+            error_log("User::sendVerificationEmail started for {$email}");
+
+            $user = $this->db->getRows("users_mart", [
+                "where" => ["email" => $email],
+                "return_type" => "single"
+            ]);
+
+            if (!$user) {
+                error_log("User::sendVerificationEmail failed: no user found for {$email}");
                 return false;
             }
-        } catch (PDOException $e) {
+
+            $verifyLink = "http://localhost/mart/app/verify.php?token=" . $user["verification_token"];
+
+            $mail = new PHPMailer(true);
+
+            // SMTP Settings
+            $mail->isSMTP();
+            $mail->Host       = 'server163.web-hosting.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@queenzy.assoec.org';
+            $mail->Password   = 'UNYOpat2017@';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+
+            $mail->setFrom('noreply@queenzy.assoec.org', 'Queenzy Stores');
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = "Verify Your Email";
+            $mail->Body    = "
+                <h2>Welcome!</h2>
+                <p>Click the link below to verify your email address:</p>
+                <a href='{$verifyLink}'>Verify Email</a>
+            ";
+
+            $result = $mail->send();
+            error_log("User::sendVerificationEmail send result=" . var_export($result, true));
+
+            return $result;
+        } catch (Exception $e) {
+            error_log("User::sendVerificationEmail ERROR - " . $e->getMessage());
             return false;
         }
     }
 
-    // Get user by ID
-    public function getUserById($id)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // Get all users
-    public function getAllUsers()
-    {
-        $stmt = $this->db->query("SELECT * FROM users ORDER BY id DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Update user
-    public function updateUser($id, $data)
-    {
-        $sql = "UPDATE users SET full_name = :full_name, email = :email, phone = :phone, role = :role, status = :status WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(":full_name", $data['full_name']);
-        $stmt->bindParam(":email", $data['email']);
-        $stmt->bindParam(":phone", $data['phone']);
-        $stmt->bindParam(":role", $data['role']);
-        $stmt->bindParam(":status", $data['status']);
-        $stmt->bindParam(":id", $id);
-        return $stmt->execute();
-    }
-
-    // Delete user
-    public function deleteUser($id)
-    {
-        $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
-        $stmt->bindParam(":id", $id);
-        return $stmt->execute();
-    }
-
-    // Check if email exists
-    public function isEmailExists($email)
-    {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-        return $stmt->fetchColumn() > 0;
-    }
-
-    // Record log (already added by you)
-    public function recordLog($object, $activity, $description)
+    /**
+     * Verify account
+     */
+    public function verifyAccount($token)
     {
         try {
-            $sql = "INSERT INTO log (user_name, uip, object, activity, description) 
-                    VALUES(:user, :userip, :object, :activity, :description)";
-            $query = $this->db->prepare($sql);
+            error_log("User::verifyAccount started for token={$token}");
 
-            $user = (isset($_SESSION['activeAdmin'])) ? $_SESSION['activeAdmin'] : ($_SESSION['active'] ?? 'unknown');
-            $query->bindParam(":user", $user);
-            $query->bindParam(":userip", $_SERVER['REMOTE_ADDR']);
-            $query->bindParam(":object", $object);
-            $query->bindParam(":activity", $activity);
-            $query->bindParam(":description", $description);
+            $user = $this->db->getRows("users_mart", [
+                "where" => ["verification_token" => $token],
+                "return_type" => "single"
+            ]);
 
-            $query->execute();
-        } catch (PDOException $e) {
-            // log or ignore error
+            if ($user) {
+                $this->db->update("users_mart", [
+                    "verified" => 1,
+                    "verification_token" => null,
+                    "updated_at" => date("Y-m-d H:i:s")
+                ], ["user_id" => $user["user_id"]]);
+
+                error_log("User::verifyAccount success for user_id=" . $user["id"]);
+                return true;
+            }
+
+            error_log("User::verifyAccount failed: no user found for token={$token}");
+            return false;
+        } catch (Exception $e) {
+            error_log("User::verifyAccount ERROR - " . $e->getMessage());
+            throw $e;
         }
     }
 
-    // Logout
-    public function logout()
+    /**
+     * Login user
+     */
+public function login($email, $password)
+{
+    try {
+        error_log("User::login started for {$email}");
+
+        $user = $this->model->getRows("users_mart", [
+            "where" => ["email" => $email],
+            "return_type" => "single"
+        ]);
+
+        switch (true) {
+            case !$user:
+                error_log("User::login failed - email not found: {$email}");
+                return ["status" => false, "message" => "Invalid login credentials."];
+
+            case !password_verify($password, $user["password_hash"]):
+                error_log("User::login failed - wrong password for {$email}");
+                return ["status" => false, "message" => "Invalid login credentials."];
+
+            case !$user["verified"]:
+                error_log("User::login failed - email not verified for {$email}");
+                return ["status" => false, "message" => "Please check your email for verification instructions."];
+
+            default:
+                // Successful login
+                $_SESSION["user_id"] = $user["user_id"];
+                $_SESSION["user_email"] = $user["email"];
+
+                // Update cart table to assign session items to logged-in user
+                $this->model->update(
+                    "cart",
+                    ["user_id" => $user["user_id"]],
+                    ["session_id" => session_id()]
+                );
+
+                error_log("User::login success for user_id=" . $user["user_id"]);
+                return ["status" => true, "message" => "Login successful"];
+        }
+
+    } catch (Exception $e) {
+        error_log("User::login ERROR - " . $e->getMessage());
+        throw $e;
+    }
+}
+
+    public function getByEmail($email)
     {
+        try {
+            error_log("User::getByEmail started for {$email}");
+            $result = $row = $this->model->getRows("users_mart", [
+                "where" => ["email" => $email],
+                "return_type" => "single"
+            ]);
+            error_log("User::getByEmail result=" . var_export($result, true));
+            return $result;
+        } catch (Exception $e) {
+            error_log("User::getByEmail ERROR - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function resendVerificationEmail($email)
+    {
+        try {
+            error_log("User::resendVerificationEmail started for email={$email}");
+
+            // Fetch user by email
+            $row = $this->model->getRows("users_mart", [
+                "where" => ["email" => $email],
+                "return_type" => "single"
+            ]);
+
+            if ($row) {
+                if ($row['is_verified'] == 1) {
+                    error_log("User::resendVerificationEmail failed: email already verified");
+                    return false;
+                }
+
+                // Generate new token
+                $newToken = bin2hex(random_bytes(16));
+
+                // Update with new token
+                $this->model->update(
+                    "users_mart",
+                    ["verification_token" => $newToken],
+                    ["id" => $row['id']]
+                );
+
+                // Send the verification email
+                $this->sendVerificationEmail($email);
+
+                error_log("User::resendVerificationEmail success for user_id=" . $row['id']);
+                return true;
+            }
+
+            error_log("User::resendVerificationEmail failed: email not found");
+            return false;
+        } catch (Exception $e) {
+            error_log("User::resendVerificationEmail ERROR - " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+      public function logout() {
+        // Destroy all session variables
+        $_SESSION = array();
+
+        // If using cookies for login, clear them too
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        // Destroy the session
         session_destroy();
-        unset($_SESSION['active']);
-        unset($_SESSION['user_id']);
         return true;
     }
 }

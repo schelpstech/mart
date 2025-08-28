@@ -11,6 +11,7 @@ include_once 'qrcode.class.php';
 include_once 'paystack.class.php';
 include_once 'product.class.php';
 include_once 'cart.class.php';
+include_once 'stripe.class.php';
 
 // database access parameters
 $db_host = 'localhost';
@@ -36,13 +37,14 @@ try {
 // Only proceed if connection was successful
 if ($db_conn !== null) {
     // make use of database with users
-    $user = new User($db_conn);
     $model = new Model($db_conn);
     $utility = new Utility();
     $generator = new QRCodeGenerator();
     $paystack = new PaystackPayment();
     $product = new Product($db_conn);
     $cart = new Cart($model);
+    $user = new User($model);
+    $stripe = new StripePayment("sk_test_51S12wOJbQ1CMImofOotcElF2LPgtFP5Xq2z1ipAiYhqTR1LJEPOrKf5xVO5wtRT4DuP0CD6gD5EOyt3vxRRazsal00gWnuumBa");
 } else {
     // Handle the case when the connection fails (e.g., show an error message or stop further processing)
     echo "Database connection failed.";

@@ -306,4 +306,33 @@ class Utility
             'message' => 'Password is strong.'
         ];
     }
+
+    /**
+     * Set a flash message
+     */
+   public function setFlash(string $type, string $message): void
+    {
+        $_SESSION['flash'] = [
+            'type' => $type,   // success, danger, warning, info
+            'message' => $message
+        ];
+    }
+
+    /**
+     * Display and clear flash message
+     */
+    public function displayFlash(): void
+    {
+        if (isset($_SESSION['flash'])) {
+            $type = $_SESSION['flash']['type'];
+            $message = $_SESSION['flash']['message'];
+
+            echo '<div class="alert alert-' . htmlspecialchars($type) . ' alert-dismissible fade show" role="alert">';
+            echo htmlspecialchars($message);
+            echo '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            echo '</div>';
+
+            unset($_SESSION['flash']); // clear after showing
+        }
+    }
 }

@@ -1,4 +1,3 @@
-
 <!-- Footer Start -->
 <footer class="ec-footer">
     <div class="footer-newletter section-space-footer-p">
@@ -276,7 +275,7 @@
 </div>
 <!-- Click To Call end -->
 
-<!-- Newsletter Modal Start -->
+<!-- 
 <div id="ec-popnews-bg"></div>
 <div id="ec-popnews-box">
     <div id="ec-popnews-close"><i class="ecicon eci-close"></i></div>
@@ -295,8 +294,35 @@
             </div>
         </div>
     </div>
+</div> -->
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- Close Button -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <div class="modal-body text-center p-4">
+                <h5 class="mb-3">Confirm Logout</h5>
+                <p class="mb-4">Are you sure you want to log out of your account?</p>
+
+                <div class="d-flex justify-content-center gap-3">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <form action="../app/user_access_action.php" method="post">
+                        <span class="ec-login-wrap ec-login-btn">
+                            <button class="btn btn-danger" name="action" value="<?php echo $utility->inputEncode('logout'); ?>" type="submit">Logout</button>
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- Newsletter Modal end -->
+<!-- Modal end -->
 
 <!-- Footer navigation panel for responsive display -->
 <div class="ec-nav-toolbar">
@@ -369,8 +395,9 @@
 <script src="assets/js/populateQuickView.js"></script>
 <script src="assets/js/manageCart.js"></script>
 <script src="assets/js/renderCart.js"></script>
+<script src="assets/js/register.js"></script>
+<script src="assets/js/checkoutFormValidator.js"></script>
 
 </body>
 
 </html>
-

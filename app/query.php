@@ -5,14 +5,22 @@ if (file_exists('../../controller/start.inc.php')) {
     include '../controller/start.inc.php';
 } else {
     include './controller/start.inc.php';
-};
+}
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
+require __DIR__ . '/./vendor/autoload.php';;
+
+//Prefill phone number and Email Address
+if (!empty($_SESSION['user_email'])) {
+    $userData = $user->getByEmail($_SESSION['user_email']);
+} 
 // Get products where section_id = 1
 $products_in_section_1 = $model->getRows("products", [
     'where' => ["section_id" => 1],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
-    'joinl' => [
+    'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
     ]
 ]);
@@ -21,7 +29,7 @@ $products_in_section_1 = $model->getRows("products", [
 $products_in_salon_nail = $model->getRows("products", [
     'where' => ["category_id" => 1],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
-    'joinl' => [
+    'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
     ]
 ]);
@@ -29,7 +37,7 @@ $products_in_salon_nail = $model->getRows("products", [
 $products_in_salon_facial = $model->getRows("products", [
     'where' => ["category_id" => 2],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
-    'joinl' => [
+    'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
     ]
 ]);
@@ -37,7 +45,7 @@ $products_in_salon_facial = $model->getRows("products", [
 $products_in_salon_hair = $model->getRows("products", [
     'where' => ["category_id" => 3],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
-    'joinl' => [
+    'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
     ]
 ]);

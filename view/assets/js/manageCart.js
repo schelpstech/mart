@@ -257,7 +257,7 @@ $(document).on("click", ".add-to-cart", function () {
     const quantity = $(".qty-input").val() || 1;
 
     $.ajax({
-        url: "ajax/cart_action.php",
+        url: "../app/ajax/cart_action.php",
         type: "POST",
         data: {
             action: "add_to_cart",

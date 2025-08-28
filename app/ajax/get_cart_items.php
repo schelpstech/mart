@@ -19,16 +19,14 @@ if ($cartItems) {
             <div class="ec-pro-content">
                 <a href="product.php?id='.$item['cart_id'].'" class="cart_pro_title">'.htmlspecialchars($item['name']).'</a>
                 <span class="cart-price"><span>£'.number_format($item['price'],2).'</span> x '.$item['quantity'].'</span>
-                <div class="qty-plus-minus">
-                    <input class="qty-input" type="text" value="'.$item['quantity'].'" readonly />
-                </div>
-                <a href="javascript:void(0)" class="removed" data-cartitemid="'.$item['cart_item_id'].'">×</a>
+                
+                <a href="javascript:void(0)" class="removed" data-cartitemid="'.$item['cart_item_id'].'">remove</a>
             </div>
         </li>';
     }
 }
 
-$vat = $subTotal * 0.20;
+$vat =  0;
 $total = $subTotal + $vat;
 
 echo json_encode([

@@ -9,9 +9,9 @@ class Cart
     {
         $this->db = $db;
         $this->session_id = session_id();  // PHP’s session ID
-        $this->user_id = $user_id;
+        $this->user_id = $_SESSION["user_id"] ?? $user_id;
     }
-    private function getCartId()
+    public function getCartId()
     {
         // Check if cart already exists for this session
         $row = $this->db->getRows("cart", [
@@ -97,30 +97,32 @@ class Cart
 
     public function getCartItems()
     {
-        // Build the WHERE clause using user_id if available, else session_id
-        $where = [];
         if (!empty($this->user_id)) {
-            $where['c.user_id'] = $this->user_id;
+            $user = $this->user_id;
+            $check = "user_id";
         } else {
-            $where['c.session_id'] = $this->session_id;
+            $user  = $this->session_id;
+            $check = "session_id";
         }
 
-        // Compose the query using getRows + INNER JOINs via joinx
         $conditions = [
             "select"   => "ct.cart_item_id, c.cart_id, ct.product_id, ct.quantity, ct.price,
                        (ct.quantity * ct.price) AS line_total,
                        p.product_name AS name, p.image_main",
-            "joinx"    => [
+            "join"    => [
                 "cart_items ct" => " ON c.cart_id = ct.cart_id",
                 "products p"    => " ON ct.product_id = p.product_id"
             ],
-            "where"    => $where,
-            "order_by" => "ct.cart_item_id DESC"
+            "where" => [$check => $user],
+            "order_by" => "ct.cart_item_id DESC",
+            "return_type" => "all"
         ];
 
         $rows = $this->db->getRows("cart c", $conditions);
         return $rows ?: [];
     }
+
+
 
     public function getCartItemID($product_id)
     {
@@ -142,5 +144,26 @@ class Cart
         // Use model->delete to remove item
         $row = $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
         return $row;
+    }
+
+    public function clearCart()
+    {
+        if (!empty($this->user_id)) {
+            $user = $this->user_id;
+            $check = "user_id";
+        } else {
+            $user  = $this->session_id;
+            $check = "session_id";
+        }
+
+        $row = $this->db->getRows("cart", [
+            "where" => [$check => $user],
+            "return_type" => "single"
+        ]);
+        // Validate input
+        if (!$row) return false;
+        // Use model->delete to remove items
+        $action = $this->db->delete("cart_items", ["cart_id" => $row['cart_id']]);
+        return $action;
     }
 }

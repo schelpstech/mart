@@ -1,12 +1,26 @@
 <?php
-class Model {
+class Model
+{
     private $db;
 
-    public function __construct($db_conn) {
+    public function __construct($db_conn)
+    {
         $this->db = $db_conn;
     }
-
-    public function insert($table, $fields) {
+    // Safely escape and quote values
+    public function quote($value)
+    {
+        return $this->db->quote($value);
+    }
+    public function prepare($sql)
+    {
+        return $this->db->prepare($sql);
+    }
+    /**
+     * Insert a record
+     */
+    public function insert($table, $fields)
+    {
         $columns = implode(", ", array_keys($fields));
         $placeholders = ":" . implode(", :", array_keys($fields));
         $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
@@ -19,166 +33,212 @@ class Model {
         return $stmt->execute() ? $this->db->lastInsertId() : false;
     }
 
-   public function update($table, $fields, $condition = "1 = 1") {
-    $setClause = [];
-    foreach ($fields as $key => $value) {
-        $setClause[] = "$key = " . $this->db->quote($value);
-    }
+    /**
+     * Update records
+     */
+    public function update($table, $fields, $condition = "1=1")
+    {
+        $setClause = [];
+        $params = [];
 
-    // Handle condition
-    if (is_array($condition)) {
-        $whereParts = [];
-        foreach ($condition as $key => $value) {
-            $whereParts[] = "$key = " . $this->db->quote($value);
+        foreach ($fields as $key => $value) {
+            $paramKey = ":set_" . $key;
+            $setClause[] = "$key = $paramKey";
+            $params[$paramKey] = $value; // bind value later
         }
-        $condition = implode(" AND ", $whereParts);
-    }
 
-    $sql = "UPDATE {$table} SET " . implode(", ", $setClause) . " WHERE {$condition}";
-    return $this->db->exec($sql);
-}
-
-
-   public function delete($table, $condition = "1 = 1") {
-    // Handle array condition
-    if (is_array($condition)) {
-        $whereParts = [];
-        foreach ($condition as $key => $value) {
-            $whereParts[] = "$key = " . $this->db->quote($value);
-        }
-        $condition = implode(" AND ", $whereParts);
-    }
-
-    $sql = "DELETE FROM {$table} WHERE {$condition}";
-    return $this->db->exec($sql);
-}
-
-
-    public function getRows($table, $conditions = array()) {
-        $sql = 'SELECT ';
-        $sql .= array_key_exists("select", $conditions) ? $conditions['select'] : '*';
-        $sql .= ' FROM ' . $table;
-
-        if (array_key_exists("join", $conditions)) {
-            $sql .= ' INNER JOIN ' . $conditions['join'];
-        }
-        if (array_key_exists("leftjoin", $conditions)) {
-            $sql .= ' LEFT JOIN ' . $conditions['leftjoin'];
-        }
-        if (array_key_exists("joinx", $conditions)) {
-            foreach ($conditions['joinx'] as $key => $value) {
-                $sql .= ' INNER JOIN ' . $key . $value;
+        // Handle condition if array
+        if (is_array($condition)) {
+            $whereParts = [];
+            foreach ($condition as $key => $value) {
+                $paramKey = ":where_" . $key;
+                $whereParts[] = "$key = $paramKey";
+                $params[$paramKey] = $value;
             }
-        }
-        if (array_key_exists("joinl", $conditions)) {
-            foreach ($conditions['joinl'] as $key => $value) {
-                $sql .= ' LEFT JOIN ' . $key . $value;
-            }
-        }
-
-        $whereClauses = [];
-        if (array_key_exists("where", $conditions)) {
-            foreach ($conditions['where'] as $key => $value) {
-                if (is_array($value)) {
-                    $placeholders = implode(',', array_map(fn($v) => $this->db->quote($v), $value));
-                    $whereClauses[] = "$key IN ($placeholders)";
-                } else {
-                    $whereClauses[] = "$key = " . $this->db->quote($value);
-                }
-            }
-        }
-
-        if (array_key_exists("where_raw", $conditions)) {
-            $whereClauses[] = $conditions['where_raw'];
-        }
-
-        if (!empty($whereClauses)) {
-            $sql .= ' WHERE ' . implode(' AND ', $whereClauses);
-        }
-
-        if (array_key_exists("where_not", $conditions)) {
-            foreach ($conditions['where_not'] as $key => $value) {
-                $sql .= " AND $key != " . $this->db->quote($value);
-            }
-        }
-        if (array_key_exists("where_greater_equals", $conditions)) {
-            foreach ($conditions['where_greater_equals'] as $key => $value) {
-                $sql .= " AND $key >= " . $this->db->quote($value);
-            }
-        }
-        if (array_key_exists("where_lesser_equals", $conditions)) {
-            foreach ($conditions['where_lesser_equals'] as $key => $value) {
-                $sql .= " AND $key <= " . $this->db->quote($value);
-            }
-        }
-        if (array_key_exists("where_lesser", $conditions)) {
-            foreach ($conditions['where_lesser'] as $key => $value) {
-                $sql .= " AND $key < " . $this->db->quote($value);
-            }
-        }
-        if (array_key_exists("where_greater", $conditions)) {
-            foreach ($conditions['where_greater'] as $key => $value) {
-                $sql .= " AND $key > " . $this->db->quote($value);
-            }
-        }
-
-        if (array_key_exists("group_by", $conditions)) {
-            $sql .= ' GROUP BY ' . $conditions['group_by'];
-        }
-        if (array_key_exists("order_by", $conditions)) {
-            $sql .= ' ORDER BY ' . $conditions['order_by'];
-        }
-        if (array_key_exists("limit", $conditions)) {
-            if (array_key_exists("start", $conditions)) {
-                $sql .= ' LIMIT ' . $conditions['start'] . ', ' . $conditions['limit'];
-            } else {
-                $sql .= ' LIMIT ' . $conditions['limit'];
-            }
-        }
-
-        $query = $this->db->prepare($sql);
-        $query->execute();
-
-        if (array_key_exists("return_type", $conditions) && $conditions['return_type'] != 'all') {
-            switch ($conditions['return_type']) {
-                case 'count':
-                    return $query->rowCount();
-                case 'single':
-                    return $query->fetch(PDO::FETCH_ASSOC);
-                default:
-                    return false;
-            }
+            $conditionSql = implode(" AND ", $whereParts);
         } else {
-            return $query->rowCount() > 0 ? $query->fetchAll(PDO::FETCH_ASSOC) : false;
+            $conditionSql = $condition; // raw string
+        }
+
+        $sql = "UPDATE {$table} SET " . implode(", ", $setClause) . " WHERE {$conditionSql}";
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $param => $val) {
+            $stmt->bindValue($param, $val);
+        }
+
+        return $stmt->execute();
+    }
+
+
+    /**
+     * Delete records
+     */
+    public function delete($table, $condition = "1=1")
+    {
+        $params = [];
+
+        if (is_array($condition)) {
+            $whereParts = [];
+            foreach ($condition as $key => $value) {
+                $paramKey = ":where_" . $key;
+                $whereParts[] = "$key = $paramKey";
+                $params[$paramKey] = $value; // bind value later
+            }
+            $conditionSql = implode(" AND ", $whereParts);
+        } else {
+            $conditionSql = $condition; // raw string condition
+        }
+
+        $sql = "DELETE FROM {$table} WHERE {$conditionSql}";
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $param => $val) {
+            $stmt->bindValue($param, $val);
+        }
+
+        return $stmt->execute();
+    }
+
+
+    /**
+     * Universal query builder
+     */
+    public function getRows($table, $params = [])
+{
+    $sql = "SELECT ";
+    $sql .= $params['select'] ?? "*";
+    $sql .= " FROM {$table}";
+
+    // Handle joins
+    foreach (['join', 'left_join', 'right_join', 'full_join'] as $joinType) {
+        if (!empty($params[$joinType]) && is_array($params[$joinType])) {
+            foreach ($params[$joinType] as $joinTable => $onClause) {
+                $type = strtoupper(str_replace('_', ' ', $joinType));
+                $sql .= " {$type} {$joinTable} {$onClause}";
+            }
         }
     }
 
-    public function getById($table, $id) {
+    // WHERE conditions
+    $bindings = [];
+    $whereClauses = [];
+
+    if (!empty($params['where']) && is_array($params['where'])) {
+        foreach ($params['where'] as $key => $value) {
+            if (is_array($value)) {
+                $placeholders = [];
+                foreach ($value as $i => $val) {
+                    $ph = ":{$key}_{$i}";
+                    $placeholders[] = $ph;
+                    $bindings[$ph] = $val;
+                }
+                $whereClauses[] = "{$key} IN (" . implode(",", $placeholders) . ")";
+            } else {
+                $ph = ":{$key}";
+                $whereClauses[] = "{$key} = {$ph}";
+                $bindings[$ph] = $value;
+            }
+        }
+    }
+
+    // Raw WHERE
+    if (!empty($params['where_raw'])) {
+        $whereClauses[] = $params['where_raw'];
+    }
+
+    if (!empty($whereClauses)) {
+        $sql .= " WHERE " . implode(" AND ", $whereClauses);
+    }
+
+    // GROUP BY
+    if (!empty($params['group_by'])) {
+        $sql .= " GROUP BY " . $params['group_by'];
+    }
+
+    // HAVING
+    if (!empty($params['having'])) {
+        $sql .= " HAVING " . $params['having'];
+    }
+
+    // ORDER BY
+    if (!empty($params['order_by'])) {
+        $sql .= " ORDER BY " . $params['order_by'];
+    }
+
+    // LIMIT and OFFSET
+    if (!empty($params['limit'])) {
+        $sql .= " LIMIT " . (int)$params['limit'];
+        if (!empty($params['offset'])) {
+            $sql .= " OFFSET " . (int)$params['offset'];
+        }
+    }
+
+    // Prepare and execute
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($bindings);
+
+    // Return type
+    $returnType = $params['return_type'] ?? 'all';
+
+    switch ($returnType) {
+        case 'single':
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        case 'count':
+            return $stmt->rowCount();
+        case 'sum':
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row['total'] ?? 0;
+        case 'all':
+        default:
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+
+    public function getById($table, $id)
+    {
         $sql = "SELECT * FROM {$table} WHERE id = " . $this->db->quote($id);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function exists($table, $condition = "1 = 1") {
-        $sql = "SELECT COUNT(*) FROM {$table} WHERE {$condition}";
-        $stmt = $this->db->query($sql);
+    public function exists($table, $condition = "1=1")
+    {
+        if (is_array($condition)) {
+            $clauses = [];
+            $params = [];
+            foreach ($condition as $col => $val) {
+                $clauses[] = "{$col} = ?";
+                $params[] = $val;
+            }
+            $where = implode(" AND ", $clauses);
+            $sql = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+        } else {
+            $sql = "SELECT COUNT(*) FROM {$table} WHERE {$condition}";
+            $stmt = $this->db->query($sql);
+        }
+
         return $stmt->fetchColumn() > 0;
     }
 
     public function lastInsertId()
-{
-    return $this->db->lastInsertId();
-}
+    {
+        return $this->db->lastInsertId();
+    }
 
-
-    public function countRows($table, $condition = "1 = 1") {
+    public function countRows($table, $condition = "1=1")
+    {
         $sql = "SELECT COUNT(*) FROM {$table} WHERE {$condition}";
         $stmt = $this->db->query($sql);
         return (int) $stmt->fetchColumn();
     }
 
-    public function search($table, $columns, $searchTerm) {
+    public function search($table, $columns, $searchTerm)
+    {
         $conditions = [];
         foreach ($columns as $col) {
             $conditions[] = "$col LIKE " . $this->db->quote("%{$searchTerm}%");
@@ -188,22 +248,25 @@ class Model {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function sum($table, $column, $condition = "1 = 1") {
+    public function sum($table, $column, $condition = "1=1")
+    {
         $sql = "SELECT SUM({$column}) AS total FROM {$table} WHERE {$condition}";
         $stmt = $this->db->query($sql);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'] ?? 0;
     }
 
-    public function beginTransaction() {
+    // Transaction helpers
+    public function beginTransaction()
+    {
         return $this->db->beginTransaction();
     }
-
-    public function commit() {
+    public function commit()
+    {
         return $this->db->commit();
     }
-
-    public function rollBack() {
+    public function rollBack()
+    {
         return $this->db->rollBack();
     }
 }
