@@ -85,7 +85,7 @@ $amountPaid = isset($orderReference['total_amount']) ? number_format($orderRefer
                         <!--thank content End -->
                         <div class="ec-hunger">
                             <div class="ec-hunger-detial">
-                                <h3>Order Completed Successfully</h3>
+                                <h3>Order <b>#<?= strtoupper ($orderReference['order_reference']) ?></b> Completed Successfully</h3>
                                 <h6>Your payment of <strong>£<?php echo $amountPaid; ?></strong> covering
                                     <strong><?php echo $ordercount; ?> item(s)</strong> was successful.</h6>
                                     <p>You’ll be redirected in 30 seconds...</p>

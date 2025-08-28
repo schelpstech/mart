@@ -1,6 +1,19 @@
 <?php
 include './inc/head.php';
+if (!isset($_SESSION['orderId'])) {
+    header("Location: ./index.php");
+    exit;
+}
+$orderId = $_SESSION['orderId'];
+
+// Fetch order details
+$orderReference = $model->getRows("orders_mart", [
+    "where" => ["order_tbl_id" => $orderId],
+    "return_type" => "single"
+]);
+
 ?>
+
 
 <body class="checkout_page">
     <div id="ec-overlay">
@@ -52,7 +65,7 @@ include './inc/head.php';
                             <div class="section-title mt-3">
                                 <h2 class="ec-title text-danger">Payment Failed</h2>
                                 <p class="sub-title">
-                                    Unfortunately, your payment could not be completed.
+                                    Unfortunately, your payment for Order with Reference Num:: <b>#<?= strtoupper($orderReference['order_reference']) ?></b> could not be completed.
                                     Please check your payment details or try again with another method.
                                     Your order has been saved but marked as <strong>Payment Failed</strong>.
                                 </p>
