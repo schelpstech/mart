@@ -172,7 +172,7 @@ class User
                     return [
                         "status" => false,
                         "message" => 'Please check your email for verification instructions. 
-                  <a href="./resendverification.php"><b>Click to resend link</b></a>'
+                  '
                     ];
 
                 default:

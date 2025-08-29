@@ -67,7 +67,7 @@ include './inc/head.php';
                                     <input type="password" name="password" placeholder="Enter your password" required />
                                 </span>
                                 <span class="ec-login-wrap ec-login-fp">
-                                    <label><a href="#">Forgot Password?</a></label>
+                                    <label><a href="./resendverification.php">Resend verification link</a></label>
                                 </span>
                                 <span class="ec-login-wrap ec-login-btn">
                                     <button class="btn btn-primary" name="action" value="<?php echo $utility->inputEncode('login'); ?>"  type="submit">Login</button>

@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $sent = $user->sendVerificationEmail($email);
                     $msg  = $sent
                         ? "Registration successful! Please check your email to verify your account."
-                        : 'Account created, but failed to send verification email.<a href="./resendverification.php"><b>Click to resend link</b></a>';
+                        : 'Account created, but failed to send verification email.';
                     $utility->setFlash($sent ? "success" : "warning", $msg);
 
                     header("Location: ../view/login.php");
