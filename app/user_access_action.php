@@ -117,12 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $utility->setFlash("danger", "Failed to send verification email.");
                 }
 
-                header("Location: ../view/resend_verification.php");
+                header("Location: ../view/resendverification.php");
                 exit;
             } catch (Exception $e) {
                 error_log("Resend verification error: " . $e->getMessage());
                 $utility->setFlash("danger", "Something went wrong. Debug: " . $e->getMessage());
-                header("Location: ../view/resend_verification.php");
+                header("Location: ../view/resendverification.php");
                 exit;
             }
 
