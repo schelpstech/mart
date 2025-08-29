@@ -169,7 +169,7 @@ public function login($email, $password)
 
             case !$user["verified"]:
                 error_log("User::login failed - email not verified for {$email}");
-                return ["status" => false, "message" => "Please check your email for verification instructions."];
+                return ["status" => false, "message" => 'Please check your email for verification instructions.  <a href="./resendverification.php"> <b>Click to resend link </b><a/>'];
 
             default:
                 // Successful login
