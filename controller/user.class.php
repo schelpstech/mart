@@ -130,8 +130,7 @@ class User
             if ($user) {
                 $this->db->update("users_mart", [
                     "verified" => 1,
-                    "verification_token" => null,
-                    "updated_at" => date("Y-m-d H:i:s")
+                    "verification_token" => null
                 ], ["user_id" => $user["user_id"]]);
 
                 error_log("User::verifyAccount success for user_id=" . $user["id"]);

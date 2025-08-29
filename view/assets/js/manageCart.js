@@ -106,8 +106,6 @@ $(document).ready(function () {
             action = "remove";
             requestData = { action: action, cart_item_id: cart_item_id };
 
-            // Debugging
-            alert("Attempting to remove. cart_item_id = " + cart_item_id);
         } else {
             // Adding to cart
             action = "add";
@@ -135,8 +133,6 @@ $(document).ready(function () {
                             .attr("title", "Remove From Cart")
                             .attr("data-cartitemid", res.item_id) // ✅ store ID
                             .html('<i class="fi-rr-trash"></i> ');
-
-                        alert("Added to cart. cart_item_id = " + res.item_id);
 
                         showToast(res.msg || "You Have Added To Cart Successfully");
                     } else if (action === "remove") {
@@ -202,7 +198,6 @@ $(document).on("change", ".cart-plus-minus", function () {
     const cart_item_id = $input.data("cartitemid");
     let quantity = parseInt($input.val(), 10);
 
-    console.log("Quantity change detected:", { cart_item_id, quantity });
 
     // Validate quantity
     if (!cart_item_id || isNaN(quantity) || quantity <= 0) {

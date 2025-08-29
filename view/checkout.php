@@ -29,7 +29,7 @@ include './inc/head.php';
                         <div class="col-md-6 col-sm-12">
                             <!-- ec-breadcrumb-list start -->
                             <ul class="ec-breadcrumb-list">
-                                <li class="ec-breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
                                 <li class="ec-breadcrumb-item active">Checkout</li>
                             </ul>
                             <!-- ec-breadcrumb-list end -->

@@ -239,6 +239,9 @@
 </div>
 <!-- Modal end -->
 
+<div id="addtocart_toast" class="toast">
+    <span class="desc"></span>
+</div>
 
 <!-- Click To Call -->
 <div class="ec-cc-style cc-right-bottom">
@@ -352,7 +355,7 @@
 </div>
 <!-- Footer navigation panel for responsive display end -->
 
-<!-- Recent Purchase Popup  -->
+<!-- 
 <div class="recent-purchase">
     <img src="assets/images/product-image/102_1.jpg" alt="payment image">
     <div class="detail">
@@ -361,9 +364,32 @@
         <p>5 Minutes ago</p>
     </div>
     <a href="javascript:void(0)" class="icon-btn recent-close">×</a>
-</div>
-<!-- Recent Purchase Popup end -->
+</div> -->
+<style>
+  #addtocart_toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #4BB543;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;   /* 👈 keep it on top */
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    opacity: 0;
+    transition: opacity 0.5s, visibility 0.5s;
+}
 
+#addtocart_toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+</style>
 <!-- Theme Custom Cursors -->
 <div class="ec-cursor"></div>
 <div class="ec-cursor-2"></div>

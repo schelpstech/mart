@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $sent = $user->sendVerificationEmail($email);
                     $msg  = $sent
                         ? "Registration successful! Please check your email to verify your account."
-                        : "Account created, but failed to send verification email. Contact support.";
+                        : 'Account created, but failed to send verification email. <a href="./resendverification.php"> <b>Click to resend link </b><a/>';
                     $utility->setFlash($sent ? "success" : "warning", $msg);
 
                     header("Location: ../view/login.php");
@@ -85,7 +85,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: ../view/login.php");
                 exit;
             }
+        case 'resend_verification':
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $utility->setFlash("danger", "Invalid email format.");
+                header("Location: ../view/resendverification.php");
+                exit;
+            }
+
+            try {
+                $userData = $user->getByEmail($email);
+
+                if (!$userData) {
+                    $utility->setFlash("danger", "No account found with this email.");
+                    header("Location: ../view/resendverification.php");
+                    exit;
+                }
+
+                if ($userData['verified']) {
+                    $utility->setFlash("info", "This email is already verified.");
+                    header("Location: ../view/login.php");
+                    exit;
+                }
+
+                $sent = $user->sendVerificationEmail($email);
+
+                if ($sent) {
+                    $utility->setFlash("success", "A new verification email has been sent.");
+                } else {
+                    $utility->setFlash("danger", "Failed to send verification email.");
+                }
+
+                header("Location: ../view/resend_verification.php");
+                exit;
+            } catch (Exception $e) {
+                error_log("Resend verification error: " . $e->getMessage());
+                $utility->setFlash("danger", "Something went wrong. Debug: " . $e->getMessage());
+                header("Location: ../view/resend_verification.php");
+                exit;
+            }
 
         case 'logout':
             $logout = $user->logout();
