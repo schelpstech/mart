@@ -148,50 +148,53 @@ class User
     /**
      * Login user
      */
-public function login($email, $password)
-{
-    try {
-        error_log("User::login started for {$email}");
+    public function login($email, $password)
+    {
+        try {
+            error_log("User::login started for {$email}");
 
-        $user = $this->model->getRows("users_mart", [
-            "where" => ["email" => $email],
-            "return_type" => "single"
-        ]);
+            $user = $this->model->getRows("users_mart", [
+                "where" => ["email" => $email],
+                "return_type" => "single"
+            ]);
 
-        switch (true) {
-            case !$user:
-                error_log("User::login failed - email not found: {$email}");
-                return ["status" => false, "message" => "Invalid login credentials."];
+            switch (true) {
+                case !$user:
+                    error_log("User::login failed - email not found: {$email}");
+                    return ["status" => false, "message" => "Invalid login credentials."];
 
-            case !password_verify($password, $user["password_hash"]):
-                error_log("User::login failed - wrong password for {$email}");
-                return ["status" => false, "message" => "Invalid login credentials."];
+                case !password_verify($password, $user["password_hash"]):
+                    error_log("User::login failed - wrong password for {$email}");
+                    return ["status" => false, "message" => "Invalid login credentials."];
 
-            case !$user["verified"]:
-                error_log("User::login failed - email not verified for {$email}");
-                return ["status" => false, "message" => 'Please check your email for verification instructions.  <a href="./resendverification.php"> <b>Click to resend link </b><a/>'];
+                case !$user["verified"]:
+                    error_log("User::login failed - email not verified for {$email}");
+                    return [
+                        "status" => false,
+                        "message" => 'Please check your email for verification instructions. 
+                  <a href="./resendverification.php"><b>Click to resend link</b></a>'
+                    ];
 
-            default:
-                // Successful login
-                $_SESSION["user_id"] = $user["user_id"];
-                $_SESSION["user_email"] = $user["email"];
+                default:
+                    // Successful login
+                    $_SESSION["user_id"] = $user["user_id"];
+                    $_SESSION["user_email"] = $user["email"];
 
-                // Update cart table to assign session items to logged-in user
-                $this->model->update(
-                    "cart",
-                    ["user_id" => $user["user_id"]],
-                    ["session_id" => session_id()]
-                );
+                    // Update cart table to assign session items to logged-in user
+                    $this->model->update(
+                        "cart",
+                        ["user_id" => $user["user_id"]],
+                        ["session_id" => session_id()]
+                    );
 
-                error_log("User::login success for user_id=" . $user["user_id"]);
-                return ["status" => true, "message" => "Login successful"];
+                    error_log("User::login success for user_id=" . $user["user_id"]);
+                    return ["status" => true, "message" => "Login successful"];
+            }
+        } catch (Exception $e) {
+            error_log("User::login ERROR - " . $e->getMessage());
+            throw $e;
         }
-
-    } catch (Exception $e) {
-        error_log("User::login ERROR - " . $e->getMessage());
-        throw $e;
     }
-}
 
     public function getByEmail($email)
     {
@@ -251,16 +254,22 @@ public function login($email, $password)
         }
     }
 
-      public function logout() {
+    public function logout()
+    {
         // Destroy all session variables
         $_SESSION = array();
 
         // If using cookies for login, clear them too
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
-                $params["path"], $params["domain"],
-                $params["secure"], $params["httponly"]
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
             );
         }
         // Destroy the session
