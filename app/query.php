@@ -15,7 +15,14 @@ require __DIR__ . '/./vendor/autoload.php';;
 //Prefill phone number and Email Address
 if (!empty($_SESSION['user_email'])) {
     $userData = $user->getByEmail($_SESSION['user_email']);
-} 
+}
+// Get all products 
+$allproducts = $model->getRows("products", [
+    "order_by" => "product_tbl_record_time DESC", // optional ordering
+    'left_join' => [
+        'categories' => ' on products.category_id = categories.categoryTbl_id'
+    ]
+]);
 // Get products where section_id = 1
 $products_in_section_1 = $model->getRows("products", [
     'where' => ["section_id" => 1],

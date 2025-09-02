@@ -105,95 +105,95 @@ class Model
      * Universal query builder
      */
     public function getRows($table, $params = [])
-{
-    $sql = "SELECT ";
-    $sql .= $params['select'] ?? "*";
-    $sql .= " FROM {$table}";
+    {
+        $sql = "SELECT ";
+        $sql .= $params['select'] ?? "*";
+        $sql .= " FROM {$table}";
 
-    // Handle joins
-    foreach (['join', 'left_join', 'right_join', 'full_join'] as $joinType) {
-        if (!empty($params[$joinType]) && is_array($params[$joinType])) {
-            foreach ($params[$joinType] as $joinTable => $onClause) {
-                $type = strtoupper(str_replace('_', ' ', $joinType));
-                $sql .= " {$type} {$joinTable} {$onClause}";
-            }
-        }
-    }
-
-    // WHERE conditions
-    $bindings = [];
-    $whereClauses = [];
-
-    if (!empty($params['where']) && is_array($params['where'])) {
-        foreach ($params['where'] as $key => $value) {
-            if (is_array($value)) {
-                $placeholders = [];
-                foreach ($value as $i => $val) {
-                    $ph = ":{$key}_{$i}";
-                    $placeholders[] = $ph;
-                    $bindings[$ph] = $val;
+        // Handle joins
+        foreach (['join', 'left_join', 'right_join', 'full_join'] as $joinType) {
+            if (!empty($params[$joinType]) && is_array($params[$joinType])) {
+                foreach ($params[$joinType] as $joinTable => $onClause) {
+                    $type = strtoupper(str_replace('_', ' ', $joinType));
+                    $sql .= " {$type} {$joinTable} {$onClause}";
                 }
-                $whereClauses[] = "{$key} IN (" . implode(",", $placeholders) . ")";
-            } else {
-                $ph = ":{$key}";
-                $whereClauses[] = "{$key} = {$ph}";
-                $bindings[$ph] = $value;
             }
         }
-    }
 
-    // Raw WHERE
-    if (!empty($params['where_raw'])) {
-        $whereClauses[] = $params['where_raw'];
-    }
+        // WHERE conditions
+        $bindings = [];
+        $whereClauses = [];
 
-    if (!empty($whereClauses)) {
-        $sql .= " WHERE " . implode(" AND ", $whereClauses);
-    }
+        if (!empty($params['where']) && is_array($params['where'])) {
+            foreach ($params['where'] as $key => $value) {
+                if (is_array($value)) {
+                    $placeholders = [];
+                    foreach ($value as $i => $val) {
+                        $ph = ":{$key}_{$i}";
+                        $placeholders[] = $ph;
+                        $bindings[$ph] = $val;
+                    }
+                    $whereClauses[] = "{$key} IN (" . implode(",", $placeholders) . ")";
+                } else {
+                    $ph = ":{$key}";
+                    $whereClauses[] = "{$key} = {$ph}";
+                    $bindings[$ph] = $value;
+                }
+            }
+        }
 
-    // GROUP BY
-    if (!empty($params['group_by'])) {
-        $sql .= " GROUP BY " . $params['group_by'];
-    }
+        // Raw WHERE
+        if (!empty($params['where_raw'])) {
+            $whereClauses[] = $params['where_raw'];
+        }
 
-    // HAVING
-    if (!empty($params['having'])) {
-        $sql .= " HAVING " . $params['having'];
-    }
+        if (!empty($whereClauses)) {
+            $sql .= " WHERE " . implode(" AND ", $whereClauses);
+        }
 
-    // ORDER BY
-    if (!empty($params['order_by'])) {
-        $sql .= " ORDER BY " . $params['order_by'];
-    }
+        // GROUP BY
+        if (!empty($params['group_by'])) {
+            $sql .= " GROUP BY " . $params['group_by'];
+        }
 
-    // LIMIT and OFFSET
-    if (!empty($params['limit'])) {
-        $sql .= " LIMIT " . (int)$params['limit'];
-        if (!empty($params['offset'])) {
-            $sql .= " OFFSET " . (int)$params['offset'];
+        // HAVING
+        if (!empty($params['having'])) {
+            $sql .= " HAVING " . $params['having'];
+        }
+
+        // ORDER BY
+        if (!empty($params['order_by'])) {
+            $sql .= " ORDER BY " . $params['order_by'];
+        }
+
+        // LIMIT and OFFSET
+        if (!empty($params['limit'])) {
+            $sql .= " LIMIT " . (int)$params['limit'];
+            if (!empty($params['offset'])) {
+                $sql .= " OFFSET " . (int)$params['offset'];
+            }
+        }
+
+        // Prepare and execute
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($bindings);
+
+        // Return type
+        $returnType = $params['return_type'] ?? 'all';
+
+        switch ($returnType) {
+            case 'single':
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            case 'count':
+                return $stmt->rowCount();
+            case 'sum':
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $row['total'] ?? 0;
+            case 'all':
+            default:
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
-
-    // Prepare and execute
-    $stmt = $this->db->prepare($sql);
-    $stmt->execute($bindings);
-
-    // Return type
-    $returnType = $params['return_type'] ?? 'all';
-
-    switch ($returnType) {
-        case 'single':
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        case 'count':
-            return $stmt->rowCount();
-        case 'sum':
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['total'] ?? 0;
-        case 'all':
-        default:
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
 
 
     public function getById($table, $id)
@@ -255,6 +255,19 @@ class Model
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'] ?? 0;
     }
+
+    public function getByQuery($sql, $params = [])
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("DB Query Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
 
     // Transaction helpers
     public function beginTransaction()

@@ -349,6 +349,7 @@ include './inc/mainhead.php';
                                                 $productName = htmlspecialchars($product['product_name']);
                                                 $productId = htmlspecialchars($product['product_id']);
                                                 $productImage = htmlspecialchars($product['image_main']);
+                                                $categoryId = htmlspecialchars($product['category_id'] ?? '');
                                                 $productCategory = htmlspecialchars($product['category_name'] ?? '');
                                                 $priceNew = number_format($product['price'], 2);
                                                 $priceOld = $product['discount_price'] ? number_format($product['discount_price'], 2) : '';
@@ -390,7 +391,7 @@ include './inc/mainhead.php';
                                                             </div>
                                                         </div>
                                                         <div class="ec-pro-content">
-                                                            <a href="shop-left-sidebar-col-3.html">
+                                                            <a href="viewcategory.php?id=<?= $categoryId ?>">
                                                                 <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
                                                             </a>
                                                             <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>

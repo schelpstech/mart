@@ -423,7 +423,7 @@
 <script src="assets/js/renderCart.js"></script>
 <script src="assets/js/register.js"></script>
 <script src="assets/js/checkoutFormValidator.js"></script>
-
+<script src="assets/js/fetchproduct.js"></script
 </body>
 
 </html>
