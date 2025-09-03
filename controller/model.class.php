@@ -237,16 +237,32 @@ class Model
         return (int) $stmt->fetchColumn();
     }
 
-    public function search($table, $columns, $searchTerm)
+    public function search($table, $options = [])
     {
-        $conditions = [];
-        foreach ($columns as $col) {
-            $conditions[] = "$col LIKE " . $this->db->quote("%{$searchTerm}%");
+        $keyword = isset($options['keyword']) ? $options['keyword'] : '';
+        $columns = isset($options['columns']) ? $options['columns'] : [];
+        $orderBy = isset($options['order_by']) ? $options['order_by'] : '';
+
+        if (empty($columns) || empty($keyword)) {
+            return [];
         }
-        $sql = "SELECT * FROM {$table} WHERE " . implode(" OR ", $conditions);
-        $stmt = $this->db->query($sql);
+
+        $likeParts = [];
+        foreach ($columns as $col) {
+            $likeParts[] = "$col LIKE :keyword";
+        }
+        $whereClause = implode(" OR ", $likeParts);
+
+        $sql = "SELECT * FROM $table WHERE $whereClause";
+        if ($orderBy) {
+            $sql .= " ORDER BY $orderBy";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':keyword' => "%$keyword%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function sum($table, $column, $condition = "1=1")
     {

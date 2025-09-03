@@ -21,27 +21,7 @@ include './inc/head.php';
 
 
     <!-- Ec breadcrumb start -->
-    <div class="sticky-header-next-sec  ec-breadcrumb section-space-mb">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row ec_breadcrumb_inner">
-                        <div class="col-md-6 col-sm-12">
-                            <h2 class="ec-breadcrumb-title">Cart</h2>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <!-- ec-breadcrumb-list start -->
-                            <ul class="ec-breadcrumb-list">
-                                <li class="ec-breadcrumb-item"><a href="index.html">Home</a></li>
-                                <li class="ec-breadcrumb-item active">Cart</li>
-                            </ul>
-                            <!-- ec-breadcrumb-list end -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Ec breadcrumb end -->
 
     <!-- Ec cart page -->
@@ -54,6 +34,27 @@ include './inc/head.php';
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
+                <div class="sticky-header-next-sec  ec-breadcrumb section-space-mb">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row ec_breadcrumb_inner">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="ec-breadcrumb-title">Cart</h2>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <!-- ec-breadcrumb-list start -->
+                                        <ul class="ec-breadcrumb-list">
+                                            <li class="ec-breadcrumb-item"><a href="index.html">Home</a></li>
+                                            <li class="ec-breadcrumb-item active">Cart</li>
+                                        </ul>
+                                        <!-- ec-breadcrumb-list end -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="ec-cart-leftside col-lg-8 col-md-12 ">
                     <div class="ec-cart-content">
                         <div class="ec-cart-inner">
@@ -125,7 +126,7 @@ include './inc/head.php';
                                         <div class="col-lg-12">
                                             <div class="ec-cart-update-bottom">
                                                 <a href="shop.php">Continue Shopping</a>
-                                                <a href="checkout.php" class="btn btn-primary">Check Out</a>
+                                                <a href="checkout.php" class="btn btn-success" style="color: white;">Check Out</a>
                                             </div>
                                         </div>
                                     </div>

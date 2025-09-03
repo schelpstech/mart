@@ -222,14 +222,6 @@
                                 <span class="new-price"></span>
                                 <span class="old-price"></span>
                             </div>
-
-
-                            <!-- Quantity + Add to Cart -->
-                            <div class="ec-quickview-qty">
-                                <div class="ec-quickview-cart">
-                                    <button class="btn btn-primary">Add To Cart</button>
-                                </div>
-                            </div>
                         </div>
                     </div> <!-- End Product Info -->
                 </div>

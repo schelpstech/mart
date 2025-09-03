@@ -89,8 +89,8 @@
                     <!-- Ec Header Search Start -->
                     <div class="align-self-center">
                         <div class="header-search">
-                            <form class="ec-btn-group-form" action="#">
-                                <input class="form-control" placeholder="Enter Your Product Name..." type="text">
+                            <form class="ec-btn-group-form" action="search.php" method="get">
+                                <input class="form-control" name="q" placeholder="Enter Your Product Name..." type="text">
                                 <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
                             </form>
                         </div>
@@ -111,6 +111,8 @@
                                                 data-bs-toggle="modal" data-bs-target="#logoutModal">
                                                 Logout
                                             </a></li>
+                                        <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                                        <li><a class="dropdown-item" href="order.php">Order History</a></li>
                                         <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
                                     <?php else: ?>
                                         <li><a class="dropdown-item" href="register.php">Register</a></li>
@@ -278,21 +280,21 @@
                             ?>
                         </ul>
                     </li>
-                    <li class="dropdown"><a href="javascript:void(0)" >Beauty Store</a>
-                            <ul class="sub-menu">
-                                <?php
-                                $africanStore = $model->getRows('categories', [
-                                    'where' => ['section_id' => 3]
-                                ]);
-                                if ($africanStore) {
-                                    foreach ($africanStore as $link) {
-                                ?>
-                                        <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
-                                <?php
-                                    }
+                    <li class="dropdown"><a href="javascript:void(0)">Beauty Store</a>
+                        <ul class="sub-menu">
+                            <?php
+                            $africanStore = $model->getRows('categories', [
+                                'where' => ['section_id' => 3]
+                            ]);
+                            if ($africanStore) {
+                                foreach ($africanStore as $link) {
+                            ?>
+                                    <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
+                            <?php
                                 }
-                                ?>
-                            </ul>
+                            }
+                            ?>
+                        </ul>
                     </li>
                     <li class="dropdown"><a href="javascript:void(0)">African Store</a>
                         <ul class="sub-menu">

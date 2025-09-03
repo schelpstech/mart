@@ -31,34 +31,31 @@ include './inc/head.php';
     }
     ?>
 
-    <!-- Ec breadcrumb start -->
-    <div class="sticky-header-next-sec ec-breadcrumb section-space-mb">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row ec_breadcrumb_inner">
-                        <div class="col-md-6 col-sm-12">
-                            <h2 class="ec-breadcrumb-title"><?= htmlspecialchars($product['product_name']); ?></h2>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <!-- ec-breadcrumb-list start -->
-                            <ul class="ec-breadcrumb-list">
-                                <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
-                                <li class="ec-breadcrumb-item active"><?= htmlspecialchars($product['product_name']); ?></li>
-                            </ul>
-                            <!-- ec-breadcrumb-list end -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Ec breadcrumb end -->
-
     <!-- Single product content -->
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
+                <div class="sticky-header-next-sec ec-breadcrumb section-space-mb">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row ec_breadcrumb_inner">
+                                    <div class="col-md-6 col-sm-12">
+                                        <h2 class="ec-breadcrumb-title"><?= htmlspecialchars($product['product_name']); ?></h2>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <!-- ec-breadcrumb-list start -->
+                                        <ul class="ec-breadcrumb-list">
+                                            <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
+                                            <li class="ec-breadcrumb-item active"><?= htmlspecialchars($product['product_name']); ?></li>
+                                        </ul>
+                                        <!-- ec-breadcrumb-list end -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="ec-pro-rightside ec-common-rightside col-lg-12 col-md-12">
                     <!-- Single product content Start -->
                     <div class="single-pro-block">
@@ -151,9 +148,9 @@ include './inc/head.php';
                                                     data-price="<?= $product['price']; ?>">Add To Cart</button>
                                             </div>
                                             <div class=" ec-single-quickview">
-                                                    <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
-                                                        title="Quick view" data-bs-toggle="modal" data-id="<?= $product['product_id']; ?>"
-                                                        data-bs-target="#ec_quickview_modal"><i class="fi-rr-eye"></i></a>
+                                                <a href="#" class="ec-btn-group quickview" data-link-action="quickview"
+                                                    title="Quick view" data-bs-toggle="modal" data-id="<?= $product['product_id']; ?>"
+                                                    data-bs-target="#ec_quickview_modal"><i class="fi-rr-eye"></i></a>
                                             </div>
                                         </div>
                                         <div class="ec-single-social">

@@ -2,7 +2,7 @@
 include './inc/mainhead.php';
 ?>
 
-<body >
+<body>
     <div id="ec-overlay">
         <div class="ec-ellipsis">
             <div></div>
@@ -269,6 +269,7 @@ include './inc/mainhead.php';
                                                 $productId = htmlspecialchars($product['product_id']);
                                                 $productImage = htmlspecialchars($product['image_main']);
                                                 $productCategory = htmlspecialchars($product['category_name'] ?? '');
+                                                $categoryId = htmlspecialchars($product['category_id'] ?? '');
                                                 $priceNew = number_format($product['price'], 2);
                                                 $priceOld = $product['discount_price'] ? number_format($product['discount_price'], 2) : '';
 
@@ -282,53 +283,7 @@ include './inc/mainhead.php';
                                                 $cartBtnIcon = $inCart ? 'fi-rr-trash' : 'fi-rr-shopping-basket';
                                         ?>
 
-                                                <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
-                                                    <div class="ec-product-inner">
-                                                        <div class="ec-pro-image-outer">
-                                                            <div class="ec-pro-image">
-                                                                <a href="viewproduct.php?id=<?= $productId ?>" class="image">
-                                                                    <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
-                                                                    <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
-                                                                </a>
-                                                                <span class="flags"><span class="new">New</span></span>
-                                                                <div class="ec-pro-actions">
-                                                                    <a class="ec-btn-group wishlist" title="Wishlist"><i class="fi-rr-heart"></i></a>
-                                                                    <a href="#" class="ec-btn-group quickview" data-id="<?= $productId ?>" title="Quick view"
-                                                                        data-bs-toggle="modal" data-bs-target="#ec_quickview_modal">
-                                                                        <i class="fi-rr-eye"></i>
-                                                                    </a>
-                                                                    <a href="javascript:void(0)" title="<?= $cartBtnTitle ?>"
-                                                                        class="ec-btn-group <?= $cartBtnClass ?>"
-                                                                        data-productid="<?= $productId ?>"
-                                                                        data-cartitemid="<?= $cartItemId ?>"
-                                                                        data-quantity="1"
-                                                                        data-action="add">
-                                                                        <i class="<?= $cartBtnIcon ?>"></i>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="ec-pro-content">
-                                                            <a href="shop-left-sidebar-col-3.html">
-                                                                <h6 class="ec-pro-stitle"><?= $productCategory ?></h6>
-                                                            </a>
-                                                            <h5 class="ec-pro-title"><a href="viewproduct.php?id=<?= $productId ?>"><?= $productName ?></a></h5>
-                                                            <div class="ec-pro-rat-price">
-                                                                <span class="ec-pro-rating">
-                                                                    <i class="ecicon eci-star fill"></i>
-                                                                    <i class="ecicon eci-star fill"></i>
-                                                                    <i class="ecicon eci-star fill"></i>
-                                                                    <i class="ecicon eci-star fill"></i>
-                                                                    <i class="ecicon eci-star fill"></i>
-                                                                </span>
-                                                                <span class="ec-price">
-                                                                    <span class="new-price">£<?= $priceNew ?></span>
-                                                                    <?php if ($priceOld) echo "<span class='old-price'>£{$priceOld}</span>"; ?>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <?php include "./inc/productCard.php"; ?>
 
                                         <?php
                                             }

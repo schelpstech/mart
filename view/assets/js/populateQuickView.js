@@ -13,7 +13,7 @@ $(document).on('click', '.quickview', function (e) {
                 // Update product name & link
                 $('#ec_quickview_modal .ec-quick-title a')
                     .text(response.data.name)
-                    .attr('href', 'product-details.php?id=' + productId);
+                    .attr('href', 'viewproduct.php?id=' + productId);
 
                 // Update description
                 $('#ec_quickview_modal .ec-quickview-desc').text(response.data.description);
