@@ -13,29 +13,39 @@ class Cart
     }
     public function getCartId()
     {
-        if (!empty($this->user_id)) {
-            $user = $this->user_id;
-            $check = "user_id";
-        } else {
-            $user  = $this->session_id;
-            $check = "session_id";
-        }
-        // Check if cart already exists for this session
+        $identifier = !empty($this->user_id) ? 'user_id' : 'session_id';
+        $value = !empty($this->user_id) ? $this->user_id : $this->session_id;
+
+        // Check if cart exists
         $row = $this->db->getRows("cart", [
-            "where" => [$check => $user],
+            "where" => [$identifier => $value],
             "return_type" => "single"
         ]);
 
         if ($row) {
             return $row['cart_id'];
-        } else {
-            // Create new cart
-            $this->db->insert("cart", [
-                "session_id" => $this->session_id
-            ]);
+        }
+
+        // Prepare new cart data
+        $cartData = [
+            "session_id" => $this->session_id,
+            "created_at" => date("Y-m-d H:i:s")
+        ];
+        if (!empty($this->user_id)) {
+            $cartData["user_id"] = $this->user_id;
+        }
+
+        // Create new cart
+        $inserted = $this->db->insert("cart", $cartData);
+
+        if ($inserted) {
             return $this->db->lastInsertId();
         }
+
+        // If insert fails
+        throw new Exception("Failed to create cart.");
     }
+
 
     public function getLatestCartItemId($product_id)
     {
@@ -94,7 +104,17 @@ class Cart
 
     public function getCartCount()
     {
-        $cart_id = $this->getCartId();
+        $identifier = !empty($this->user_id) ? 'user_id' : 'session_id';
+        $value = !empty($this->user_id) ? $this->user_id : $this->session_id;
+
+        // Check if cart exists
+        $row = $this->db->getRows("cart", [
+            "where" => [$identifier => $value],
+            "return_type" => "single"
+        ]);
+
+        $cart_id =  $row['cart_id'];
+
         $row = $this->db->getRows("cart_items", [
             "where" => ["cart_id" => $cart_id],
             "return_type" => "count"
