@@ -19,7 +19,7 @@ $(document).on('click', '.quickview', function (e) {
                 $('#ec_quickview_modal .ec-quickview-desc').text(response.data.description);
 
                 // Update prices
-                $('#ec_quickview_modal .new-price').text('₦' + response.data.new_price);
+                $('#ec_quickview_modal .new-price').text('£' + response.data.new_price);
                 $('#ec_quickview_modal .old-price').text(response.data.old_price ? '£' + response.data.old_price : '');
 
                 // Load product images dynamically

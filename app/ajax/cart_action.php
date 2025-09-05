@@ -45,34 +45,10 @@ if ($action === "add") {
 
 
 if ($action === "count") {
-
-    if (!empty($_SESSION['user_id'])) {
-        $cartCount = $model->getRows("cart", [
-            "where" => ["user_id" => $_SESSION['user_id']],
-            "return_type" => "single"
-        ]);
-        if ($cartCount) {
-            $cart_id = $cartCount['cart_id'];
-            $countofCount = $model->getRows("cart_items", [
-                "where" => ["cart_id" => $cart_id],
-                "return_type" => "count"
-            ]);
-            if ($countofCount) {
-                $response = ["status" => "success", "count" => $countofCount];
-                echo json_encode($response);
-                exit;
-            }else{
-                $response = ["status" => "success", "count" => 0];
-                echo json_encode($response);
-                exit;
-            }
-        } 
-    } else {
-        $count = $cart->getCartCount();
-        $response = ["status" => "success", "count" => $count];
-        echo json_encode($response);
-        exit;
-    }
+    $count = $cart->getCartCount();
+    $response = ["status" => "success", "count" => $count];
+    echo json_encode($response);
+    exit;
 }
 
 if ($_POST['action'] === 'get_cart_items') {
@@ -153,9 +129,9 @@ if ($_POST['action'] === "update_quantity") {
         $total = $subTotal + $vat;
         echo json_encode([
             "status" => "success",
-            "line_total" => '£' . number_format($linetotal, 2),
-            "cart_subtotal" => '£' . number_format($subTotal, 2),
-            "cart_grandtotal" => '£' . number_format($total, 2)
+            "line_total" => '£' .number_format($linetotal, 2),
+            "cart_subtotal" => '£' .number_format($subTotal, 2),
+            "cart_grandtotal" => '£' .number_format($total, 2)
         ]);
     } else {
         echo json_encode(["status" => "error", "msg" => "Invalid update"]);

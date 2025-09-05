@@ -7,11 +7,7 @@ $(document).ready(function () {
         $toast.find(".desc").text(message);
         $toast.css("background-color", type === "error" ? "#FF4C4C" : "#4BB543");
         $toast.addClass("show");
-
-        // Hide after 3 seconds
-        setTimeout(function () {
-            $toast.removeClass("show");
-        }, 3000);
+        setTimeout(() => $toast.removeClass("show"), 3000);
     }
 
     // -------------------------------
@@ -105,7 +101,6 @@ $(document).ready(function () {
             // Removing from cart
             action = "remove";
             requestData = { action: action, cart_item_id: cart_item_id };
-
         } else {
             // Adding to cart
             action = "add";
@@ -198,7 +193,6 @@ $(document).on("change", ".cart-plus-minus", function () {
     const cart_item_id = $input.data("cartitemid");
     let quantity = parseInt($input.val(), 10);
 
-
     // Validate quantity
     if (!cart_item_id || isNaN(quantity) || quantity <= 0) {
         alert("Invalid quantity");
@@ -244,32 +238,33 @@ $(document).on("change", ".cart-plus-minus", function () {
             showToast("Network / server error", "error");
         },
     });
+
+    $(document).on("click", ".add-to-cart", function () {
+        const product_id = $(this).data("productid");
+        const quantity = $(".qty-input").val() || 1;
+
+        $.ajax({
+            url: "../app/ajax/cart_action.php",
+            type: "POST",
+            data: {
+                action: "add_to_cart",
+                product_id: product_id,
+                quantity: quantity,
+            },
+            dataType: "json",
+            success: function (res) {
+                if (res.status === "success") {
+                    showToast(res.msg || "Product added to cart!");
+                } else {
+                    showToast(res.msg || "Error adding product", "error");
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX error:", xhr.responseText);
+                showToast("Network / server error", "error");
+            },
+        });
+    });
 });
 
 //
-$(document).on("click", ".add-to-cart", function () {
-    const product_id = $(this).data("productid");
-    const quantity = $(".qty-input").val() || 1;
-
-    $.ajax({
-        url: "../app/ajax/cart_action.php",
-        type: "POST",
-        data: {
-            action: "add_to_cart",
-            product_id: product_id,
-            quantity: quantity
-        },
-        dataType: "json",
-        success: function (res) {
-            if (res.status === "success") {
-                showToast(res.msg || "Product added to cart!");
-            } else {
-                showToast(res.msg || "Error adding product", "error");
-            }
-        },
-        error: function (xhr) {
-            console.error("AJAX error:", xhr.responseText);
-            showToast("Network / server error", "error");
-        }
-    });
-});

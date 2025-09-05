@@ -56,7 +56,7 @@ if ($token) {
                             <?php $utility->displayFlash(); ?>
 
                             <?php if ($isValid): ?>
-                                <form action="../app/user_access_action.php" method="POST" autocomplete="off">
+                                <form action="../app/user_access_action.php" method="POST" autocomplete="off" id="resetpasswordpage">
                                     <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
 
                                     <span class="ec-login-wrap">

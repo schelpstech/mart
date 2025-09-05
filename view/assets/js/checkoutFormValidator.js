@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("checkoutForm");
+    if (!form) return; // Exit if not on checkout page
 
     form.addEventListener("submit", function (event) {
         let valid = true;
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const postcode = form.postcode.value.trim();
         const consent = form.privacy_consent.checked;
 
-        // Name validation
+        // ---- Name validation ----
         if (firstname.length < 2) {
             valid = false;
             messages.push("First name must be at least 2 characters.");
@@ -25,21 +26,21 @@ document.addEventListener("DOMContentLoaded", function () {
             messages.push("Last name must be at least 2 characters.");
         }
 
-        // Email validation
+        // ---- Email validation ----
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             valid = false;
             messages.push("Please enter a valid email address.");
         }
 
-        // Phone validation (UK style)
+        // ---- Phone validation (UK format) ----
         const phoneRegex = /^\+44\s?\d{10}$/;
         if (!phoneRegex.test(phone)) {
             valid = false;
             messages.push("Please enter a valid UK phone number (e.g. +44 7123456789).");
         }
 
-        // Address
+        // ---- Address validation ----
         if (address1.length < 5) {
             valid = false;
             messages.push("Address Line 1 must be at least 5 characters.");
@@ -50,20 +51,20 @@ document.addEventListener("DOMContentLoaded", function () {
             messages.push("City is required.");
         }
 
-        // UK Postcode validation
+        // ---- UK Postcode validation ----
         const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i;
         if (!postcodeRegex.test(postcode)) {
             valid = false;
             messages.push("Please enter a valid UK postcode.");
         }
 
-        // Privacy consent
+        // ---- Privacy consent ----
         if (!consent) {
             valid = false;
             messages.push("You must agree to the Privacy Policy.");
         }
 
-        // Prevent submission if invalid
+        // ---- Prevent submission if invalid ----
         if (!valid) {
             event.preventDefault();
             alert(messages.join("\n"));

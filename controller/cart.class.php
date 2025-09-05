@@ -104,17 +104,7 @@ class Cart
 
     public function getCartCount()
     {
-        $identifier = !empty($this->user_id) ? 'user_id' : 'session_id';
-        $value = !empty($this->user_id) ? $this->user_id : $this->session_id;
-
-        // Check if cart exists
-        $row = $this->db->getRows("cart", [
-            "where" => [$identifier => $value],
-            "return_type" => "single"
-        ]);
-
-        $cart_id =  $row['cart_id'];
-
+        $cart_id = $this->getCartId();
         $row = $this->db->getRows("cart_items", [
             "where" => ["cart_id" => $cart_id],
             "return_type" => "count"
