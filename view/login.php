@@ -63,9 +63,13 @@ include './inc/head.php';
                                     <label>Email Address*</label>
                                     <input type="text" name="email" placeholder="Enter your email add..." required />
                                 </span>
-                                <span class="ec-login-wrap">
+                                <span class="ec-login-wrap password-wrap" style="position: relative;">
                                     <label>Password*</label>
-                                    <input type="password" name="password" placeholder="Enter your password" required />
+                                    <input type="password" id="passwordField" name="password" placeholder="Enter your password" required />
+                                    <span id="togglePassword"
+                                        style="position: absolute; right: 10px; top: 38px; cursor: pointer; font-size: 14px; color: #555;">
+                                        👁
+                                    </span>
                                 </span>
                                 <span class="ec-login-wrap ec-login-fp">
                                     <label><a href="./forgotpassword.php">Forgot Password</a></label>
@@ -78,6 +82,20 @@ include './inc/head.php';
                                     <a href="register.php" class="btn btn-secondary">Register</a>
                                 </span>
                             </form>
+
+                            <script>
+                                const passwordField = document.getElementById("passwordField");
+                                const togglePassword = document.getElementById("togglePassword");
+
+                                togglePassword.addEventListener("click", function() {
+                                    const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+                                    passwordField.setAttribute("type", type);
+
+                                    // Change icon/text
+                                    this.textContent = type === "password" ? "👁" : "🙈";
+                                });
+                            </script>
+
                         </div>
                     </div>
                 </div>
