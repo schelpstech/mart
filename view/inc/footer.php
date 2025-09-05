@@ -1,186 +1,128 @@
 <!-- Footer Start -->
-<footer class="ec-footer">
-    <div class="footer-newletter section-space-footer-p">
-        <div class="container">
-            <div class="row">
-                <div class="footer-cat-inner">
-                    <div class="footer-cat-block">
-                        <div class="footer-cat-stitle">Model Directory</div>
-                        <div class="block">
-                            <span class="footer-cat-title">Model : </span>
-                            <a href="shop-left-sidebar-col-3.html">Air S1</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Mozer B12</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Somara like</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Vitzer N</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Nion lite</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Sumo BL</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Viser N1</a>
-                        </div>
-                        <div class="block">
-                            <span class="footer-cat-title">Sports : </span>
-                            <a href="shop-left-sidebar-col-3.html">Konen D</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Lonevi mar</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Soma nika</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Vitzer N</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">boor lite</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Synati BL</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">deras N1</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">lykra</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">ribook</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">batas</a>
-                        </div>
-                        <div class="block">
-                            <span class="footer-cat-title">Casual : </span>
-                            <a href="shop-left-sidebar-col-3.html">Bhutta</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Batari</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Pumara</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Mikra</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">boorsy lite</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Synati BL</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">deras N1</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">lykra</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Nota</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Syri</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Fora m</a><span> | </span>
-                            <a href="shop-left-sidebar-col-3.html">Lebeen</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<footer class="ec-footer" style="background-color: #222222; color: #ffffff;">
     <div class="footer-container">
         <div class="footer-top section-space-footer-p">
             <div class="container">
-                <div class="row">
+                <div class="row text-white">
+                    <!-- Popular Categories -->
                     <div class="col-sm-12 col-lg-3 ec-footer-cat">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading">Popular Categories</h4>
+                            <h4 class="ec-footer-heading text-white">Popular Categories</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="#">Fashion</a></li>
-                                    <li class="ec-footer-link"><a href="#">Electronic</a></li>
-                                    <li class="ec-footer-link"><a href="#">Cosmetic</a></li>
-                                    <li class="ec-footer-link"><a href="#">Health</a></li>
-                                    <li class="ec-footer-link"><a href="#">Watches</a></li>
+                                    <li class="ec-footer-link"><a href="/category/mens-fashion" class="text-white">Men’s Fashion</a></li>
+                                    <li class="ec-footer-link"><a href="/category/womens-fashion" class="text-white">Women’s Fashion</a></li>
+                                    <li class="ec-footer-link"><a href="/category/electronics" class="text-white">Electronics</a></li>
+                                    <li class="ec-footer-link"><a href="/category/beauty" class="text-white">Beauty & Cosmetics</a></li>
+                                    <li class="ec-footer-link"><a href="/category/home-garden" class="text-white">Home & Garden</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Customer Service -->
                     <div class="col-sm-12 col-lg-3 ec-footer-info">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading">Products</h4>
+                            <h4 class="ec-footer-heading text-white">Customer Service</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="#">Prices drop</a></li>
-                                    <li class="ec-footer-link"><a href="#">New products</a></li>
-                                    <li class="ec-footer-link"><a href="#">Best sales</a></li>
-                                    <li class="ec-footer-link"><a href="contact-us.html">Contact us</a></li>
-                                    <li class="ec-footer-link"><a href="#">Sitemap</a></li>
+                                    <li class="ec-footer-link"><a href="/help/shipping" class="text-white">Delivery Information</a></li>
+                                    <li class="ec-footer-link"><a href="/help/returns" class="text-white">Returns & Refunds</a></li>
+                                    <li class="ec-footer-link"><a href="/help/faq" class="text-white">FAQs</a></li>
+                                    <li class="ec-footer-link"><a href="/contact" class="text-white">Contact Us</a></li>
+                                    <li class="ec-footer-link"><a href="/sitemap" class="text-white">Sitemap</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Company Info -->
                     <div class="col-sm-12 col-lg-3 ec-footer-account">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading">Our Company</h4>
+                            <h4 class="ec-footer-heading text-white">Our Company</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="track-order.html">Delivery</a></li>
-                                    <li class="ec-footer-link"><a href="privacy-policy.html">Legal Notice</a></li>
-                                    <li class="ec-footer-link"><a href="terms-condition.html">Terms and conditions</a>
-                                    </li>
-                                    <li class="ec-footer-link"><a href="about-us.html">About us</a></li>
-                                    <li class="ec-footer-link"><a href="checkout.html">Secure payment</a></li>
+                                    <li class="ec-footer-link"><a href="/about" class="text-white">About Us</a></li>
+                                    <li class="ec-footer-link"><a href="/careers" class="text-white">Careers</a></li>
+                                    <li class="ec-footer-link"><a href="/terms" class="text-white">Terms & Conditions</a></li>
+                                    <li class="ec-footer-link"><a href="/privacy" class="text-white">Privacy Policy</a></li>
+                                    <li class="ec-footer-link"><a href="/cookies" class="text-white">Cookie Policy</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-lg-3 ec-footer-service">
-                        <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading">Services</h4>
-                            <div class="ec-footer-links">
-                                <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="#">Prices drop</a></li>
-                                    <li class="ec-footer-link"><a href="#">New products</a></li>
-                                    <li class="ec-footer-link"><a href="#">Best sales</a></li>
-                                    <li class="ec-footer-link"><a href="contact-us.html">Contact us</a></li>
-                                    <li class="ec-footer-link"><a href="#">Sitemap</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+
+                    <!-- Contact & Social -->
                     <div class="col-sm-12 col-lg-3 ec-footer-cont-social">
                         <div class="ec-footer-contact">
                             <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading">Contact</h4>
+                                <h4 class="ec-footer-heading text-white">Contact</h4>
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
-                                        <li class="ec-footer-link ec-foo-location"><span><i
-                                                    class="fi fi-rr-marker"></i></span>
-                                            <p>2548 Broaddus Maple Court, Madisonville KY 4783, USA</p>
+                                        <li class="ec-footer-link ec-foo-location text-white">
+                                            <span><i class="fi fi-rr-marker"></i></span>
+                                            <p>123 High Street, London, UK</p>
                                         </li>
-                                        <li class="ec-footer-link ec-foo-call"><span><i
-                                                    class="fi-rr-phone-call"></i></span><a href="tel:+919999999999">+91
-                                                999 999 9999</a>
+                                        <li class="ec-footer-link ec-foo-call">
+                                            <span><i class="fi-rr-phone-call"></i></span>
+                                            <a href="tel:+441234567890" class="text-white">+44 1234 567890</a>
                                         </li>
-                                        <li class="ec-footer-link ec-foo-mail"><span><i
-                                                    class="fi fi-rr-envelope"></i></span><a
-                                                href="mailto:support@demo.email">support@demo.email</a></li>
+                                        <li class="ec-footer-link ec-foo-mail">
+                                            <span><i class="fi fi-rr-envelope"></i></span>
+                                            <a href="mailto:support@yourshop.co.uk" class="text-white">support@yourshop.co.uk</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
+
                         <div class="ec-footer-social">
                             <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading marg-b-0 s-head">Follow Us</h4>
+                                <h4 class="ec-footer-heading marg-b-0 s-head text-white">Follow Us</h4>
                                 <div class="ec-footer-links">
                                     <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="#"><i class="ecicon eci-instagram"
-                                                    aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="#"><i class="ecicon eci-twitter-square"
-                                                    aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="#"><i class="ecicon eci-facebook-square"
-                                                    aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="#"><i class="ecicon eci-linkedin-square"
-                                                    aria-hidden="true"></i></a></li>
+                                        <li class="ec-footer-link"><a href="https://instagram.com/yourshop" target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a></li>
+                                        <li class="ec-footer-link"><a href="https://twitter.com/yourshop" target="_blank"><i class="ecicon eci-twitter-square" aria-hidden="true"></i></a></li>
+                                        <li class="ec-footer-link"><a href="https://facebook.com/yourshop" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a></li>
+                                        <li class="ec-footer-link"><a href="https://linkedin.com/company/yourshop" target="_blank"><i class="ecicon eci-linkedin-square" aria-hidden="true"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                </div> <!-- /row -->
             </div>
         </div>
-        <div class="footer-bottom">
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom" style="background-color: #1a1a1a; color: #cccccc;">
             <div class="container">
                 <div class="row">
-                    <!-- Footer payment -->
+                    <!-- Payment Icons -->
                     <div class="footer-bottom-right">
                         <div class="footer-bottom-payment d-flex justify-content-center">
                             <div class="payment-link">
-                                <img src="assets/images/icons/payment.png" alt="">
+                                <img src="assets/images/icons/payment.png" alt="Payment Methods">
                             </div>
-
                         </div>
                     </div>
-                    <!-- Footer payment -->
-                    <!-- Footer Copyright Start -->
-                    <div class="footer-copy">
-                        <div class="footer-bottom-copy ">
-                            <div class="ec-copy">Copyright © <span id="copyright_year"></span> <a class="site-name"
-                                    href="index.html">Ekka</a> all
-                                rights reserved. Powered by Ekka</div>
+
+                    <!-- Copyright -->
+                    <div class="footer-copy text-center">
+                        <div class="footer-bottom-copy">
+                            <div class="ec-copy">
+                                &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">YourShop</a>. 
+                                All rights reserved. <br>
+                                Registered in England & Wales, Company No. 12345678.
+                            </div>
                         </div>
                     </div>
-                    <!-- Footer Copyright End -->
-
                 </div>
             </div>
         </div>
     </div>
 </footer>
-<!-- Footer Area End -->
 
 <!-- Modal -->
 <div class="modal fade" id="ec_quickview_modal" tabindex="-1" role="dialog">
@@ -415,7 +357,10 @@
 <script src="assets/js/renderCart.js"></script>
 <script src="assets/js/register.js"></script>
 <script src="assets/js/checkoutFormValidator.js"></script>
-<script src="assets/js/fetchproduct.js"></script
+<script src="assets/js/fetchproduct.js"></script>
+<script src="assets/js/userprofile.js"></script>
+<script src="assets/js/forgotpassword.js"></script>
+<script src="assets/js/validatepwdresetpage.js"></script>
 </body>
 
 </html>

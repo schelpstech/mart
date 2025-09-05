@@ -132,7 +132,7 @@ include './inc/mainhead.php';
                         <h4>Beauty. Fashion. Convenience.</h4>
                         <h5>From elegant salon appointments to stylish African fashion and everyday essentials — all in one
                             place.</h5>
-                        <p><strong>Queenzy African Stores and Braid Salon</strong> is your one-stop destination for premium
+                        <p><strong>Queenzy African Store and Braids Salon</strong> is your one-stop destination for premium
                             beauty services and quality products. Whether you're booking a manicure, getting your hair
                             braided, or shopping for custom-made outfits, groceries, hair care, or makeup — we bring it all
                             together under one roof.</p>

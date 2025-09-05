@@ -243,7 +243,7 @@
                                 </ul>
                             </li>
                             <li><a href="shop.php" style="color: white;">SHOP</a></li>
-                            <li><a href="contact.php" style="color: white;">CONTACT</a></li>
+                            <li><a href="#" style="color: white;">CONTACT</a></li>
                         </ul>
                     </div>
                 </div>
@@ -329,7 +329,7 @@
                         </ul>
                     </li>
                     <li><a href="shop.php">SHOP</a></li>
-                    <li><a href="contact.php">CONTACT</a></li>
+                    <li><a href="#">CONTACT</a></li>
 
                 </ul>
             </div>

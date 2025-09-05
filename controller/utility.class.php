@@ -310,7 +310,7 @@ class Utility
     /**
      * Set a flash message
      */
-   public function setFlash(string $type, string $message): void
+    public function setFlash(string $type, string $message): void
     {
         $_SESSION['flash'] = [
             'type' => $type,   // success, danger, warning, info
@@ -334,5 +334,49 @@ class Utility
 
             unset($_SESSION['flash']); // clear after showing
         }
+    }
+
+
+    function resetPasswordEmailTemplate($resetLink)
+    {
+        return '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Password Reset Request</title>
+        <style>
+            body { font-family: Arial, sans-serif; background-color: #f6f6f6; margin:0; padding:0; }
+            .container { max-width:600px; margin:20px auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+            .header { background-color:#222; padding:20px; text-align:center; }
+            .header img { max-width:150px; }
+            .content { padding:30px; color:#333; }
+            h2 { color:#222; }
+            .button { display:inline-block; padding:12px 24px; margin-top:20px; background:#007bff; color:#fff !important; text-decoration:none; border-radius:5px; font-weight:bold; }
+            .footer { margin-top:30px; font-size:12px; color:#888; text-align:center; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="http://queenzy.assoec.org/view/index.html" alt="Your Store Logo">
+            </div>
+            <div class="content">
+                <h2>Password Reset Request</h2>
+                <p>Hello,</p>
+                <p>We received a request to reset your password. If you made this request, please click the button below to set a new password.</p>
+                <p style="text-align:center;">
+                    <a href="' . htmlspecialchars($resetLink) . '" class="button">Reset My Password</a>
+                </p>
+                <p>If the button doesn\'t work, copy and paste this link into your browser:</p>
+                <p><a href="' . htmlspecialchars($resetLink) . '">' . htmlspecialchars($resetLink) . '</a></p>
+                <p>If you did not request a password reset, you can safely ignore this email.</p>
+                <div class="footer">
+                    <p>© ' . date("Y") . ' Queenzy Store. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>';
     }
 }

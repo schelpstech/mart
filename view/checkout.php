@@ -180,7 +180,7 @@ include './inc/head.php';
                                             <span class="ec-pay-option">
                                                 <span>
                                                     <input type="radio" id="pay1" name="radio-group" checked>
-                                                    <label for="pay1">Cash On Delivery</label>
+                                                    <label for="pay1">Online Payment</label>
                                                 </span>
                                             </span>
                                         </form>

@@ -13,9 +13,16 @@ class Cart
     }
     public function getCartId()
     {
+        if (!empty($this->user_id)) {
+            $user = $this->user_id;
+            $check = "user_id";
+        } else {
+            $user  = $this->session_id;
+            $check = "session_id";
+        }
         // Check if cart already exists for this session
         $row = $this->db->getRows("cart", [
-            "where" => ["session_id" => $this->session_id],
+            "where" => [$check => $user],
             "return_type" => "single"
         ]);
 

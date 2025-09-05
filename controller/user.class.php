@@ -276,4 +276,50 @@ class User
         session_destroy();
         return true;
     }
+
+    public function saveUserProfile($userId, $data)
+    {
+        // check if profile exists
+        $exists = $this->model->getRows("user_profiles", [
+            "where" => ["user_id" => $userId],
+            "return_type" => "single"
+        ]);
+
+        if ($exists) {
+            // update
+            return $this->model->update("user_profiles", $data, ["user_id" => $userId]);
+        } else {
+            // insert
+            $data["user_id"] = $userId;
+            return $this->model->insert("user_profiles", $data);
+        }
+    }
+
+public function getUserProfile($userId)
+{
+    // Step 1: Get base user info (email, phone, etc.)
+    $user = $this->model->getRows("users_mart", [
+        "where" => ["user_id" => $userId],
+        "return_type" => "single"
+    ]);
+
+    if (!$user) {
+        return null; // user not found
+    }
+
+    // Step 2: Check if profile exists
+    $profile = $this->model->getRows("user_profiles", [
+        "where" => ["user_id" => $userId],
+        "return_type" => "single"
+    ]);
+
+    // Step 3: Merge results
+    if ($profile) {
+        return array_merge($user, $profile);
+    }
+
+    // If no profile, return just users_mart fields
+    return $user;
+}
+
 }

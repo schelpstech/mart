@@ -137,6 +137,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: ../view/checkout.php");
                 exit;
             }
+
+        case 'reset':
+            $email    = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            $token    = htmlspecialchars(trim($_POST['token']));
+            $password = $_POST['password'];
+            $confirm  = $_POST['confirm_password'];
+            if (!empty($token)) {
+                $row = $model->getRows('password_resets', [
+                    "where" => ["token" => $token],
+                    "return_type" => "single",
+                    'left_join' => [
+                        'users_mart' => ' on users_mart.user_id = password_resets.user_id'
+                    ]
+                ]);
+
+                if ($row && strtotime($row['expires_at']) > time()) {
+                    $isValid = true;
+                    $userEmail = $row['email'];
+                } else {
+                    $utility->setFlash("danger", "Token has expired. Kindly request a new password reset.");
+                    header("Location: ../view/resetpassword.php?token=" . urlencode($token));
+                    exit;
+                }
+            } else {
+                $utility->setFlash("danger", "Invalid or Empty Token.");
+                header("Location: ../view/resetpassword.php?token=" . urlencode($token));
+                exit;
+            }
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL) && $email != $userEmail) {
+                $utility->setFlash("danger", "Invalid email address.");
+                header("Location: ../view/resetpassword.php?token=" . urlencode($token));
+                exit;
+            }
+
+            if ($password !== $confirm) {
+                $utility->setFlash("danger", "Passwords do not match.");
+                header("Location: ../view/resetpassword.php?token=" . urlencode($token));
+                exit;
+            }
+
+            if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $password)) {
+                $utility->setFlash("danger", "Password must be at least 8 characters and contain uppercase, lowercase, number, and symbol.");
+                header("Location: ../view/resetpassword.php?token=" . urlencode($token));
+                exit;
+            }
+            //change password 
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            $changePassword = $model->update(
+                "users_mart",
+                ["password_hash" => $hashedPassword],
+                ["email" => $email]
+            );
+            if ($changePassword) {
+                $utility->setFlash("success", "Password changed successfully.");
+                header("Location: ../view/login.php");
+                exit;
+            } else {
+                $utility->setFlash("warning", "Password change failed. Please try again.");
+                header("Location: ../view/checkout.php");
+                exit;
+            }
         default:
             $utility->setFlash("warning", "Unknown action requested.");
             header("Location: ../view/login.php");

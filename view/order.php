@@ -9,16 +9,16 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 // Fetch orders for this user
-$orders = $model->getRows("orders_mart", ["user_id" => $userId]);
+$orders = $model->getRows("orders_mart", ["where" => ["user_id" => $userId],]);
 ?>
 
 <body class="shop_page">
     <div id="ec-overlay">
         <div class="ec-ellipsis">
-            <div>Q</div>
-            <div>U</div>
-            <div>E</div>
-            <div>E</div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </div>
     <?php
@@ -53,25 +53,7 @@ $orders = $model->getRows("orders_mart", ["user_id" => $userId]);
         <div class="container">
             <div class="row">
                 <!-- Sidebar -->
-                <div class="ec-shop-leftside ec-vendor-sidebar col-lg-3 col-md-12">
-                    <div class="ec-sidebar-wrap ec-border-box">
-                        <div class="ec-sidebar-block">
-                            <div class="ec-vendor-block">
-                                <div class="ec-vendor-block-items">
-                                    <ul>
-                                        <li><a href="user-profile.php">User Profile</a></li>
-                                        <li><a href="user-history.php" class="active">History</a></li>
-                                        <li><a href="wishlist.php">Wishlist</a></li>
-                                        <li><a href="cart.php">Cart</a></li>
-                                        <li><a href="checkout.php">Checkout</a></li>
-                                        <li><a href="track-order.php">Track Order</a></li>
-                                        <li><a href="user-invoice.php">Invoice</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php include './inc/sidebar.php'; ?>
 
                 <!-- Orders Table -->
                 <div class="ec-shop-rightside col-lg-9 col-md-12">
@@ -107,16 +89,16 @@ $orders = $model->getRows("orders_mart", ["user_id" => $userId]);
                                                     <td scope="col"><span><b>£<?php echo number_format($order['total_amount'], 2); ?></b></span></td>
                                                     <td>
                                                         <span class="<?php echo $order['payment_status'] === 'paid' ? 'text-success' : 'text-danger'; ?>"><b>
-                                                            <?php echo ucfirst($order['payment_status']); ?></b>
+                                                                <?php echo ucfirst($order['payment_status']); ?></b>
                                                         </span>
                                                     </td>
                                                     <td scope="col"><span><b><?php $countItem = $ordercount = $model->getRows("order_items_mart", [
-                                                                    "where" => ["order_item_id" => $order['order_tbl_id']],
-                                                                    "return_type" => "count"
-                                                                ]);
-                                                                echo $countItem; ?></b></span></td>
+                                                                                    "where" => ["order_item_id" => $order['order_tbl_id']],
+                                                                                    "return_type" => "count"
+                                                                                ]);
+                                                                                echo $countItem; ?></b></span></td>
                                                     <td><span class="tbl-btn">
-                                                            <a class="btn btn-lg btn-primary" href="order-details.php?id=<?php echo $order['order_tbl_id']; ?>">View</a>
+                                                            <a class="btn btn-lg btn-primary" href="orderDetails.php?ref=<?php echo $order['order_reference']; ?>">View</a>
                                                         </span></td>
                                                 </tr>
                                             <?php endforeach; ?>
