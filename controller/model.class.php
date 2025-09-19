@@ -195,14 +195,25 @@ class Model
         }
     }
 
-
-    public function getById($table, $id)
+    public function getById($table, $where, $column = "id")
     {
-        $sql = "SELECT * FROM {$table} WHERE id = " . $this->db->quote($id);
+        if (is_array($where)) {
+            // Multiple conditions
+            $clauses = [];
+            foreach ($where as $col => $val) {
+                $clauses[] = "{$col} = " . $this->db->quote($val);
+            }
+            $sql = "SELECT * FROM {$table} WHERE " . implode(" AND ", $clauses) . " LIMIT 1";
+        } else {
+            // Single condition (id or custom column)
+            $sql = "SELECT * FROM {$table} WHERE {$column} = " . $this->db->quote($where) . " LIMIT 1";
+        }
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     public function exists($table, $condition = "1=1")
     {

@@ -16,9 +16,9 @@ include '../app/query.php';
 
 
    <!-- site Favicon -->
-   <link rel="icon" href="assets/images/new/logo.avif" sizes="32x32" />
-   <link rel="apple-touch-icon" href="assets/images/favicon/favicon-9.png" />
-   <meta name="msapplication-TileImage" content="assets/images/favicon/favicon-9.png" />
+   <link rel="icon" href="assets/images/logo/nlogo.png" sizes="32x32" />
+   <link rel="apple-touch-icon" href="assets/images/logo/nlogo.png" />
+   <meta name="msapplication-TileImage" content="assets/images/logo/nlogo.png" />
 
    <!-- css Icon Font -->
    <link rel="stylesheet" href="assets/css/vendor/ecicons.min.css" />

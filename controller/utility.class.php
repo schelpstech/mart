@@ -379,4 +379,57 @@ class Utility
     </body>
     </html>';
     }
+
+    /**
+     * Handle a single file upload
+     * @param string $inputName Input field name
+     * @param array $allowedTypes Allowed MIME types
+     * @param int $maxFileSize Max size in bytes
+     * @param string $uploadPath Folder path (without trailing slash)
+     * @return string|false File path (relative) on success, false on failure
+     */
+    public function handleProductImageUploadedFile($inputName, $allowedTypes, $maxFileSize, $uploadPath)
+    {
+        if (empty($_FILES[$inputName]['name'])) {
+            return ['error' => "No file uploaded for input '{$inputName}'."];
+        }
+
+        $file = $_FILES[$inputName];
+        $fileName   = $file['name'];
+        $fileTmpName = $file['tmp_name'];
+        $fileSize   = $file['size'];
+        $fileError  = $file['error'];
+        $fileType   = $file['type'];
+
+        if ($fileError !== UPLOAD_ERR_OK) {
+            return ['error' => "Upload error code {$fileError} for file '{$fileName}'."];
+        }
+
+        if (!in_array($fileType, $allowedTypes)) {
+            return ['error' => "Invalid file type '{$fileType}' for '{$fileName}'."];
+        }
+
+        if ($fileSize > $maxFileSize) {
+            return ['error' => "File '{$fileName}' exceeds max size limit (" . ($maxFileSize / 1024 / 1024) . "MB)."];
+        }
+
+        $utility = new Utility();
+        $saveFileName = $utility->generateRandomString(8) . $utility->RemoveSpecialChar($fileName);
+
+        if (!is_dir($uploadPath)) {
+            if (!mkdir($uploadPath, 0777, true)) {
+                return ['error' => "Failed to create upload directory '{$uploadPath}'."];
+            }
+        }
+
+        $destination = rtrim($uploadPath, "/") . '/' . $saveFileName;
+
+        if (move_uploaded_file($fileTmpName, $destination)) {
+            // Return file name or relative path depending on your need
+            return $saveFileName;
+            // return $destination; // if you want full path
+        }
+
+        return ['error' => "Failed to move uploaded file '{$fileName}' to destination."];
+    }
 }

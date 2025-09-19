@@ -3,6 +3,14 @@
 // begin or resume session
 session_start();
 
+
+
+// Define global application name constant
+if (!defined("APP_NAME")) {
+    define("APP_NAME", "Queenzy Mart");
+}
+
+
 // Include necessary file
 include_once 'user.class.php';
 include_once 'model.class.php';

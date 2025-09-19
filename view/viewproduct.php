@@ -65,7 +65,7 @@ include './inc/head.php';
                                     <div class="single-product-scroll">
                                         <div class="single-product-cover">
                                             <div class="single-slide zoom-image-hover">
-                                                <img class="img-responsive" src="assets/images/product/<?= htmlspecialchars($product['image_main']); ?>"
+                                                <img class="img-responsive" src="assets/images/product/main/<?= htmlspecialchars($product['image_main']); ?>"
                                                     alt="">
                                             </div>
                                         </div>
@@ -80,19 +80,15 @@ include './inc/head.php';
                                                 <i class="ecicon eci-star fill"></i>
                                                 <i class="ecicon eci-star fill"></i>
                                                 <i class="ecicon eci-star fill"></i>
-                                                <i class="ecicon eci-star-o"></i>
+                                                <i class="ecicon eci-star fill"></i>
                                             </div>
-                                            <span class="ec-read-review"><a href="#ec-spt-nav-review">Be the first to
-                                                    review this product</a></span>
                                         </div>
-                                        <div class="ec-single-desc">Lorem Ipsum is simply dummy text of the printing and
-                                            typesetting industry. Lorem Ipsum has been the industry's standard dummy
-                                            text ever since the 1990</div>
+                                        <div class="ec-single-desc"><?= htmlspecialchars($product['short_description']); ?></div>
 
                                         <div class="ec-single-sales">
                                             <div class="ec-single-sales-inner">
                                                 <div class="ec-single-sales-title">sales accelerators</div>
-                                                <div class="ec-single-sales-visitor">real time <span>24</span> visitor
+                                                <div class="ec-single-sales-visitor">real time <span><?= $utility->generateRandomDigits(2) ?></span> visitor
                                                     right now!</div>
                                                 <div class="ec-single-sales-progress">
                                                     <span class="ec-single-progress-desc">Hurry up!left <?php echo ($product['stock_quantity']); ?> in
@@ -109,38 +105,17 @@ include './inc/head.php';
                                         <div class="ec-single-price-stoke">
                                             <div class="ec-single-price">
                                                 <span class="ec-single-ps-title">As low as</span>
-                                                <span class="new-price"> <?php echo number_format($product['price'], 2); ?></span>
+                                                <span class="new-price">£ <?php echo number_format($product['price'], 2); ?></span>
                                             </div>
                                             <div class="ec-single-stoke">
                                                 <span class="ec-single-ps-title">IN STOCK</span>
                                                 <span class="ec-single-sku">SKU#: <?= htmlspecialchars($product['sku']); ?></span>
                                             </div>
                                         </div>
-                                        <div class="ec-pro-variation">
-                                            <div class="ec-pro-variation-inner ec-pro-variation-size">
-                                                <span>SIZE</span>
-                                                <div class="ec-pro-variation-content">
-                                                    <ul>
-                                                        <li class="active"><span>7</span></li>
-                                                        <li><span>8</span></li>
-                                                        <li><span>9</span></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="ec-pro-variation-inner ec-pro-variation-color">
-                                                <span>Color</span>
-                                                <div class="ec-pro-variation-content">
-                                                    <ul>
-                                                        <li class="active"><span
-                                                                style="background-color:#23839c;"></span></li>
-                                                        <li><span style="background-color:#000;"></span></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="ec-single-qty">
                                             <div class="qty-plus-minus">
-                                                <input class="qty-input" type="text" name="ec_qtybtn" value="1" />
+                                                <input class="qty-input" type="text" readonly name="ec_qtybtn" value="1" />
                                             </div>
                                             <div class="ec-single-cart ">
                                                 <button class="btn btn-primary add-to-cart"
@@ -200,12 +175,7 @@ include './inc/head.php';
                                 <div id="ec-spt-nav-details" class="tab-pane fade show active">
                                     <div class="ec-single-pro-tab-desc">
                                         <p><?= nl2br(htmlspecialchars($product['description'])); ?></p>
-                                        <ul>
-                                            <li>Any Product types that You want - Simple, Configurable</li>
-                                            <li>Downloadable/Digital Products, Virtual Products</li>
-                                            <li>Inventory Management with Backordered items</li>
-                                            <li>Flatlock seams throughout.</li>
-                                        </ul>
+                                       
                                     </div>
                                 </div>
                                 <div id="ec-spt-nav-info" class="tab-pane fade">
@@ -213,6 +183,7 @@ include './inc/head.php';
                                         <ul>
                                             <li><span>Size</span> <?= (htmlspecialchars($product['size_options'])); ?></li>
                                             <li><span>Brand</span> <?= (htmlspecialchars($product['brand'])); ?></li>
+                                            <li><span>Model</span> <?= (htmlspecialchars($product['model'])); ?></li>
                                             <li><span>Color</span> <?= (htmlspecialchars($product['color_options'])); ?></li>
                                         </ul>
                                     </div>
@@ -223,55 +194,25 @@ include './inc/head.php';
                                         <div class="ec-t-review-wrapper">
                                             <div class="ec-t-review-item">
                                                 <div class="ec-t-review-avtar">
-                                                    <img src="assets/images/review-image/1.jpg" alt="" />
+                                                    <img src="assets/images/logo/nlogo.jpg" alt="" />
                                                 </div>
                                                 <div class="ec-t-review-content">
                                                     <div class="ec-t-review-top">
-                                                        <div class="ec-t-review-name">Jeny Doe</div>
+                                                        <div class="ec-t-review-name">Admin</div>
                                                         <div class="ec-t-review-rating">
                                                             <i class="ecicon eci-star fill"></i>
                                                             <i class="ecicon eci-star fill"></i>
                                                             <i class="ecicon eci-star fill"></i>
                                                             <i class="ecicon eci-star fill"></i>
-                                                            <i class="ecicon eci-star-o"></i>
+                                                            <i class="ecicon eci-star fill"></i>
                                                         </div>
                                                     </div>
                                                     <div class="ec-t-review-bottom">
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the industry's
-                                                            standard dummy text ever since the 1500s, when an unknown
-                                                            printer took a galley of type and scrambled it to make a
-                                                            type specimen.
+                                                        <p>Very Good and Specially crafted for you
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="ec-t-review-item">
-                                                <div class="ec-t-review-avtar">
-                                                    <img src="assets/images/review-image/2.jpg" alt="" />
-                                                </div>
-                                                <div class="ec-t-review-content">
-                                                    <div class="ec-t-review-top">
-                                                        <div class="ec-t-review-name">Linda Morgus</div>
-                                                        <div class="ec-t-review-rating">
-                                                            <i class="ecicon eci-star fill"></i>
-                                                            <i class="ecicon eci-star fill"></i>
-                                                            <i class="ecicon eci-star fill"></i>
-                                                            <i class="ecicon eci-star-o"></i>
-                                                            <i class="ecicon eci-star-o"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="ec-t-review-bottom">
-                                                        <p>Lorem Ipsum is simply dummy text of the printing and
-                                                            typesetting industry. Lorem Ipsum has been the industry's
-                                                            standard dummy text ever since the 1500s, when an unknown
-                                                            printer took a galley of type and scrambled it to make a
-                                                            type specimen.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
                                         </div>
                                         <div class="ec-ratting-content">
                                             <h3>Add a Review</h3>
