@@ -32,7 +32,7 @@ $(document).on('click', '.quickview', function (e) {
                     });
                 } else {
                     // Fallback image
-                    imageHtml = `<div class="qty-slide"><img class="img-responsive" src="assets/images/product-image/default.jpg" alt=""></div>`;
+                    imageHtml = `<div class="qty-slide"><img class="img-responsive" src="../view/assets/images/product/main/default.jpg" alt=""></div>`;
                     thumbHtml = imageHtml;
                 }
 

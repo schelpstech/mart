@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 $img = trim($img);
                 // Ensure correct path format
                 if ($img !== '') {
-                    $images[] = 'assets/images/product/' . ltrim($img, '/');
+                    $images[] = '../view/assets/images/product/main/' . ltrim($img, '/');
                 }
             }
         }

@@ -178,70 +178,47 @@
 
                         <ul style="color: white;">
                             <li><a href="index.php" style="color: white;">HOME</a></li>
-                            <li class="dropdown"><a href="javascript:void(0)" style="color: white;">Fashion Store</a>
-                                <ul class="sub-menu">
-                                    <?php
-                                    $africanStore = $model->getRows("categories", [
-                                        "where" => ["section_id" => 2]
-                                    ]);
-                                    if ($africanStore) {
-                                        foreach ($africanStore as $link) {
-                                    ?>
-                                            <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </ul>
-                            </li>
-                            <li class="dropdown"><a href="javascript:void(0)" style="color: white;">Beauty Store</a>
-                                <ul class="sub-menu">
-                                    <?php
-                                    $africanStore = $model->getRows("categories", [
-                                        "where" => ["section_id" => 3]
-                                    ]);
-                                    if ($africanStore) {
-                                        foreach ($africanStore as $link) {
-                                    ?>
-                                            <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </ul>
-                            </li>
-                            <li class="dropdown"><a href="javascript:void(0)" style="color: white;">African Store</a>
-                                <ul class="sub-menu">
-                                    <?php
-                                    $africanStore = $model->getRows("categories", [
-                                        "where" => ["section_id" => 4]
-                                    ]);
-                                    if ($africanStore) {
-                                        foreach ($africanStore as $link) {
-                                    ?>
-                                            <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </ul>
-                            </li>
-                            <li class="dropdown"><a href="javascript:void(0)" style="color: white;">Salon Services</a>
-                                <ul class="sub-menu">
-                                    <?php
-                                    $africanStore = $model->getRows("categories", [
-                                        "where" => ["section_id" => 1]
-                                    ]);
-                                    if ($africanStore) {
-                                        foreach ($africanStore as $link) {
-                                    ?>
-                                            <li><a href="viewcategory.php?id=<?= $link['categoryTbl_id'] ?>"><?= $link['category_name'] ?></a></li>
-                                    <?php
-                                        }
-                                    }
-                                    ?>
-                                </ul>
-                            </li>
+
+                            <?php
+                            // Fetch all sections (e.g., Fashion Store, African Store, Beauty & Hair Store, etc.)
+                            $sections = $model->getRows("sections", [
+                                "order_by" => "section_name ASC"
+                            ]);
+
+                            if ($sections) {
+                                foreach ($sections as $section) {
+                            ?>
+                                    <li class="dropdown">
+                                        <a href="javascript:void(0)" style="color: white;">
+                                            <?= htmlspecialchars($section['section_name']) ?>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <?php
+                                            // Fetch categories under this section
+                                            $categories = $model->getRows("categories", [
+                                                "where" => ["section_id" => $section['id']]
+                                            ]);
+
+                                            if ($categories) {
+                                                foreach ($categories as $cat) {
+                                            ?>
+                                                    <li>
+                                                        <a href="viewcategory.php?id=<?= $cat['categoryTbl_id'] ?>">
+                                                            <?= htmlspecialchars($cat['category_name']) ?>
+                                                        </a>
+                                                    </li>
+                                            <?php
+                                                }
+                                            } else {
+                                                echo "<li><a href='#'>No categories</a></li>";
+                                            }
+                                            ?>
+                                        </ul>
+                                    </li>
+                            <?php
+                                }
+                            }
+                            ?>
                             <li><a href="shop.php" style="color: white;">SHOP</a></li>
                             <li><a href="#" style="color: white;">CONTACT</a></li>
                         </ul>

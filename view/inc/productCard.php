@@ -3,8 +3,8 @@
         <div class="ec-pro-image-outer">
             <div class="ec-pro-image">
                 <a href="viewproduct.php?id=<?= $productId ?>" class="image">
-                    <img class="main-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
-                    <img class="hover-image" src="assets/images/product/<?= $productImage ?>" alt="Product" />
+                    <img class="main-image" src="../view/assets/images/product/main/<?= $productImage ?>" alt="Product" />
+                    <img class="hover-image" src="../view/assets/images/product/main/<?= $productImage ?>" alt="Product" />
                 </a>
                 <span class="flags"><span class="new">New</span></span>
                 <div class="ec-pro-actions">
