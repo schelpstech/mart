@@ -23,7 +23,7 @@
                             ?>
                                     <li>
                                         <div class="ec-sidebar-block-item">
-                                            <img src="assets/images/icons/dress-8.png" class="svg_img" alt="<?= $catName ?>" />
+                                            <img src="../view/assets/images<?= $cat['icon'] ?>" class="svg_img" alt="<?= $catName ?>" />
                                             <?= $catName ?> 
                                         </div>
 
