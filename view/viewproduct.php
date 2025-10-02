@@ -58,17 +58,18 @@ include './inc/head.php';
                 </div>
                 <div class="ec-pro-rightside ec-common-rightside col-lg-12 col-md-12">
                     <!-- Single product content Start -->
-                    <div class="single-pro-block">
+                   <div class="single-pro-block">
                         <div class="single-pro-inner">
                             <div class="row">
                                 <div class="single-pro-img single-pro-img-no-sidebar">
                                     <div class="single-product-scroll">
                                         <div class="single-product-cover">
-                                            <div class="single-slide zoom-image-hover">
+                                            <div class="single-slide">
                                                 <img class="img-responsive" src="assets/images/product/main/<?= htmlspecialchars($product['image_main']); ?>"
                                                     alt="">
                                             </div>
                                         </div>
+                                       
                                     </div>
                                 </div>
                                 <div class="single-pro-desc single-pro-desc-no-sidebar">
@@ -112,7 +113,7 @@ include './inc/head.php';
                                                 <span class="ec-single-sku">SKU#: <?= htmlspecialchars($product['sku']); ?></span>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="ec-single-qty">
                                             <div class="qty-plus-minus">
                                                 <input class="qty-input" type="text" readonly name="ec_qtybtn" value="1" />
@@ -175,7 +176,7 @@ include './inc/head.php';
                                 <div id="ec-spt-nav-details" class="tab-pane fade show active">
                                     <div class="ec-single-pro-tab-desc">
                                         <p><?= nl2br(htmlspecialchars($product['description'])); ?></p>
-                                       
+
                                     </div>
                                 </div>
                                 <div id="ec-spt-nav-info" class="tab-pane fade">

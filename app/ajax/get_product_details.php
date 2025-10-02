@@ -5,25 +5,12 @@ require_once '../query.php'; // adjust path
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = intval($_POST['id']);
     $product = $model->getRows("products", [
-    'where' => ["product_id" => $id],
-    "return_type" => "single"
-]);
+        'where' => ["product_id" => $id],
+        "return_type" => "single"
+    ]);
 
     if ($product) {
-        $images = [];
-
-        // Load images from DB
-        if (!empty($product['image_gallery'])) {
-            $imgList = explode(',', $product['image_gallery']); // comma-separated list
-            foreach ($imgList as $img) {
-                $img = trim($img);
-                // Ensure correct path format
-                if ($img !== '') {
-                    $images[] = '../view/assets/images/product/main/' . ltrim($img, '/');
-                }
-            }
-        }
-
+        $images = 'assets/images/product/main/' . $product['image_main'];
         echo json_encode([
             'success' => true,
             'data' => [

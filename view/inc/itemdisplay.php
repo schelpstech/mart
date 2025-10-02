@@ -15,7 +15,7 @@ $slug        = "viewproduct.php?id=" . $productId;
             <div class="ec-pro-image">
                 <a href="<?= $slug ?>" class="image">
                     <img class="main-image" src="../view/assets/images/product/main/<?= $imageMain ?>" alt="<?= htmlspecialchars($imageMain) ?>" />
-                    <?php if ($imageHover) { ?>
+                    <?php if ($imageMain) { ?>
                         <img class="hover-image" src="../view/assets/images/product/main/<?= $imageHover ?>" alt="<?= htmlspecialchars($imageMain) ?>" />
                     <?php } ?>
                 </a>

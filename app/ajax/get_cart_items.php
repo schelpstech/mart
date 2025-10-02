@@ -14,7 +14,7 @@ if ($cartItems) {
         $output .= '
         <li>
             <a href="product.php?id='.$item['cart_id'].'" class="sidecart_pro_img">
-                <img src="assets/images/product/'.htmlspecialchars($item['image_main']).'" alt="'.htmlspecialchars($item['name']).'">
+                <img src="../view/assets/images/product/main/'.htmlspecialchars($item['image_main']).'" alt="'.htmlspecialchars($item['name']).'">
             </a>
             <div class="ec-pro-content">
                 <a href="product.php?id='.$item['cart_id'].'" class="cart_pro_title">'.htmlspecialchars($item['name']).'</a>

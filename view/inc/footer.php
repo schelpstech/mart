@@ -112,7 +112,7 @@
                     <div class="footer-copy text-center">
                         <div class="footer-bottom-copy">
                             <div class="ec-copy">
-                                &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">YourShop</a>. 
+                                &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">YourShop</a>.
                                 All rights reserved. <br>
                                 Registered in England & Wales, Company No. 12345678.
                             </div>
@@ -271,8 +271,8 @@
             </div>
             <div class="ec-nav-panel-icons">
                 <a href="#ec-side-cart" class="toggle-cart ec-header-btn ec-side-toggle"><i
-                        class="fi-rr-shopping-basket"></i><span
-                        class="ec-cart-noti ec-header-count cart-count-lable">3</span></a>
+                        class="fi-rr-shopping-basket"></i><span id="cart-count"
+                        class="ec-cart-noti ec-header-count cart-count-lable">0</span></a>
             </div>
             <div class="ec-nav-panel-icons">
                 <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
@@ -296,29 +296,29 @@
     <a href="javascript:void(0)" class="icon-btn recent-close">×</a>
 </div> -->
 <style>
-  #addtocart_toast {
-    visibility: hidden;
-    min-width: 250px;
-    margin-left: -125px;
-    background-color: #4BB543;
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    padding: 16px;
-    position: fixed;
-    z-index: 9999;   /* 👈 keep it on top */
-    left: 50%;
-    bottom: 30px;
-    font-size: 17px;
-    opacity: 0;
-    transition: opacity 0.5s, visibility 0.5s;
-}
+    #addtocart_toast {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #4BB543;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 9999;
+        /* 👈 keep it on top */
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+        opacity: 0;
+        transition: opacity 0.5s, visibility 0.5s;
+    }
 
-#addtocart_toast.show {
-    visibility: visible;
-    opacity: 1;
-}
-
+    #addtocart_toast.show {
+        visibility: visible;
+        opacity: 1;
+    }
 </style>
 <!-- Theme Custom Cursors -->
 <div class="ec-cursor"></div>

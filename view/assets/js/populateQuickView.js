@@ -25,16 +25,17 @@ $(document).on('click', '.quickview', function (e) {
                 // Load product images dynamically
                 let imageHtml = '';
                 let thumbHtml = '';
+                // Load product images dynamically
                 if (response.data.images && response.data.images.length > 0) {
-                    response.data.images.forEach(function (img) {
-                        imageHtml += `<div class="qty-slide"><img class="img-responsive" src="${img}" alt=""></div>`;
-                        thumbHtml += `<div class="qty-slide"><img class="img-responsive" src="${img}" alt=""></div>`;
-                    });
+                    imageHtml += `<div class="qty-slide"><img class="img-responsive" src="${response.data.images}" alt=""></div>`;
+                    thumbHtml += `<div class="qty-slide"><img class="img-responsive" src="${response.data.images}" alt=""></div>`;
+
                 } else {
                     // Fallback image
                     imageHtml = `<div class="qty-slide"><img class="img-responsive" src="../view/assets/images/product/main/default.jpg" alt=""></div>`;
                     thumbHtml = imageHtml;
                 }
+
 
                 $('#ec_quickview_modal .qty-product-cover').html(imageHtml);
                 $('#ec_quickview_modal .qty-nav-thumb').html(thumbHtml);
