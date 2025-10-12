@@ -143,7 +143,7 @@ include './inc/header.php';
 											<!-- Price & Quantity -->
 											<div class="col-md-6">
 												<label class="form-label">Price (£)</label>
-												<input type="number" class="form-control" name="price" tabindex="9" required>
+												<input type="text" class="form-control" name="price" tabindex="9" required>
 											</div>
 											<div class="col-md-6">
 												<label class="form-label">Quantity</label>
