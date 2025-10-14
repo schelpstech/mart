@@ -281,7 +281,7 @@
                 <button class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static">
                     <i class="fi-rr-user"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end cc-button cc-right-bottom">
                     <?php if (!empty($_SESSION['user_id'])): ?>
                         <li>
                             <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
