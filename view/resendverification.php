@@ -25,13 +25,13 @@ include './inc/head.php';
                 <div class="col-12">
                     <div class="row ec_breadcrumb_inner">
                         <div class="col-md-6 col-sm-12">
-                            <h2 class="ec-breadcrumb-title">Login</h2>
+                            <h2 class="ec-breadcrumb-title">Resend Verification</h2>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <!-- ec-breadcrumb-list start -->
                             <ul class="ec-breadcrumb-list">
-                                <li class="ec-breadcrumb-item"><a href="index.html">Home</a></li>
-                                <li class="ec-breadcrumb-item active">Login</li>
+                                <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
+                                <li class="ec-breadcrumb-item active"><a href="login.php">Login</a></li>
                             </ul>
                             <!-- ec-breadcrumb-list end -->
                         </div>
