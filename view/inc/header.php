@@ -181,30 +181,30 @@
 
                             <?php
                             // Fetch all sections (e.g., Fashion Store, African Store, Beauty & Hair Store, etc.)
-                            $sections = $model->getRows("sections", [
+                            $sectionn = $model->getRows("sections", [
                                 "order_by" => "section_name ASC"
                             ]);
 
-                            if ($sections) {
-                                foreach ($sections as $section) {
+                            if ($sectionn) {
+                                foreach ($sections as $sectionm) {
                             ?>
                                     <li class="dropdown">
                                         <a href="javascript:void(0)" style="color: white;">
-                                            <?= htmlspecialchars($section['section_name']) ?>
+                                            <?= htmlspecialchars($sectionm['section_name']) ?>
                                         </a>
                                         <ul class="sub-menu">
                                             <?php
                                             // Fetch categories under this section
-                                            $categories = $model->getRows("categories", [
-                                                "where" => ["section_id" => $section['id']]
+                                            $categoriesd = $model->getRows("categories", [
+                                                "where" => ["section_id" => $sectionm['id']]
                                             ]);
 
-                                            if ($categories) {
-                                                foreach ($categories as $cat) {
+                                            if ($categoriesd) {
+                                                foreach ($categories as $catm) {
                                             ?>
                                                     <li>
-                                                        <a href="viewcategory.php?id=<?= $cat['categoryTbl_id'] ?>">
-                                                            <?= htmlspecialchars($cat['category_name']) ?>
+                                                        <a href="viewcategory.php?id=<?= $catm['categoryTbl_id'] ?>">
+                                                            <?= htmlspecialchars($catm['category_name']) ?>
                                                         </a>
                                                     </li>
                                             <?php
