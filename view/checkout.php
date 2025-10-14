@@ -158,9 +158,9 @@ include './inc/head.php';
                                 </div>
                                 <div class="ec-sb-block-content">
                                     <div class="ec-checkout-del">
-                                        <label><input type="radio" name="delivery" checked /> Standard Delivery (2-4 working days) – £3.95</label><br>
-                                        <label><input type="radio" name="delivery" /> Next Day Delivery – £6.95</label><br>
-                                        <label><input type="radio" name="delivery" /> Free Delivery (orders over £50)</label>
+                                        <label><input type="radio" name="delivery" checked /> Standard Delivery (2-4 working days)</label><br>
+                                        <label><input type="radio" name="delivery" /> Paid Delivery - Orders below £49.99</label><br>
+                                        <label><input type="radio" name="delivery" /> Free Delivery - Orders over £50</label>
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@ include './inc/head.php';
                             <!-- Sidebar Payment Block -->
                             <div class="ec-sidebar-block">
                                 <div class="ec-sb-title">
-                                    <h3 class="ec-sidebar-title">Payment Method</h3>
+                                    <h3 class="ec-sidebar-title">Supported Payment Method</h3>
                                 </div>
                                 <div class="ec-sb-block-content">
                                     <div class="ec-check-pay-img-inner">
@@ -232,44 +232,74 @@ include './inc/head.php';
                                 <div class="ec-checkout-wrap margin-bottom-30 padding-bottom-3">
                                     <div class="ec-checkout-block ec-check-bill">
                                         <h3 class="ec-checkout-title">Billing & Delivery Details</h3>
+                                        <?php
+                                        try {
+                                            $profile = $user->getUserProfile($userId);
 
+                                            // fallback values if no profile row yet
+                                            $firstname   = $profile['firstname']   ?? '';
+                                            $lastname    = $profile['lastname']    ?? '';
+                                            $email       = $profile['email']       ?? '';
+                                            $phone       = $profile['phone']       ?? '';
+                                            $phone2      = $profile['phone2']      ?? '';
+                                            $address1    = $profile['address1']    ?? '';
+                                            $address2    = $profile['address2']    ?? '';
+                                            $city        = $profile['city']        ?? '';
+                                            $county      = $profile['county']      ?? '';
+                                            $postcode    = $profile['postcode']    ?? '';
+                                        } catch (Exception $e) {
+                                            // If DB lookup fails, fall back to empty values
+                                            $firstname = $lastname = $email = $phone = $phone2 = '';
+                                            $address1 = $address2 = $city = $county = $postcode = '';
+                                        }
+                                        ?>
                                         <div class="ec-check-bill-form">
                                             <form id="checkoutForm" action="../app/orderHandler.php" method="post">
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>First Name*</label>
-                                                    <input type="text" name="firstname" id="firstname" placeholder="John" required="yes" tabindex="1" />
+                                                    <input type="text" name="firstname" id="firstname" placeholder="John"
+                                                        value="<?= htmlspecialchars($firstname) ?>" required tabindex="1" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>Last Name*</label>
-                                                    <input type="text" name="lastname" id="lastname" placeholder="Doe" required="yes" tabindex="2" />
+                                                    <input type="text" name="lastname" id="lastname" placeholder="Doe"
+                                                        value="<?= htmlspecialchars($lastname) ?>" required tabindex="2" />
                                                 </span>
                                                 <span class="ec-bill-wrap">
                                                     <label>Email Address*</label>
-                                                    <input type="email" name="email" id="email" placeholder="you@example.com" value="<?php echo $email; ?>" required="yes" tabindex="3" />
+                                                    <input type="email" name="email" id="email" placeholder="you@example.com"
+                                                        value="<?= htmlspecialchars($email) ?>" required tabindex="3" />
                                                 </span>
                                                 <span class="ec-bill-wrap">
                                                     <label>Phone Number*</label>
-                                                    <input type="tel" name="phone" id="phone" placeholder="+44 7123 456789" value="<?php echo $phone; ?>" required="yes" tabindex="4" />
+                                                    <input type="tel" name="phone" id="phone" placeholder="+44 7123 456789"
+                                                        value="<?= htmlspecialchars($phone) ?>" required tabindex="4" />
                                                 </span>
                                                 <span class="ec-bill-wrap">
                                                     <label>Address Line 1*</label>
-                                                    <input type="text" name="address1" id="address1" placeholder="123 High Street" required="yes" tabindex="5" />
+                                                    <input type="text" name="address1" id="address1" placeholder="123 High Street"
+                                                        value="<?= htmlspecialchars($address1) ?>" required tabindex="5" />
                                                 </span>
                                                 <span class="ec-bill-wrap">
                                                     <label>Address Line 2 (optional)</label>
-                                                    <input type="text" name="address2" id="address2" placeholder="Apartment, suite, etc. (optional)" />
+                                                    <input type="text" name="address2" id="address2"
+                                                        placeholder="Apartment, suite, etc. (optional)"
+                                                        value="<?= htmlspecialchars($address2) ?>" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>Town / City*</label>
-                                                    <input type="text" name="city" id="city" placeholder="London" required="yes" tabindex="6" />
+                                                    <input type="text" name="city" id="city" placeholder="London"
+                                                        value="<?= htmlspecialchars($city) ?>" required tabindex="6" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>County (optional)</label>
-                                                    <input type="text" name="county" id="county" placeholder="Greater London" />
+                                                    <input type="text" name="county" id="county" placeholder="Greater London"
+                                                        value="<?= htmlspecialchars($county) ?>" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>Postcode*</label>
-                                                    <input type="text" name="postcode" id="postcode" placeholder="SW1A 1AA" required="yes" tabindex="7" />
+                                                    <input type="text" name="postcode" id="postcode" placeholder="SW1A 1AA"
+                                                        value="<?= htmlspecialchars($postcode) ?>" required tabindex="7" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>Country*</label>
@@ -279,13 +309,15 @@ include './inc/head.php';
                                                     <div class="ec-checkout-wrap margin-bottom-30">
                                                         <div class="ec-checkout-block">
                                                             <h3 class="ec-checkout-title">Order Notes (optional)</h3>
-                                                            <textarea name="order-notes" id="order-notes" placeholder="Notes about your order, e.g. delivery instructions." rows="3"></textarea>
+                                                            <textarea name="order-notes" id="order-notes"
+                                                                placeholder="Notes about your order, e.g. delivery instructions."
+                                                                rows="3"></textarea>
                                                         </div>
                                                     </div>
                                                 </span>
                                                 <div class="ec-bill-wrap">
                                                     <label>
-                                                        <input type="checkbox" name="privacy_consent" required="yes" tabindex="8" />
+                                                        <input type="checkbox" name="privacy_consent" required tabindex="8" />
                                                         I agree to the processing of my personal data in accordance with the
                                                         <a href="privacy-policy.php" target="_blank"><b>Privacy Policy</b></a>.
                                                     </label>
@@ -298,6 +330,7 @@ include './inc/head.php';
                                             </form>
                                         </div>
                                     </div>
+
                                 </div>
                                 <!-- Place Order Button -->
 
