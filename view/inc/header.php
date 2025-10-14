@@ -186,7 +186,7 @@
                             ]);
 
                             if ($sectionn) {
-                                foreach ($sections as $sectionm) {
+                                foreach ($sectionn as $sectionm) {
                             ?>
                                     <li class="dropdown">
                                         <a href="javascript:void(0)" style="color: white;">
