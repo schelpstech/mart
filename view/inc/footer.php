@@ -277,13 +277,11 @@
             <div class="ec-nav-panel-icons">
                 <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
             </div>
-            <div class="ec-nav-panel-icons dropdown dropup"
-                style="overflow: visible; position: relative; z-index: 9999;">
+            <div class="ec-nav-panel-icons dropdown dropup footer-dropup">
                 <button class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static">
                     <i class="fi-rr-user"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end"
-                    style="z-index: 99999; position: absolute; bottom: 100%; margin-bottom: 5px;">
+                <ul class="dropdown-menu dropdown-menu-end">
                     <?php if (!empty($_SESSION['user_id'])): ?>
                         <li>
                             <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
@@ -298,10 +296,6 @@
                     <?php endif; ?>
                 </ul>
             </div>
-
-
-
-
         </div>
     </div>
 </div>
@@ -339,6 +333,32 @@
 
     #addtocart_toast.show {
         visibility: visible;
+        opacity: 1;
+    }
+
+    /* Fix dropdown inside footer */
+    .footer-dropup {
+        position: relative;
+        overflow: visible !important;
+        z-index: 1050 !important;
+    }
+
+    /* Ensure dropdown always shows above footer */
+    .footer-dropup .dropdown-menu {
+        position: absolute !important;
+        bottom: 100% !important;
+        top: auto !important;
+        margin-bottom: 8px;
+        z-index: 9999 !important;
+
+        /* optional animation */
+        transition: all 0.2s ease-in-out;
+        transform-origin: bottom;
+        opacity: 0;
+    }
+
+    .footer-dropup .dropdown-menu.show {
+        transform: translateY(-5px);
         opacity: 1;
     }
 </style>
