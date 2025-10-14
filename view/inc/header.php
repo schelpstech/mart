@@ -56,7 +56,7 @@
                         <!-- Header Cart Start -->
                         <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
                             <div class="header-icon"><i class="fi-rr-shopping-basket"></i></div>
-                            <span class="ec-header-count ec-cart-count cart-count-lable">3</span>
+                            <span id="cart-count" class="ec-header-count ec-cart-count cart-count-lable">0</span>
                         </a>
                         <!-- Header Cart End -->
                         <!-- Header menu Start -->

@@ -112,7 +112,7 @@
                     <div class="footer-copy text-center">
                         <div class="footer-bottom-copy">
                             <div class="ec-copy">
-                                &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">YourShop</a>.
+                                &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">Queenzy Stores</a>.
                                 All rights reserved. <br>
                                 Registered in England & Wales, Company No. 12345678.
                             </div>
@@ -184,8 +184,8 @@
         <!-- Panel Content -->
         <div class="cc-header">
             <img src="assets/images/whatsapp/profile_01.jpg" alt="profile image" />
-            <h2>John Mark</h2>
-            <p>Tachnical Manager</p>
+            <h2>Queenzy Support</h2>
+            <p>Technical Manager</p>
         </div>
         <div class="cc-body">
             <p><b>Hey there &#128515;</b></p>
