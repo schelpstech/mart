@@ -277,10 +277,7 @@
             <div class="ec-nav-panel-icons">
                 <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
             </div>
-            <div class="ec-nav-panel-icons">
-                <a href="login.php" class="ec-header-btn"><i class="fi-rr-user"></i></a>
-            </div>
-            <div class="ec-header-user dropdown">
+            <div class="ec-nav-panel-icons dropdown">
                 <button class="dropdown-toggle" data-bs-toggle="dropdown"><i class="fi-rr-user"></i></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <?php if (!empty($_SESSION['user_id'])): ?>
