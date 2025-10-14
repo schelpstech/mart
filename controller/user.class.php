@@ -79,20 +79,20 @@ class User
                 return false;
             }
 
-            $verifyLink = "http://localhost/mart/app/verify.php?token=" . $user["verification_token"];
+            $verifyLink = "https://queenzystores.com/app/verify.php?token=" . $user["verification_token"];
 
             $mail = new PHPMailer(true);
 
             // SMTP Settings
-            $mail->isSMTP();
-            $mail->Host       = 'server163.web-hosting.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreply@queenzy.assoec.org';
-            $mail->Password   = 'UNYOpat2017@';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
+             $mail->isSMTP();
+        $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'noreply@queenzystores.com'; 
+        $mail->Password   = '&YhzGPLtgtiP'; 
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; 
+        $mail->Port       = 465;
 
-            $mail->setFrom('noreply@queenzy.assoec.org', 'Queenzy Stores');
+            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
             $mail->addAddress($email);
 
             $mail->isHTML(true);

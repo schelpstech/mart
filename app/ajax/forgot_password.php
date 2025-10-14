@@ -33,7 +33,7 @@ $model->insert("password_resets", [
 ]);
 
 // Reset link
-$resetLink = "http://localhost/mart/view/resetpassword.php?token=$token";
+$resetLink = "https://queenzystores.com/view/resetpassword.php?token=$token";
 
 // TODO: Replace with PHPMailer or your mail utility
 require_once "../mail_config.php";

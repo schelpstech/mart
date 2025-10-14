@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Initiate Stripe Checkout
             $session = $stripe->createCheckoutSession(
-                "http://localhost/mart/app/paymentHandler.php",
-                "http://localhost/mart/app/paymentHandler.php",
+                "https://queenzystores.com/app/paymentHandler.php",
+                "https://queenzystores.com/app/paymentHandler.php",
                 $lineItems,
                 $email
             );

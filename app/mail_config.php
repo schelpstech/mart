@@ -9,15 +9,15 @@ function sendEmail($to, $subject, $htmlContent, $altContent = "") {
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'server163.web-hosting.com'; // e.g., smtp.gmail.com
+        $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'noreply@queenzy.assoec.org'; 
-        $mail->Password   = 'UNYOpat2017@'; 
+        $mail->Username   = 'noreply@queenzystores.com'; 
+        $mail->Password   = '&YhzGPLtgtiP'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; 
         $mail->Port       = 465;
 
         // Recipients
-        $mail->setFrom('noreply@queenzy.assoec.org', 'Queenzy Store');
+        $mail->setFrom('noreply@queenzystores.com', 'Queenzy Store');
         $mail->addAddress($to);
 
         // Content
