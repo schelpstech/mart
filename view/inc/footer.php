@@ -278,7 +278,7 @@
                 <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
             </div>
             <div class="ec-nav-panel-icons dropdown dropup">
-                <button class="dropdown-toggle" data-bs-toggle="dropdown">
+                <button class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static">
                     <i class="fi-rr-user"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
