@@ -277,16 +277,14 @@
             <div class="ec-nav-panel-icons">
                 <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
             </div>
-            <div class="ec-nav-panel-icons dropdown dropup" style="bottom: 100%; top: auto; margin-bottom: 5px;">
+            <div class="ec-nav-panel-icons dropdown dropup">
                 <button class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static">
                     <i class="fi-rr-user"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <?php if (!empty($_SESSION['user_id'])): ?>
                         <li>
-                            <a href="#"
-                                class="dropdown-item"
-                                data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
                                 Logout
                             </a>
                         </li>
@@ -298,6 +296,7 @@
                     <?php endif; ?>
                 </ul>
             </div>
+
 
         </div>
     </div>
