@@ -80,7 +80,7 @@ include './inc/head.php';
                                                             <td data-label="Product" class="ec-cart-pro-name">
                                                                 <a href="product.php?id=<?= $item['product_id']; ?>">
                                                                     <img class="ec-cart-pro-img mr-4"
-                                                                        src="assets/images/product/<?= $item['image_main']; ?>"
+                                                                        src="../view/assets/images/product/main/<?= $item['image_main']; ?>"
                                                                         alt="<?= htmlspecialchars($item['name']); ?>" />
                                                                     <?= htmlspecialchars($item['name']); ?>
                                                                 </a>
