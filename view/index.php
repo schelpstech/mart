@@ -390,7 +390,7 @@ include './inc/mainhead.php';
                                     <li class="ec-test-item">
                                         <div class="ec-test-inner">
                                             <div class="ec-test-img">
-                                                <img alt="testimonial" title="testimonial" src="<?= htmlspecialchars($test['photo']) ?>" />
+                                                <img alt="testimonial" title="testimonial" src="../view/assets/images/banner/customer.jpg" alt="Testimonial" />
                                             </div>
                                             <div class="ec-test-content">
                                                 <div class="ec-test-name"><?= htmlspecialchars($test['name']) ?></div>
@@ -413,17 +413,21 @@ include './inc/mainhead.php';
                 <!-- ec Banner Start -->
                 <div class="col-md-6 col-sm-12" data-animation="fadeIn">
                     <div class="ec-banner-inner">
-                        <div class="ec-banner-block ec-banner-block-1">
+                        <div class="ec-banner-block  ec-banner-block-1">
                             <div class="banner-block">
                                 <div class="banner-content">
                                     <div class="banner-text">
-                                        <span class="ec-banner-disc">25% discount</span>
-                                        <span class="ec-banner-title">Sports & Formal</span>
-                                        <span class="ec-banner-stitle">Starting @ £20</span>
+                                        <span class="ec-banner-disc">Quality products you can trust</span>
+                                        <span class="ec-banner-title">Shop the Latest </span>
+                                        <span class="ec-banner-stitle">Affordable prices for everyone</span>
                                     </div>
-                                    <span class="ec-banner-btn"><a href="shop-left-sidebar-col-3.html">Shop Now <i
-                                                class="ecicon eci-angle-double-right" aria-hidden="true"></i></a></span>
+                                    <span class="ec-banner-btn">
+                                        <a href="shop.php">Shop Now
+                                            <i class="ecicon eci-angle-double-right" aria-hidden="true"></i>
+                                        </a>
+                                    </span>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -503,77 +507,38 @@ include './inc/mainhead.php';
     <!-- Ec Instagram Start -->
     <section class="section ec-instagram-section section-space-pt">
         <div class="container">
-            <h2 class="d-none">Instagram</h2>
+            <h2 class="d-none">Recently Added Products</h2>
             <div class="ec-insta-wrapper" data-animation="fadeIn">
                 <div class="ec-insta-outer">
                     <div class="insta-auto">
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/1.jpg" alt="">
+                        <?php
+                        // Get all products in this section
+                        $productImgs = $model->getRows("products", [
+                            "order_by" => "product_tbl_record_time DESC",
+                            "limit" => 20
+                        ]);
 
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/2.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/3.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/4.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/5.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/6.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/7.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
-                        <div class="ec-insta-item">
-                            <div class="ec-insta-inner">
-                                <a href="#" target="_blank"><img src="assets/images/instragram-image/3.jpg" alt="">
-
-                                </a>
-                            </div>
-                        </div>
-                        <!-- instagram item -->
+                        if (!empty($productImgs)) {
+                            foreach ($productImgs as $product) {
+                                $productId = htmlspecialchars($product['product_id']);
+                                $productImage = htmlspecialchars($product['image_main']);
+                        ?>
+                                <!-- instagram item -->
+                                <div class="ec-insta-item">
+                                    <div class="ec-insta-inner">
+                                        <a href="viewproduct.php?id=<?= $productId ?>" target="_blank">
+                                            <img src="../view/assets/images/product/main/<?= $productImage ?>" alt="Product">
+                                        </a>
+                                    </div>
+                                </div>
+                        <?php
+                            }
+                        } else {
+                            echo "<p>No products found.</p>";
+                        }
+                        ?>
                     </div>
+
                 </div>
             </div>
         </div>
