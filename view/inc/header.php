@@ -9,10 +9,10 @@
                     <div class="header-top-social">
                         <span class="social-text text-upper">Follow us on:</span>
                         <ul class="mb-0">
-                            <li class="list-inline-item"><a class="hdr-facebook" href="#"><i class="ecicon eci-facebook"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-twitter" href="#"><i class="ecicon eci-twitter"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-instagram" href="#"><i class="ecicon eci-instagram"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-linkedin" href="#"><i class="ecicon eci-linkedin"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-facebook" href="https://web.facebook.com/queenzylooks"><i class="ecicon eci-facebook"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzylooks_uk"><i class="ecicon eci-twitter"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzylooksuk"><i class="ecicon eci-instagram"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-youtube" href="https://www.youtube.com/@queenzylooks"><i class="ecicon eci-youtube"></i></a></li>
                         </ul>
                     </div>
                 </div>
