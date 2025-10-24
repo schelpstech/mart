@@ -92,7 +92,7 @@
                     <!-- Company Info -->
                     <div class="col-sm-12 col-lg-4 ec-footer-account">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading marg-b-0 s-head text-white">Follow Us</h4>
+                             <h4 class="ec-footer-heading text-white">Follow Us</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
                                     <li class="ec-footer-link"><a href="https://www.instagram.com/queenzylooksuk" target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a>@queenzylooksuk</li>
