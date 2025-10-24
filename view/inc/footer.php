@@ -47,15 +47,40 @@
                                         <ul class="align-items-center">
                                             <li class="ec-footer-link ec-foo-location text-white">
                                                 <span><i class="fi fi-rr-marker"></i></span>
-                                                <p>123 High Street, London, UK</p>
+                                                <p>10 London Street, Larkhall, ML9 1AG</p>
                                             </li>
                                             <li class="ec-footer-link ec-foo-call">
                                                 <span><i class="fi-rr-phone-call"></i></span>
-                                                <a href="tel:+441234567890" class="text-white">+44 1234 567890</a>
+                                                <a href="tel:+4401698640067" class="text-white">+44 01698640067</a>
                                             </li>
                                             <li class="ec-footer-link ec-foo-mail">
                                                 <span><i class="fi fi-rr-envelope"></i></span>
-                                                <a href="mailto:support@yourshop.co.uk" class="text-white">support@queenzystore.com</a>
+                                                <a href="mailto:support@queenzystore.com" class="text-white">support@queenzystore.com</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-4 ec-footer-info">
+                        <div class="ec-footer-widget">
+                            <h4 class="ec-footer-heading text-white">Opening Hours</h4>
+                            <div class="ec-footer-contact">
+                                <div class="ec-footer-widget">
+                                    <div class="ec-footer-links">
+                                        <ul class="align-items-center">
+                                            <li class="ec-footer-link ec-foo-location text-white">
+                                                <span><i class="fi fi-rr-calendar"></i></span>
+                                                <p>Mon - Fri: 10am - 8pm</p>
+                                            </li>
+                                            <li class="ec-footer-link ec-foo-location text-white">
+                                                <span><i class="fi fi-rr-calendar"></i></span>
+                                                <p>Saturday: 10:30am - 9pm</p>
+                                            </li>
+                                            <li class="ec-footer-link ec-foo-location text-white">
+                                                <span><i class="fi fi-rr-calendar"></i></span>
+                                                <p>Sunday: Closed</p>
                                             </li>
                                         </ul>
                                     </div>
@@ -179,7 +204,7 @@
             <p>Need help ? just give me a call.</p>
         </div>
         <div class="cc-footer">
-            <a href="tel:+919099153528" class="cc-call-button">
+            <a href="tel:+44 01698640067" class="cc-call-button">
                 <span>Call me</span>
                 <svg width="13px" height="10px" viewBox="0 0 13 10">
                     <path d="M1,5 L11,5"></path>
