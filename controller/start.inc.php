@@ -23,8 +23,8 @@ include_once 'stripe.class.php';
 
 // database access parameters
 $db_host = 'localhost';
-$db_user = 'mart@dmin';
-$db_pass = 'P@$$word';
+$db_user = 'root';
+$db_pass = '';
 $db_name = 'mart_a99_queenzy';
 
 // Initialize $db_conn to avoid undefined variable warning if connection fails

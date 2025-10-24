@@ -5,92 +5,79 @@
             <div class="container">
                 <div class="row text-white">
                     <!-- Popular Categories -->
-                    <div class="col-sm-12 col-lg-3 ec-footer-cat">
+                    <div class="col-sm-12 col-lg-4 ec-footer-cat">
                         <div class="ec-footer-widget">
                             <h4 class="ec-footer-heading text-white">Popular Categories</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="/category/mens-fashion" class="text-white">Men’s Fashion</a></li>
-                                    <li class="ec-footer-link"><a href="/category/womens-fashion" class="text-white">Women’s Fashion</a></li>
-                                    <li class="ec-footer-link"><a href="/category/electronics" class="text-white">Electronics</a></li>
-                                    <li class="ec-footer-link"><a href="/category/beauty" class="text-white">Beauty & Cosmetics</a></li>
-                                    <li class="ec-footer-link"><a href="/category/home-garden" class="text-white">Home & Garden</a></li>
+                                    <?php
+                                    // Fetch categories under this section
+                                    $categories = $model->getRows("categories", [
+                                        "where" => ["category_status" => 'Active'],
+                                        "limit" => 5,
+                                        "order" => ["category_name" => "ASC"]
+                                    ]);
+
+                                    if ($categories) {
+                                        foreach ($categories as $cat) {
+                                    ?>
+                                            <li class="ec-footer-link">
+                                                <a href="viewcategory.php?id=<?= $cat['categoryTbl_id'] ?>" class="text-white">
+                                                    <?= htmlspecialchars($cat['category_name']) ?>
+                                                </a>
+                                            </li>
+                                    <?php
+                                        }
+                                    } else {
+                                        echo "<li><a href='#'>No categories</a></li>";
+                                    }
+                                    ?>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
                     <!-- Customer Service -->
-                    <div class="col-sm-12 col-lg-3 ec-footer-info">
+                    <div class="col-sm-12 col-lg-4 ec-footer-info">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading text-white">Customer Service</h4>
-                            <div class="ec-footer-links">
-                                <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="/help/shipping" class="text-white">Delivery Information</a></li>
-                                    <li class="ec-footer-link"><a href="/help/returns" class="text-white">Returns & Refunds</a></li>
-                                    <li class="ec-footer-link"><a href="/help/faq" class="text-white">FAQs</a></li>
-                                    <li class="ec-footer-link"><a href="/contact" class="text-white">Contact Us</a></li>
-                                    <li class="ec-footer-link"><a href="/sitemap" class="text-white">Sitemap</a></li>
-                                </ul>
+                            <h4 class="ec-footer-heading text-white">Contact Us</h4>
+                            <div class="ec-footer-contact">
+                                <div class="ec-footer-widget">
+                                    <div class="ec-footer-links">
+                                        <ul class="align-items-center">
+                                            <li class="ec-footer-link ec-foo-location text-white">
+                                                <span><i class="fi fi-rr-marker"></i></span>
+                                                <p>123 High Street, London, UK</p>
+                                            </li>
+                                            <li class="ec-footer-link ec-foo-call">
+                                                <span><i class="fi-rr-phone-call"></i></span>
+                                                <a href="tel:+441234567890" class="text-white">+44 1234 567890</a>
+                                            </li>
+                                            <li class="ec-footer-link ec-foo-mail">
+                                                <span><i class="fi fi-rr-envelope"></i></span>
+                                                <a href="mailto:support@yourshop.co.uk" class="text-white">support@queenzystore.com</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Company Info -->
-                    <div class="col-sm-12 col-lg-3 ec-footer-account">
+                    <div class="col-sm-12 col-lg-4 ec-footer-account">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading text-white">Our Company</h4>
+                            <h4 class="ec-footer-heading marg-b-0 s-head text-white">Follow Us</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="/about" class="text-white">About Us</a></li>
-                                    <li class="ec-footer-link"><a href="/careers" class="text-white">Careers</a></li>
-                                    <li class="ec-footer-link"><a href="/terms" class="text-white">Terms & Conditions</a></li>
-                                    <li class="ec-footer-link"><a href="/privacy" class="text-white">Privacy Policy</a></li>
-                                    <li class="ec-footer-link"><a href="/cookies" class="text-white">Cookie Policy</a></li>
+                                    <li class="ec-footer-link"><a href="https://www.instagram.com/queenzylooksuk" target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a>@queenzylooksuk</li>
+                                    <li class="ec-footer-link"><a href="https://www.tiktok.com/@queenzylooks_uk" target="_blank"><i class="ecicon eci-twitter-square" aria-hidden="true"></i></a>@queenzylooks_uk</li>
+                                    <li class="ec-footer-link"><a href="https://web.facebook.com/queenzylooks" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a>@queenzylooks</li>
+                                    <li class="ec-footer-link"><a href="https://www.youtube.com/@queenzylooks" target="_blank"><i class="ecicon eci-youtube-square" aria-hidden="true"></i></a>@queenzylooks</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Contact & Social -->
-                    <div class="col-sm-12 col-lg-3 ec-footer-cont-social">
-                        <div class="ec-footer-contact">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading text-white">Contact</h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link ec-foo-location text-white">
-                                            <span><i class="fi fi-rr-marker"></i></span>
-                                            <p>123 High Street, London, UK</p>
-                                        </li>
-                                        <li class="ec-footer-link ec-foo-call">
-                                            <span><i class="fi-rr-phone-call"></i></span>
-                                            <a href="tel:+441234567890" class="text-white">+44 1234 567890</a>
-                                        </li>
-                                        <li class="ec-footer-link ec-foo-mail">
-                                            <span><i class="fi fi-rr-envelope"></i></span>
-                                            <a href="mailto:support@yourshop.co.uk" class="text-white">support@queenzystore.com</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ec-footer-social">
-                            <div class="ec-footer-widget">
-                                <h4 class="ec-footer-heading marg-b-0 s-head text-white">Follow Us</h4>
-                                <div class="ec-footer-links">
-                                    <ul class="align-items-center">
-                                        <li class="ec-footer-link"><a href="https://instagram.com/yourshop" target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="https://twitter.com/yourshop" target="_blank"><i class="ecicon eci-twitter-square" aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="https://facebook.com/yourshop" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a></li>
-                                        <li class="ec-footer-link"><a href="https://linkedin.com/company/yourshop" target="_blank"><i class="ecicon eci-linkedin-square" aria-hidden="true"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div> <!-- /row -->
             </div>
         </div>
