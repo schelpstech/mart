@@ -94,62 +94,45 @@ include './inc/head.php';
                                 '; // default button
 
                                 if (!empty($_SESSION['user_id'])) {
-                                    // Initialize
-                                    $productItems = $cart->getCartItems();
-                                    $serviceItems = $cart->getServiceCartItems();
-                                    $subtotal = 0;
-                                    $hasProducts = !empty($productItems);
-                                    $hasServices = !empty($serviceItems);
-
-                                    // Combine subtotals separately
-                                    $productSubtotal = 0;
-                                    foreach ($productItems as $item) {
-                                        $productSubtotal += $item['line_total'];
-                                    }
-
-                                    $serviceSubtotal = 0;
-                                    foreach ($serviceItems as $srv) {
-                                        $serviceSubtotal += $srv['line_total'];
-                                    }
-
-                                    // Overall subtotal
-                                    $subtotal = $productSubtotal + $serviceSubtotal;
-
-                                    // Delivery: 0 for services-only, normal for product orders
-                                    if ($hasProducts && !$hasServices) {
-                                        $delivery = ($subtotal >= 50) ? 0 : 5.00;
-                                    } elseif ($hasProducts && $hasServices) {
-                                        // Mixed order: apply delivery for product portion only
-                                        $delivery = ($productSubtotal >= 50) ? 0 : 5.00;
+                                    if (isset($_SESSION['order_type']) && $_SESSION['order_type'] === "service") {
+                                        // Fetch cart items for service booking
+                                        $cartItems = $cart->getServiceCartItems();
                                     } else {
-                                        // Services only — no delivery
-                                        $delivery = 0;
+                                        // Fetch cart items for product purchase
+                                        $cartItems = $cart->getCartItems();
+                                    }
+                                    // Fetch cart items for logged-in user
+
+                                    // Calculate subtotal
+                                    foreach ($cartItems as $item) {
+                                        $subtotal += $item['line_total'];
                                     }
 
-                                    // Total
-                                    $total = $subtotal + $delivery;
-
-                                    // Checkout button
                                     if ($subtotal > 0) {
+                                        // Determine delivery cost
+                                        $delivery = ($subtotal >= 50) ? 0 : 5.00;
+
+                                        // Total amount
+                                        $total = $subtotal + $delivery;
+
+                                        // Checkout button
                                         $button = '
-            <button class="btn btn-lg btn-success btn-jittery" name="action" value="' . $utility->inputEncode('place_order') . '" type="submit">
-                Proceed to Payment
-            </button>';
+                                        <button class="btn btn-lg btn-success btn-jittery" name="action" value="' . $utility->inputEncode('place_order') . '" type="submit">Place Order</button>';
                                     } else {
+                                        // Empty cart
                                         $subtotal = $delivery = $total = 0;
-                                        $button = '
-            <div class="ec-bg-swipe">
-                <button class="ec-btn-bg-swipe">
-                    <span class="circle" aria-hidden="true">
-                        <span class="icon arrow"></span>
-                    </span>
-                    <span class="button-text">Start Shopping</span>
-                </button>
-            </div>';
                                     }
+                                } else {
+                                    // Guest user, no cart
+                                    $subtotal = $delivery = $total = 0;
                                 }
-
-
+                                //Prefill phone number and Email Address
+                                if (!empty($userData)) {
+                                    $phone = $userData['phone'];
+                                    $email = $userData['email'];
+                                } else {
+                                    $phone = $email = '';
+                                }
                                 ?>
 
 
@@ -257,7 +240,7 @@ include './inc/head.php';
                                         <h3 class="ec-checkout-title">Billing & Delivery Details</h3>
                                         <?php
                                         try {
-                                            $profile = $user->getUserProfile($_SESSION['user_id']);
+                                            $profile = $user->getUserProfile($userId);
 
                                             // fallback values if no profile row yet
                                             $firstname   = $profile['firstname']   ?? '';
@@ -328,17 +311,6 @@ include './inc/head.php';
                                                     <label>Country*</label>
                                                     <input type="text" value="United Kingdom" disabled />
                                                 </span>
-                                                <?php if ($hasServices): ?>
-                                                    <span class="ec-bill-wrap ec-bill-half">
-                                                        <label>Appointment Date*</label>
-                                                        <input type="date" name="appointment_date" id="appointment_date" required tabindex="8" />
-                                                    </span>
-                                                    <span class="ec-bill-wrap ec-bill-half">
-                                                        <label>Appointment Time*</label>
-                                                        <input type="time" name="appointment_time" id="appointment_time" required tabindex="9" />
-                                                    </span>
-                                                <?php endif; ?>
-
                                                 <span class="ec-bill-wrap">
                                                     <div class="ec-checkout-wrap margin-bottom-30">
                                                         <div class="ec-checkout-block">

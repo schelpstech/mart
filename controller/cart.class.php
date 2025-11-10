@@ -138,6 +138,30 @@ class Cart
         $rows = $this->db->getRows("cart c", $conditions);
         return $rows ?: [];
     }
+    public function getServiceCartItems()
+    {
+        if (!empty($this->user_id)) {
+            $user = $this->user_id;
+            $check = "user_id";
+        } else {
+            $user  = $this->session_id;
+            $check = "session_id";
+        }
+        $conditions = [
+            "select"   => "sct.service_cart_item_id, c.cart_id, sct.service_id, sct.quantity, sct.price,
+                       (sct.quantity * sct.price) AS line_total,
+                       s.name AS name, s.image",
+            "join"    => [
+                "service_cart_items sct" => " ON c.cart_id = sct.cart_id",
+                "services s"    => " ON sct.service_id = s.id"
+            ],
+            "where" => [$check => $user],
+            "order_by" => "sct.service_cart_item_id DESC",
+            "return_type" => "all"
+        ];
+        $rows = $this->db->getRows("cart c", $conditions);
+        return $rows ?: [];
+    }
 
 
 

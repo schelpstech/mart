@@ -1,5 +1,6 @@
 <?php
 include './inc/head.php';
+$_SESSION['referer'] = $_SERVER['HTTP_REFERER'] 
 ?>
 
 <body class="register_page">

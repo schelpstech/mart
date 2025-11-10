@@ -411,6 +411,7 @@
 <script src="assets/js/userprofile.js"></script>
 <script src="assets/js/forgotpassword.js"></script>
 <script src="assets/js/validatepwdresetpage.js"></script>
+<script src="assets/js/bookingform.js"></script>
 </body>
 
 </html>

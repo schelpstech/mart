@@ -71,7 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($userData['status']) {
 
                     $utility->setFlash("success", $userData['message']);
-                    header("Location: ../view/checkout.php");
+                    $referrer = $_SESSION['referer'] ?? '../view/checkout.php';
+                    header("Location: " . $referrer);
                     exit;
                 } else {
                     // Login failed

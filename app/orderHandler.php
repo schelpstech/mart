@@ -17,28 +17,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $county    = $_POST['county'];
             $postcode  = $_POST['postcode'];
             $notes     = $_POST['order-notes'];
+            $appointment_date     = $_POST['appointment_date'] ?? "";
+            $appointment_time     = $_POST['appointment_time'] ?? "";
 
-            // Get cart data from session
-            $cartItems = $cart->getCartItems();
-            if (empty($cartItems)) {
+            // Fetch both product and service cart items
+            $productCartItems = $cart->getCartItems();
+            $serviceCartItems = $cart->getServiceCartItems();
+
+            // Merge both if they exist
+            if (!empty($productCartItems) && !empty($serviceCartItems)) {
+                $cartItems = array_merge($productCartItems, $serviceCartItems);
+            } elseif (!empty($productCartItems)) {
+                $cartItems = $productCartItems;
+            } elseif (!empty($serviceCartItems)) {
+                $cartItems = $serviceCartItems;
+            } else {
                 die("Cart is empty!");
             }
+
             $orderReference = $utility->generateRandomString(10);
-            // Calculate total (in Naira -> Kobo or GBP -> Pence, depending on your config)
+
+            // Calculate total (in GBP → Pence)
             $total = 0;
             $lineItems = [];
+
             foreach ($cartItems as $item) {
-                $subtotal = $item['price'] * $item['quantity'];
+                // Fallback for missing quantity or name
+                $quantity = isset($item['quantity']) ? (int)$item['quantity'] : 1;
+                $price    = isset($item['price']) ? (float)$item['price'] : 0;
+                $name     = isset($item['name']) ? $item['name'] : ($item['service_name'] ?? 'Service');
+
+                $subtotal = $price * $quantity;
                 $total   += $subtotal;
 
                 // Add to Stripe Checkout line items
                 $lineItems[] = [
-                    "name"     => $item['name'],
-                    "amount"   => intval($item['price'] * 100), // Convert to smallest unit
-                    "currency" => "gbp", // change to "ngn" if in Naira
-                    "quantity" => $item['quantity'],
+                    "name"     => $name,
+                    "amount"   => intval($price * 100), // Convert to smallest unit (pence)
+                    "currency" => "gbp", // change to "ngn" if processing in Naira
+                    "quantity" => $quantity,
                 ];
             }
+
 
             // Insert order into DB (status pending until webhook confirms)
             $orderData = [
@@ -55,22 +75,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'postcode'     => $postcode,
                 'order_notes'  => $notes,
                 'total_amount' => $total,
+                'appointment_date' => $appointment_date,
+                'appointment_time' => $appointment_time,
                 'payment_status'       => 'pending'
             ];
             $orderId = $model->insert('orders_mart', $orderData);
 
             // Insert order items
-            foreach ($cartItems as $item) {
-                $model->insert('order_items_mart', [
-                    'order_item_id' => $orderId,
-                    'product_id'    => $item['product_id'],
-                    'product_name'  => $item['name'],
-                    'price'         => $item['price'],
-                    'quantity'      => $item['quantity'],
-                    'subtotal'      => $item['price'] * $item['quantity']
-                ]);
-            }
 
+            $productCartItems = $cart->getCartItems();
+            $serviceCartItems = $cart->getServiceCartItems();
+
+            // Merge both if they exist
+            if (!empty($productCartItems)) {
+                $cartItems = $productCartItems;
+                foreach ($cartItems as $item) {
+                    $model->insert('order_items_mart', [
+                        'order_item_id' => $orderId,
+                        'orderType' => "product",
+                        'product_id'    => $item['product_id'],
+                        'product_name'  => $item['name'],
+                        'price'         => $item['price'],
+                        'quantity'      => $item['quantity'],
+                        'subtotal'      => $item['price'] * $item['quantity']
+                    ]);
+                }
+            } 
+            if (!empty($serviceCartItems)) {
+                $cartItems = $serviceCartItems;
+                foreach ($cartItems as $item) {
+                    $model->insert('order_items_mart', [
+                        'order_item_id' => $orderId,
+                        'orderType' => "service",
+                        'product_id'    => $item['service_id'],
+                        'product_name'  => $item['name'],
+                        'price'         => $item['price'],
+                        'quantity'      => $item['quantity'],
+                        'subtotal'      => $item['price'] * $item['quantity']
+                    ]);
+                }
+            } 
             // Clear cart
             $cart->clearCart();
             $_SESSION["orderId"] = $orderId;

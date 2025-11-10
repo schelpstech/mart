@@ -9,10 +9,10 @@
                     <div class="header-top-social">
                         <span class="social-text text-upper">Follow us on:</span>
                         <ul class="mb-0">
-                            <li class="list-inline-item"><a class="hdr-facebook" href="https://web.facebook.com/queenzylooks"><i class="ecicon eci-facebook"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzylooks_uk"><i class="ecicon eci-twitter"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzylooksuk"><i class="ecicon eci-instagram"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-youtube" href="https://www.youtube.com/@queenzylooks"><i class="ecicon eci-youtube"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-facebook" href="https://www.facebook.com/share/15i61ckgUZ/?mibextid=wwXIfr"><i class="ecicon eci-facebook"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzylooks_uk?_t=ZG-8stXpbaSAvh&_r=1"><i class="ecicon eci-twitter"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzylooksuk?igsh=MXEzaTc1NDJxcmJ3ag%3D%3D&utm_source=qr"><i class="ecicon eci-instagram"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-youtube" href="https://youtube.com/@queenzylooks?si=z6gqW2Q3Hz5jSvX3"><i class="ecicon eci-youtube"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -219,8 +219,8 @@
                                 }
                             }
                             ?>
-                            <li><a href="shop.php" style="color: white;">SHOP</a></li>
-                            <li><a href="#" style="color: white;">CONTACT</a></li>
+                            <li><a href="shop.php" style="color: white;">Shop</a></li>
+                            <li><a href="booking.php" style="color: white;">Booking</a></li>
                         </ul>
                     </div>
                 </div>
@@ -281,9 +281,8 @@
                         }
                     }
                     ?>
-                    <li><a href="shop.php">SHOP</a></li>
-                    <li><a href="#">CONTACT</a></li>
-
+                    <li><a href="shop.php" style="color: white;">Shop</a></li>
+                    <li><a href="booking.php" style="color: white;">Booking</a></li>
                 </ul>
             </div>
 
@@ -293,10 +292,10 @@
                 <div class="header-res-social">
                     <div class="header-top-social">
                         <ul class="mb-0">
-                            <li class="list-inline-item"><a class="hdr-facebook" href="#"><i class="ecicon eci-facebook"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-twitter" href="#"><i class="ecicon eci-twitter"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-instagram" href="#"><i class="ecicon eci-instagram"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-linkedin" href="#"><i class="ecicon eci-linkedin"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-facebook" href="https://www.facebook.com/share/15i61ckgUZ/?mibextid=wwXIfr"><i class="ecicon eci-facebook"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzylooks_uk?_t=ZG-8stXpbaSAvh&_r=1"><i class="ecicon eci-twitter"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzylooksuk?igsh=MXEzaTc1NDJxcmJ3ag%3D%3D&utm_source=qr"><i class="ecicon eci-instagram"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-linkedin" href="https://youtube.com/@queenzylooks?si=z6gqW2Q3Hz5jSvX3"><i class="ecicon eci-linkedin"></i></a></li>
                         </ul>
                     </div>
                 </div>
