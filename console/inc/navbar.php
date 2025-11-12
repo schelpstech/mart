@@ -58,6 +58,7 @@
 								<ul class="sub-menu" data-parent="#sidebar-menu">
 									<li><a class="sidenav-item-link" href="product_mgr.php">Product Manager</a></li>
 									<li><a class="sidenav-item-link" href="add-product.php">Add Product</a></li>
+									<li><a class="sidenav-item-link" href="servicemgr.php">Manage Services</a></li>
 								</ul>
 							</div>
 						</li>
