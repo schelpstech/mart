@@ -51,9 +51,9 @@ include './inc/head.php';
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="section-title">
-                        <h2 class="ec-bg-title">Privacy Policy</h2>
-                        <h2 class="ec-title">Privacy Policy</h2>
-                        <p class="sub-title mb-3">Protecting your privacy under the UK GDPR</p>
+                        <h2 class="ec-bg-title">Delivery Policy</h2>
+                        <h2 class="ec-title">Delivery Policy</h2>
+                        <p class="sub-title mb-3">Ensuring the best delivery experience for our customers</p>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -64,9 +64,8 @@ include './inc/head.php';
                             <div class="ec-cms-block-inner">
                                 <h3 class="ec-cms-block-title">Welcome</h3>
                                 <p>
-                                    Your privacy is important to us. This Privacy Policy explains how we collect, use,
-                                    store and protect your personal information when you use our ecommerce platform.
-                                    We comply with the United Kingdom General Data Protection Regulation (UK GDPR).
+                                    Your delivery experience is important to us. This Delivery Policy explains how we handle, process,
+                                    and deliver your orders when you use our ecommerce platform.
                                 </p>
                             </div>
                         </div>

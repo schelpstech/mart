@@ -53,7 +53,8 @@ include './inc/head.php';
                     <div class="section-title">
                         <h2 class="ec-bg-title">Refund & Return Policy</h2>
                         <h2 class="ec-title">Refund & Return Policy</h2>
-                        <p class="sub-title mb-3">Protecting your privacy under the UK GDPR</p>
+                        <p class="sub-title mb-3">We are committed to ensuring your satisfaction and protecting your best interests.</p>
+
                     </div>
                 </div>
                 <div class="col-md-12">
