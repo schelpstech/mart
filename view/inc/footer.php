@@ -53,9 +53,13 @@
                                                 <span><i class="fi-rr-phone-call"></i></span>
                                                 <a href="tel:+4401698640067" class="text-white">+44 01698640067</a>
                                             </li>
+                                            <li class="ec-footer-link ec-foo-call">
+                                                <span><i class="fi-rr-phone-call"></i></span>
+                                                <a href="tel:+447368400960" class="text-white">+44 7368400960</a>
+                                            </li>
                                             <li class="ec-footer-link ec-foo-mail">
                                                 <span><i class="fi fi-rr-envelope"></i></span>
-                                                <a href="mailto:support@queenzystore.com" class="text-white">support@queenzystore.com</a>
+                                                <a href="mailto:info@queenzystore.com" class="text-white">info@queenzystore.com</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -100,6 +104,22 @@
                                     <li class="ec-footer-link"><a href="https://web.facebook.com/queenzylooks" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a>@queenzylooks</li>
                                     <li class="ec-footer-link"><a href="https://www.youtube.com/@queenzylooks" target="_blank"><i class="ecicon eci-youtube-square" aria-hidden="true"></i></a>@queenzylooks</li>
                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Company Info -->
+                    <div class="col-sm-12 col-lg-4 ec-footer-account">
+                        <div class="ec-footer-widget">
+                             <h4 class="ec-footer-heading text-white"><p><strong>Delivery & Policies:</strong></p></h4>
+                            <div class="ec-footer-links">
+                                <ul class="align-items-center">
+                                    
+                                        <ul style="padding-left: 18px; margin-top: 5px;">
+                                            <li><a href="delivery-policy.php"><strong>Delivery Policy</strong></a></li><br>
+                                            <li><a href="return-policy.php"><strong>Return & Refund Policy</strong></a></li><br>
+                                            <li><a href="privacy-policy.php"><strong>Privacy Policy</strong></a></li>
+                                        </ul>
+                                    </ul>
                             </div>
                         </div>
                     </div>
@@ -204,7 +224,16 @@
             <p>Need help ? just give me a call.</p>
         </div>
         <div class="cc-footer">
-            <a href="tel:+44 01698640067" class="cc-call-button">
+            <a href="tel:+447767918847" class="cc-call-button">
+                <span>Call me</span>
+                <svg width="13px" height="10px" viewBox="0 0 13 10">
+                    <path d="M1,5 L11,5"></path>
+                    <polyline points="8 1 12 5 8 9"></polyline>
+                </svg>
+            </a>
+        </div>
+        <div class="cc-footer">
+            <a href="tel:+447368400960" class="cc-call-button">
                 <span>Call me</span>
                 <svg width="13px" height="10px" viewBox="0 0 13 10">
                     <path d="M1,5 L11,5"></path>

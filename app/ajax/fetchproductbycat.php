@@ -5,7 +5,7 @@ $limit  = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
 $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 
 $allproducts = $model->getRows("products", [
-    'where' => ["category_id" => $_SESSION['categoryId']],
+    'where' => ["category_id" => $_SESSION['categoryId'], 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     "limit" => $limit, // ✅ MySQL LIMIT with offset
     "offset" => $offset, // ✅ MySQL LIMIT with offset

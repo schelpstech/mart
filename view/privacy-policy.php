@@ -25,13 +25,13 @@ include './inc/head.php';
                 <div class="col-12">
                     <div class="row ec_breadcrumb_inner">
                         <div class="col-md-6 col-sm-12">
-                            <h2 class="ec-breadcrumb-title">Policy</h2>
+                            <h2 class="ec-breadcrumb-title">Privacy Policy</h2>
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <!-- ec-breadcrumb-list start -->
                             <ul class="ec-breadcrumb-list">
                                 <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
-                                <li class="ec-breadcrumb-item active">Policy</li>
+                                <li class="ec-breadcrumb-item active">PrivacyPolicy</li>
                             </ul>
                             <!-- ec-breadcrumb-list end -->
                         </div>
@@ -43,14 +43,13 @@ include './inc/head.php';
     <!-- Ec breadcrumb end -->
 
     <!-- Start Privacy & Policy page -->
-    <!-- Start Privacy & Policy page -->
 <section class="ec-page-content section-space-p">
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center">
                 <div class="section-title">
-                    <h2 class="ec-bg-title">Privacy & Policy</h2>
-                    <h2 class="ec-title">Privacy & Policy</h2>
+                    <h2 class="ec-bg-title">Privacy Policy</h2>
+                    <h2 class="ec-title">Privacy Policy</h2>
                     <p class="sub-title mb-3">Protecting your privacy under the UK GDPR</p>
                 </div>
             </div>

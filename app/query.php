@@ -18,6 +18,7 @@ if (!empty($_SESSION['user_email'])) {
 }
 // Get all products 
 $allproducts = $model->getRows("products", [
+    'where' => [ 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
@@ -25,7 +26,7 @@ $allproducts = $model->getRows("products", [
 ]);
 // Get products where section_id = 1
 $products_in_section_1 = $model->getRows("products", [
-    'where' => ["section_id" => 1],
+    'where' => ["section_id" => 1, 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
@@ -34,7 +35,7 @@ $products_in_section_1 = $model->getRows("products", [
 
 // Get products in category = Nails Only
 $products_in_salon_nail = $model->getRows("products", [
-    'where' => ["category_id" => 1],
+    'where' => ["category_id" => 1, 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
@@ -42,7 +43,7 @@ $products_in_salon_nail = $model->getRows("products", [
 ]);
 // Get products in category = Facials Only
 $products_in_salon_facial = $model->getRows("products", [
-    'where' => ["category_id" => 2],
+    'where' => ["category_id" => 2, 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'
@@ -50,7 +51,7 @@ $products_in_salon_facial = $model->getRows("products", [
 ]);
 // Get products in category = Hair Only
 $products_in_salon_hair = $model->getRows("products", [
-    'where' => ["category_id" => 3],
+    'where' => ["category_id" => 3, 'status >' => 'Active'],
     "order_by" => "product_tbl_record_time DESC", // optional ordering
     'left_join' => [
         'categories' => ' on products.category_id = categories.categoryTbl_id'

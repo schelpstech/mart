@@ -185,8 +185,20 @@ include './inc/head.php';
                                         <label><input type="radio" name="delivery" /> Paid Delivery - Orders below £49.99</label><br>
                                         <label><input type="radio" name="delivery" /> Free Delivery - Orders over £50</label>
                                     </div>
+
+                                    <hr>
+
+                                    <div class="ec-checkout-links" style="margin-top: 10px;">
+                                        <p><strong>Delivery & Policies:</strong></p>
+                                        <ul style="padding-left: 18px; margin-top: 5px;">
+                                            <li><a href="delivery-policy.php"><strong>Delivery Policy</strong></a></li>
+                                            <li><a href="return-policy.php"><strong>Return & Refund Policy</strong></a></li>
+                                            <li><a href="privacy-policy.php"><strong>Privacy Policy</strong></a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
+
                             <!-- Sidebar Summary Block -->
                         </div>
                         <div class="ec-sidebar-wrap ec-checkout-pay-wrap">
