@@ -6,7 +6,7 @@ $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 
 // ✅ Fetch randomized products with categories joined
 $allproducts = $model->getRows("products", [
-    'where' => ['status >' => 'Active'],
+    'where' => ['status' => 'Active'],
     "order_by" => "RAND()",  // 👈 randomize product order
     "limit" => $limit,
     "offset" => $offset,

@@ -31,7 +31,7 @@
                                         // Fetch products for this category
                                         $products = $model->getRows('products', [
                                             'where' => ['category_id' => $catId, 
-                                            'status >' => 'Active'
+                                            'status' => 'Active'
                                             ]
                                         ]);
 
