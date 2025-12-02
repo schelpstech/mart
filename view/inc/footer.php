@@ -99,10 +99,10 @@
                              <h4 class="ec-footer-heading text-white">Follow Us</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-                                    <li class="ec-footer-link"><a href="https://www.instagram.com/queenzylooksuk" target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a>@queenzylooksuk</li>
-                                    <li class="ec-footer-link"><a href="https://www.tiktok.com/@queenzylooks_uk" target="_blank"><i class="ecicon eci-twitter-square" aria-hidden="true"></i></a>@queenzylooks_uk</li>
-                                    <li class="ec-footer-link"><a href="https://web.facebook.com/queenzylooks" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a>@queenzylooks</li>
-                                    <li class="ec-footer-link"><a href="https://www.youtube.com/@queenzylooks" target="_blank"><i class="ecicon eci-youtube-square" aria-hidden="true"></i></a>@queenzylooks</li>
+                                    <li class="ec-footer-link"><a href="https://www.instagram.com/queenzylooksuk?igsh=MXEzaTc1NDJxcmJ3ag%3D%3D&utm_source=qr " target="_blank"><i class="ecicon eci-instagram" aria-hidden="true"></i></a>@queenzylooksuk</li>
+                                    <li class="ec-footer-link"><a href="https://www.tiktok.com/@queenzylooks_uk?_t=ZG-8stXpbaSAvh&_r=1" target="_blank"><i class="ecicon eci-twitter-square" aria-hidden="true"></i></a>@queenzylooks_uk</li>
+                                    <li class="ec-footer-link"><a href="https://www.facebook.com/share/15i61ckgUZ/?mibextid=wwXIfr" target="_blank"><i class="ecicon eci-facebook-square" aria-hidden="true"></i></a>@queenzylooks</li>
+                                    <li class="ec-footer-link"><a href="https://youtube.com/@queenzylooks?si=z6gqW2Q3Hz5jSvX3" target="_blank"><i class="ecicon eci-youtube-square" aria-hidden="true"></i></a>@queenzylooks</li>
                                 </ul>
                             </div>
                         </div>

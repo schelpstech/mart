@@ -38,7 +38,7 @@ include './inc/mainhead.php';
                                         <h1 class="ec-slide-title">Salon Services</h1>
                                         <div class="ec-slide-desc">
                                             <p>Hair, Nails & More from <b>£15</b>.00</p>
-                                            <a href="./shop.php" class="btn btn-lg btn-primary">Book Appointment <i
+                                            <a href="https://queenzystores.com/view/booking.php" class="btn btn-lg btn-primary">Book Appointment <i
                                                     class="ecicon eci-angle-double-right" aria-hidden="true"></i></a>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@ include './inc/mainhead.php';
                                         <h1 class="ec-slide-title">Queenzy Fashion</h1>
                                         <div class="ec-slide-desc">
                                             <p>Custom Outfits from <b>£25</b>.00</p>
-                                            <a href="./shop.php" class="btn btn-lg btn-primary">Shop Now <i
+                                            <a href="https://queenzystores.com/view/viewcategory.php?id=10" class="btn btn-lg btn-primary">Shop Now <i
                                                     class="ecicon eci-angle-double-right" aria-hidden="true"></i></a>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@ include './inc/mainhead.php';
                                         <h1 class="ec-slide-title">Makeup & Haircare</h1>
                                         <div class="ec-slide-desc">
                                             <p>Top Brands from <b>£10</b>.00</p>
-                                            <a href="./shop.php" class="btn btn-lg btn-primary">Explore Products <i
+                                            <a href="https://queenzystores.com/view/viewcategory.php?id=15" class="btn btn-lg btn-primary">Explore Products <i
                                                     class="ecicon eci-angle-double-right" aria-hidden="true"></i></a>
                                         </div>
                                     </div>
@@ -95,7 +95,7 @@ include './inc/mainhead.php';
                                         <h1 class="ec-slide-title">Groceries</h1>
                                         <div class="ec-slide-desc">
                                             <p>Daily Needs from <b>£5</b>.00</p>
-                                            <a href="./shop.php" class="btn btn-lg btn-primary">Start Shopping <i
+                                            <a href="https://queenzystores.com/view/viewcategory.php?id=1" class="btn btn-lg btn-primary">Start Shopping <i
                                                     class="ecicon eci-angle-double-right" aria-hidden="true"></i></a>
                                         </div>
                                     </div>

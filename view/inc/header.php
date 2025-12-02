@@ -154,9 +154,9 @@
                 <!-- Ec Header Search Start -->
                 <div class="col">
                     <div class="header-search">
-                        <form class="ec-btn-group-form" action="#">
-                            <input class="form-control" placeholder="Enter Your Product Name..." type="text">
-                            <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
+                        <form class="ec-btn-group-form" action="search.php" method="get">
+                            <input class="form-control" name="q" placeholder="Enter Your Product Name..." type="text">
+                                <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
                         </form>
                     </div>
                 </div>
