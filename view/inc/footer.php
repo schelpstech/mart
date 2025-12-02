@@ -146,7 +146,7 @@
                             <div class="ec-copy">
                                 &copy; <span id="copyright_year"></span> <a class="site-name text-white" href="/">Queenzy Stores</a>.
                                 All rights reserved. <br>
-                                Registered in England & Wales, Company No. 12345678.
+                                Registered in England & Wales, Company No. SC756353.
                             </div>
                         </div>
                     </div>
@@ -221,11 +221,11 @@
         </div>
         <div class="cc-body">
             <p><b>Hey there &#128515;</b></p>
-            <p>Need help ? just give me a call.</p>
+            <p>Need help ? Send us a chat.</p>
         </div>
         <div class="cc-footer">
-            <a href="tel:+447767918847" class="cc-call-button">
-                <span>Call me</span>
+            <a href="https://wa.me/+447767918847" class="cc-call-button">
+                <span>Chat us</span>
                 <svg width="13px" height="10px" viewBox="0 0 13 10">
                     <path d="M1,5 L11,5"></path>
                     <polyline points="8 1 12 5 8 9"></polyline>
@@ -233,8 +233,8 @@
             </a>
         </div>
         <div class="cc-footer">
-            <a href="tel:+447368400960" class="cc-call-button">
-                <span>Call me</span>
+            <a href="https://wa.me/+447368400960" class="cc-call-button">
+                <span>Chat us</span>
                 <svg width="13px" height="10px" viewBox="0 0 13 10">
                     <path d="M1,5 L11,5"></path>
                     <polyline points="8 1 12 5 8 9"></polyline>
