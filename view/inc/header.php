@@ -240,7 +240,7 @@
             <div class="ec-menu-content">
 
                 <ul>
-                    <li><a href="index.php">HOME</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <?php
                     // Fetch all sections (e.g., Fashion Store, African Store, Beauty & Hair Store, etc.)
                     $sections = $model->getRows("sections", [
@@ -281,8 +281,8 @@
                         }
                     }
                     ?>
-                    <li><a href="shop.php" style="color: white;">Shop</a></li>
-                    <li><a href="booking.php" style="color: white;">Booking</a></li>
+                    <li><a href="shop.php">Shop</a></li>
+                    <li><a href="booking.php" >Booking</a></li>
                 </ul>
             </div>
 
