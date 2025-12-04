@@ -448,7 +448,7 @@ include './inc/mainhead.php';
                                 </div>
                                 <div class="ec-service-desc">
                                     <h2>Worldwide Delivery</h2>
-                                    <p>For Order Over $100</p>
+                                    <p>For Order Over £100</p>
                                 </div>
                             </div>
                         </div>
@@ -492,7 +492,7 @@ include './inc/mainhead.php';
                                 </div>
                                 <div class="ec-service-desc">
                                     <h2>30% money back</h2>
-                                    <p>For Order Over $100</p>
+                                    <p>For Order Over £100</p>
                                 </div>
                             </div>
                         </div>
