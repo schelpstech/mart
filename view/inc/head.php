@@ -33,12 +33,13 @@ include '../app/query.php';
    <link rel="stylesheet" href="assets/css/plugins/owl.carousel.min.css" />
    <link rel="stylesheet" href="assets/css/plugins/owl.theme.default.min.css" />
    <link rel="stylesheet" href="assets/css/plugins/bootstrap.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
    <!-- Main Style -->
    <link rel="stylesheet" href="assets/css/demo9.css" />
-        <!-- Main Style -->
-     <link rel="stylesheet" href="assets/css/style.css" />
-     <link rel="stylesheet" href="assets/css/responsive.css" />
+   <!-- Main Style -->
+   <link rel="stylesheet" href="assets/css/style.css" />
+   <link rel="stylesheet" href="assets/css/responsive.css" />
    <!-- Background css -->
    <link rel="stylesheet" id="bg-switcher-css" href="assets/css/backgrounds/bg-4.css">
 

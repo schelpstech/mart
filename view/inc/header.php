@@ -10,9 +10,13 @@
                         <span class="social-text text-upper">Follow us on:</span>
                         <ul class="mb-0">
                             <li class="list-inline-item"><a class="hdr-facebook" href="https://www.facebook.com/share/15i61ckgUZ/?mibextid=wwXIfr"><i class="ecicon eci-facebook"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzylooks_uk?_t=ZG-8stXpbaSAvh&_r=1"><i class="ecicon eci-twitter"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzylooksuk?igsh=MXEzaTc1NDJxcmJ3ag%3D%3D&utm_source=qr"><i class="ecicon eci-instagram"></i></a></li>
-                            <li class="list-inline-item"><a class="hdr-youtube" href="https://youtube.com/@queenzylooks?si=z6gqW2Q3Hz5jSvX3"><i class="ecicon eci-youtube"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-twitter" href="https://www.tiktok.com/@queenzystores_uk"> <span class="ec-svg-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M12.004 2c.636 0 .63.002.63.002.127 1.528.78 3.14 2.18 4.54 1.4 1.4 3.02 2.053 4.536 2.18.002.002.002.632.002.632v3.073s-1.9.06-3.745-.59c-1.24-.434-2.274-1.015-3.004-1.656v6.964c0 3.48-2.826 6.305-6.305 6.305S0 20.624 0 17.144s2.826-6.305 6.305-6.305c.482 0 .948.056 1.398.155v3.406a2.9 2.9 0 0 0-1.398-.354 3.098 3.098 0 1 0 3.098 3.098V2h1.601z" />
+                                        </svg>
+                                    </span></a></li>
+                            <li class="list-inline-item"><a class="hdr-instagram" href="https://www.instagram.com/queenzystoresuk/?igsh=MXEzaTc1NDJxcmJ3ag%3D%3D&utm_source=qr#"><i class="ecicon eci-instagram"></i></a></li>
+                            <li class="list-inline-item"><a class="hdr-youtube" href="https://www.youtube.com/@queenzystores"><i class="ecicon eci-youtube"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -25,7 +29,7 @@
                 <!-- Header Top Message Start -->
                 <div class="col text-center header-top-center">
                     <div class="header-top-message text-upper">
-                        <span>Free Shipping</span>for Single Order above - £50
+                        <span>Free Shipping</span>for Single Order above - £100
                     </div>
                 </div>
                 <!-- Header Top Message End -->
@@ -156,7 +160,7 @@
                     <div class="header-search">
                         <form class="ec-btn-group-form" action="search.php" method="get">
                             <input class="form-control" name="q" placeholder="Enter Your Product Name..." type="text">
-                                <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
+                            <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
                         </form>
                     </div>
                 </div>
@@ -282,7 +286,7 @@
                     }
                     ?>
                     <li><a href="shop.php">Shop</a></li>
-                    <li><a href="booking.php" >Booking</a></li>
+                    <li><a href="booking.php">Booking</a></li>
                 </ul>
             </div>
 
