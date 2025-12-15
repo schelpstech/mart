@@ -491,8 +491,8 @@ include './inc/mainhead.php';
                                     <i class="fi fi-ts-donate"></i>
                                 </div>
                                 <div class="ec-service-desc">
-                                    <h2>30% money back</h2>
-                                    <p>For Order Over £100</p>
+                                    <h2>Get up to 30% discount</h2>
+                                    <p>on bulk orders</p>
                                 </div>
                             </div>
                         </div>
