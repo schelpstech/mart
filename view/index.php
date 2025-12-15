@@ -269,7 +269,7 @@ include './inc/mainhead.php';
                                                 // Get all products in this section
                                                 $products = $model->getRows("products", [
                                                     "where" => ["section_id" => $sectionId,
-                                                        'products.status' => 'Active'
+                                                        'status' => 'Active'
                                                     ],
                                                     'left_join' => [
                                                         'categories' => ' on products.category_id = categories.categoryTbl_id',
@@ -320,7 +320,7 @@ include './inc/mainhead.php';
                                                         <?php
                                                         $catProducts = $model->getRows("products", [
                                                             "where" => ["category_id" => $catId,
-                                                                'products.status' => 'Active'
+                                                                'status' => 'Active'
                                                                 ],
                                                             "order_by" => "product_tbl_record_time DESC",
                                                             "limit" => 8

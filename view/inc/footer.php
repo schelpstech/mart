@@ -448,6 +448,15 @@
         fill: currentColor;
     }
 </style>
+
+<style>
+/* Optional: Change floating button color */
+.cc-button.cc-right-bottom {
+    background-color: #28a745;
+    color: #fff;
+}
+</style>
+
 <!-- Theme Custom Cursors -->
 <div class="ec-cursor"></div>
 <div class="ec-cursor-2"></div>
