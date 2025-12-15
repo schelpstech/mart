@@ -268,7 +268,9 @@ include './inc/mainhead.php';
                                                 <?php
                                                 // Get all products in this section
                                                 $products = $model->getRows("products", [
-                                                    "where" => ["section_id" => $sectionId],
+                                                    "where" => ["section_id" => $sectionId,
+                                                        'products.status' => 'Active'
+                                                    ],
                                                     'left_join' => [
                                                         'categories' => ' on products.category_id = categories.categoryTbl_id',
                                                         'sections' => ' on categories.section_id = sections.id'
@@ -317,7 +319,9 @@ include './inc/mainhead.php';
                                                     <div class="row">
                                                         <?php
                                                         $catProducts = $model->getRows("products", [
-                                                            "where" => ["category_id" => $catId],
+                                                            "where" => ["category_id" => $catId,
+                                                                'products.status' => 'Active'
+                                                                ],
                                                             "order_by" => "product_tbl_record_time DESC",
                                                             "limit" => 8
                                                         ]);
