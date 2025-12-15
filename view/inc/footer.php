@@ -51,7 +51,7 @@
                                             </li>
                                             <li class="ec-footer-link ec-foo-call">
                                                 <span><i class="fi-rr-phone-call"></i></span>
-                                                <a href="tel:+4401698640067" class="text-white">+44 01698640067</a>
+                                                <a href="tel:+447767918847" class="text-white">+44 7767918847</a>
                                             </li>
                                             <li class="ec-footer-link ec-foo-call">
                                                 <span><i class="fi-rr-phone-call"></i></span>
@@ -59,7 +59,7 @@
                                             </li>
                                             <li class="ec-footer-link ec-foo-mail">
                                                 <span><i class="fi fi-rr-envelope"></i></span>
-                                                <a href="mailto:info@queenzystore.com" class="text-white">info@queenzystore.com</a>
+                                                <a href="mailto:info@queenzystores.com" class="text-white">info@queenzystores.com</a>
                                             </li>
                                         </ul>
                                     </div>
