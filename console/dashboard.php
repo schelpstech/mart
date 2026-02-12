@@ -23,10 +23,14 @@ include './inc/header.php';
 		// Get dashboard stats
 		$totalUsers = $model->countRows("users_mart");
 		$totalOrders = $model->countRows("orders_mart");
-		$totalRevenue =  $model->getRows("orders_mart", [
-			"where" => ["payment_status" => "paid"],
-			"return_type" => "sum"
+		$totalRevenueData = $model->getRows("orders_mart", [
+			"select" => "SUM(total_amount) AS total_revenue",
+			"where"  => ["payment_status" => "paid"],
+			"return_type" => "single"
 		]);
+
+		$totalRevenue = $totalRevenueData['total_revenue'] ?? 0;
+
 		$todaySignups = $model->countRows("users_mart", "DATE(created_at) = CURDATE()");
 		?>
 		<div class="row">
@@ -222,7 +226,7 @@ include './inc/header.php';
 								<?php endif; ?>
 							</tbody>
 
-							
+
 						</table>
 
 					</div>
@@ -310,11 +314,7 @@ include './inc/header.php';
 														aria-expanded="false" data-display="static"></a>
 													<ul class="dropdown-menu dropdown-menu-right">
 														<li class="dropdown-item">
-															<a href="order-detail.php?id=<?= $order['order_tbl_id']; ?>">View</a>
-														</li>
-														<li class="dropdown-item">
-															<a href="order-delete.php?id=<?= $order['order_tbl_id']; ?>"
-																onclick="return confirm('Are you sure you want to remove this order?');">Remove</a>
+															<a href="order-details.php?id=<?= $order['order_tbl_id']; ?>">View</a>
 														</li>
 													</ul>
 												</div>
