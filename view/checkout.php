@@ -81,7 +81,7 @@ include './inc/head.php';
                                 </div>
                                 <?php
                                 $subtotal = 0;
-                                $delivery = 5.00; // Default delivery cost
+                                $delivery = 10.00; // Default delivery cost
                                 $button = '
                                         <div class="ec-bg-swipe">
                                             <button class="ec-btn-bg-swipe">
@@ -117,10 +117,10 @@ include './inc/head.php';
 
                                     // Delivery: 0 for services-only, normal for product orders
                                     if ($hasProducts && !$hasServices) {
-                                        $delivery = ($subtotal >= 50) ? 0 : 5.00;
+                                        $delivery = ($subtotal >= 99) ? 0 : 10.00;
                                     } elseif ($hasProducts && $hasServices) {
                                         // Mixed order: apply delivery for product portion only
-                                        $delivery = ($productSubtotal >= 50) ? 0 : 5.00;
+                                        $delivery = ($productSubtotal >= 99) ? 0 : 10.00;
                                     } else {
                                         // Services only — no delivery
                                         $delivery = 0;
@@ -182,8 +182,8 @@ include './inc/head.php';
                                 <div class="ec-sb-block-content">
                                     <div class="ec-checkout-del">
                                         <label><input type="radio" name="delivery" checked /> Standard Delivery (2-4 working days)</label><br>
-                                        <label><input type="radio" name="delivery" /> Paid Delivery - Orders below £49.99</label><br>
-                                        <label><input type="radio" name="delivery" /> Free Delivery - Orders over £50</label>
+                                        <label><input type="radio" name="delivery" /> Paid Delivery - Orders below £99</label><br>
+                                        <label><input type="radio" name="delivery" /> Free Delivery - Orders over £100</label>
                                     </div>
 
                                     <hr>

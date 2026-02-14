@@ -59,6 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
             }
 
+            if($total <= 0) {
+                die("Invalid order total.");
+            }elseif ($total < 100) {
+                $total  = $total +10; // Add £10 delivery fee for orders under £20
+            }
+
 
             // Insert order into DB (status pending until webhook confirms)
             $orderData = [
