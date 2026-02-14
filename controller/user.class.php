@@ -84,13 +84,13 @@ class User
             $mail = new PHPMailer(true);
 
             // SMTP Settings
-             $mail->isSMTP();
-        $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'noreply@queenzystores.com'; 
-        $mail->Password   = '&YhzGPLtgtiP'; 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; 
-        $mail->Port       = 465;
+            $mail->isSMTP();
+            $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@queenzystores.com';
+            $mail->Password   = '&YhzGPLtgtiP';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
 
             $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
             $mail->addAddress($email);
@@ -295,31 +295,358 @@ class User
         }
     }
 
-public function getUserProfile($userId)
-{
-    // Step 1: Get base user info (email, phone, etc.)
-    $user = $this->model->getRows("users_mart", [
-        "where" => ["user_id" => $userId],
-        "return_type" => "single"
-    ]);
+    public function getUserProfile($userId)
+    {
+        // Step 1: Get base user info (email, phone, etc.)
+        $user = $this->model->getRows("users_mart", [
+            "where" => ["user_id" => $userId],
+            "return_type" => "single"
+        ]);
 
-    if (!$user) {
-        return null; // user not found
+        if (!$user) {
+            return null; // user not found
+        }
+
+        // Step 2: Check if profile exists
+        $profile = $this->model->getRows("user_profiles", [
+            "where" => ["user_id" => $userId],
+            "return_type" => "single"
+        ]);
+
+        // Step 3: Merge results
+        if ($profile) {
+            return array_merge($user, $profile);
+        }
+
+        // If no profile, return just users_mart fields
+        return $user;
     }
 
-    // Step 2: Check if profile exists
-    $profile = $this->model->getRows("user_profiles", [
-        "where" => ["user_id" => $userId],
-        "return_type" => "single"
-    ]);
 
-    // Step 3: Merge results
-    if ($profile) {
-        return array_merge($user, $profile);
+    public function sendOrderConfirmationEmail($orderId)
+    {
+        try {
+
+            // 1. Fetch Order
+            $order = $this->db->getRows("orders_mart", [
+                "where" => ["order_tbl_id" => $orderId],
+                "return_type" => "single"
+            ]);
+
+            if (!$order) {
+                error_log("Order not found: {$orderId}");
+                return false;
+            }
+            $orderReference = ($order['order_reference'] ?? "N/A");
+            // 3. Fetch Order Items
+            $orderItems = $this->db->getRows("order_items_mart", [
+                "where" => ["order_item_id" => $orderId]
+            ]);
+
+            if (!$orderItems) {
+                error_log("No items found for order: {$orderId}");
+                return false;
+            }
+
+            // 4. Build Items Table
+            $itemsHtml = "";
+            $grandTotal = 0;
+
+            foreach ($orderItems as $item) {
+
+                $product = $this->db->getRows("products", [
+                    "where" => ["product_id" => $item['product_id']],
+                    "return_type" => "single"
+                ]);
+
+                $productName = $product ? $product['product_name'] : "Product";
+                $quantity = $item['quantity'];
+                $price = $item['price'];
+                $total = $quantity * $price;
+
+                $grandTotal += $total;
+
+                $itemsHtml .= "
+                <tr>
+                    <td>{$productName}</td>
+                    <td>{$quantity}</td>
+                    <td>₦" . number_format($price, 2) . "</td>
+                    <td>₦" . number_format($total, 2) . "</td>
+                </tr>
+            ";
+            }
+
+            // 5. Email HTML Template
+            $emailBody = "
+        <div style='font-family: Arial, sans-serif;'>
+            <h2>Thank you for your order!</h2>
+            <p>Hi {$order['firstname']},</p>
+            <p>Your order has been successfully placed.</p>
+
+            <h3>Order Details</h3>
+            <table width='100%' border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse;'>
+                <thead>
+                    <tr style='background:#f2f2f2;'>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$itemsHtml}
+                </tbody>
+            </table>
+
+            <h3 style='margin-top:20px;'>Grand Total: £" . number_format($grandTotal, 2) . "</h3>
+
+            <p>We will notify you once your order is shipped.</p>
+            <p>Thank you for shopping with us.</p>
+
+            <br>
+            <strong>Queenzy Stores</strong>
+        </div>
+        ";
+
+            // 6. Send Mail
+            $mail = new PHPMailer(true);
+
+            $mail->isSMTP();
+            $mail->Host       = 'queenzystores.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@queenzystores.com';
+            $mail->Password   = '&YhzGPLtgtiP';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+
+            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $mail->addAddress($order['email']);
+
+            $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = "Order Confirmation - #" . $orderReference;
+            $mail->Body    = $emailBody;
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Order confirmation email error: " . $e->getMessage());
+            return false;
+        }
     }
 
-    // If no profile, return just users_mart fields
-    return $user;
-}
+    public function notifyAdminOfNewOrder($orderId)
+    {
+        try {
 
+            // Fetch Order
+            $order = $this->db->getRows("orders_mart", [
+                "where" => ["order_tbl_id" => $orderId],
+                "return_type" => "single"
+            ]);
+
+            if (!$order) {
+                error_log("Admin Notify: Order not found {$orderId}");
+                return false;
+            }
+            $orderReference = ($order['order_reference'] ?? "N/A");
+            // Fetch Order Items
+            $orderItems = $this->db->getRows("order_items_mart", [
+                "where" => ["order_item_id" => $orderId]
+            ]);
+
+            if (!$orderItems) {
+                error_log("Admin Notify: No items for {$orderId}");
+                return false;
+            }
+
+            $itemsHtml = "";
+            $grandTotal = 0;
+
+            foreach ($orderItems as $item) {
+
+                $product = $this->db->getRows("products", [
+                    "where" => ["product_id" => $item['product_id']],
+                    "return_type" => "single"
+                ]);
+
+                $productName = $product ? $product['product_name'] : "Product";
+                $quantity = $item['quantity'];
+                $price = $item['price'];
+                $total = $quantity * $price;
+
+                $grandTotal += $total;
+
+                $itemsHtml .= "
+                <tr>
+                    <td>{$productName}</td>
+                    <td>{$quantity}</td>
+                    <td>₦" . number_format($price, 2) . "</td>
+                    <td>₦" . number_format($total, 2) . "</td>
+                </tr>
+            ";
+            }
+
+            $emailBody = "
+        <div style='font-family: Arial, sans-serif;'>
+            <h2>New Order Received</h2>
+
+            <p><strong>Order ID:</strong> {$orderReference}</p>
+            <p><strong>Customer:</strong> {$order['firstname']} {$order['lastname']}</p>
+            <p><strong>Email:</strong> {$order['email']}</p>
+            <p><strong>Phone:</strong> {$order['phone']}</p>
+            <p><strong>Address:</strong> {$order['address']}</p>
+
+            <h3>Order Items</h3>
+
+            <table width='100%' border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse;'>
+                <thead>
+                    <tr style='background:#f2f2f2;'>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {$itemsHtml}
+                </tbody>
+            </table>
+
+            <h3>Total: ₦" . number_format($grandTotal, 2) . "</h3>
+
+            <p>Please process this order immediately.</p>
+        </div>
+        ";
+
+            $mail = new PHPMailer(true);
+
+            $mail->isSMTP();
+            $mail->Host       = 'queenzystores.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@queenzystores.com';
+            $mail->Password   = '&YhzGPLtgtiP';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+
+            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $mail->addAddress('orders@queenzystores.com');
+
+            $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = "NEW ORDER - #" . $orderReference;
+            $mail->Body    = $emailBody;
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Admin order notify error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function sendPaymentConfirmationEmail($orderId)
+    {
+        try {
+
+            $order = $this->db->getRows("orders_mart", [
+                "where" => ["order_tbl_id" => $orderId],
+                "return_type" => "single"
+            ]);
+
+            if (!$order) {
+                error_log("Payment Email: Order not found {$orderId}");
+                return false;
+            }
+
+            $status = strtolower(trim($order['payment_status']));
+            $orderReference = ($order['order_reference'] ?? "N/A");
+            // Default subject and message
+            $subject = "";
+            $messageContent = "";
+
+            if ($status === "paid") {
+
+                $subject = "Payment Successful - Order #" . $orderReference;
+
+                $messageContent = "
+                <h2 style='color:green;'>Payment Successful</h2>
+                <p>Hi {$order['firstname']},</p>
+                <p>We have successfully received your payment for Order #{$orderReference}.</p>
+                <p><strong>Order Reference:</strong> " . ($orderReference ?? 'N/A') . "</p>
+                <p>Your order is now being processed and will be shipped soon.</p>
+                <p>Thank you for shopping with Queenzy Stores.</p>
+            ";
+            } elseif ($status === "failed") {
+
+                $subject = "Payment Failed - Order #" . $orderReference;
+
+                $messageContent = "
+                <h2 style='color:red;'>Payment Failed</h2>
+                <p>Hi {$order['firstname']},</p>
+                <p>Unfortunately, your payment for Order #{$orderReference} was not successful.</p>
+                <p>Please log in to your account and retry the payment.</p>
+                <p>If you believe this is an error, kindly contact us at 
+                <strong>orders@queenzystores.com</strong>.</p>
+            ";
+            } elseif ($status === "pending") {
+
+                $subject = "Payment Pending - Order #" . $orderReference;
+
+                $messageContent = "
+                <h2 style='color:orange;'>Payment Pending</h2>
+                <p>Hi {$order['firstname']},</p>
+                <p>Your payment for Order #{$orderReference} is currently pending.</p>
+                <p>Please log in to your account to complete the payment.</p>
+                <p>If you have already made the payment, kindly wait a few minutes and check again.</p>
+                <p>If you notice any issue, contact 
+                <strong>orders@queenzystores.com</strong>.</p>
+            ";
+            } else {
+
+                $subject = "Order Payment Update - Order #" . $orderReference;
+
+                $messageContent = "
+                <h2>Payment Status Update</h2>
+                <p>Hi {$order['firstname']},</p>
+                <p>Your payment status for Order #{$orderReference} is currently: <strong>{$status}</strong>.</p>
+                <p>If this seems incorrect, please contact 
+                <strong>orders@queenzystores.com</strong>.</p>
+            ";
+            }
+
+            $emailBody = "
+        <div style='font-family: Arial, sans-serif;'>
+            {$messageContent}
+            <hr>
+            <p>You can log in to your account here:</p>
+            <p><a href='https://queenzystores.com'>
+            Login to Your Account</a></p>
+            <br>
+            <strong>Queenzy Stores Team</strong>
+        </div>
+        ";
+
+            $mail = new PHPMailer(true);
+
+            $mail->isSMTP();
+            $mail->Host       = 'queenzystores.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@queenzystores.com';
+            $mail->Password   = '&YhzGPLtgtiP';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
+
+            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $mail->addAddress($order['email']);
+
+            $mail->isHTML(true);
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = $subject;
+            $mail->Body    = $emailBody;
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("Payment confirmation email error: " . $e->getMessage());
+            return false;
+        }
+    }
 }

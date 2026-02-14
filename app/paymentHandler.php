@@ -16,6 +16,17 @@ if (isset($_GET['session_id']) && isset($_SESSION["orderId"])) {
             ['payment_status' => 'paid', 'session_ref' => $sessionId],
             ['order_tbl_id' => $orderId]
         );
+
+        //Send confirmation email to user
+        $user->sendOrderConfirmationEmail($orderId);
+
+        //send confirmation email to admin
+        $user->notifyAdminOfNewOrder($orderId);
+
+        //send payment confirmation email to user
+        $user->sendPaymentConfirmationEmail($orderId);
+
+        //Set flash message and redirect to success page
         $utility->setFlash('success', "Payment Successful for Order #{$orderId}");
         header('Location: ../view/ordersuccess.php');
     } elseif (isset($session['payment_status']) && $session['payment_status'] === 'pending') {
@@ -24,6 +35,8 @@ if (isset($_GET['session_id']) && isset($_SESSION["orderId"])) {
             ['payment_status' => 'pending', 'session_ref' => $sessionId],
             ['order_tbl_id' => $orderId]
         );
+                //send payment confirmation email to user
+        $user->sendPaymentConfirmationEmail($orderId);
         $utility->setFlash('error', "Payment Failed or Pending for Order #{$orderId}");
         header('Location: ../view/paymentfail.php');
     } else {
@@ -32,6 +45,8 @@ if (isset($_GET['session_id']) && isset($_SESSION["orderId"])) {
             ['payment_status' => 'failed', 'session_ref' => $sessionId],
             ['order_tbl_id' => $orderId]
         );
+                //send payment confirmation email to user
+        $user->sendPaymentConfirmationEmail($orderId);
         $utility->setFlash('error', "Payment Failed or Pending for Order #{$orderId}");
         header('Location: ../view/paymentfail.php');
     }
