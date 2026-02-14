@@ -17,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $county    = $_POST['county'];
             $postcode  = $_POST['postcode'];
             $notes     = $_POST['order-notes'];
-            $appointment_date     = $_POST['appointment_date'] ?? "";
-            $appointment_time     = $_POST['appointment_time'] ?? "";
+            $appointment_date     = $_POST['appointment_date'] ?? "2000-01-01update";
+            $appointment_time     = $_POST['appointment_time'] ?? "00:00:00";
 
             // Fetch both product and service cart items
             $productCartItems = $cart->getCartItems();
