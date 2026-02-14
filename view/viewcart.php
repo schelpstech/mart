@@ -152,11 +152,11 @@ include './inc/head.php';
                                         </div>
                                         <div>
                                             <span class="text-left">Delivery Charges</span>
-                                            <span class="text-right">£0.00</span>
+                                            <span class="text-right">£<?= $total < 100 ? 10.00 : 0.00 ?></span>
                                         </div>
                                         <div class="ec-cart-summary-total">
                                             <span class="text-left">Total Amount</span>
-                                            <span class="text-right cart-grandtotal">£<?= number_format($total, 2); ?></span>
+                                            <span class="text-right cart-grandtotal">£<?= number_format($total < 100 ? $total + 10.00 : $total, 2); ?></span>
                                         </div>
                                     </div>
                                 </div>

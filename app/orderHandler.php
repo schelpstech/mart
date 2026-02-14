@@ -59,12 +59,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
             }
 
-            if($total <= 0) {
-                die("Invalid order total.");
-            }elseif ($total < 100) {
-                $total  = $total +10; // Add £10 delivery fee for orders under £20
+            $deliveryFee = 0;
+
+            if ($total < 100) {
+                $deliveryFee = 10;
+                $calculatedTotal  = $total + 10; // Add £10 delivery fee for orders under £20
+            }else {
+                $calculatedTotal = $total; // No delivery fee for orders £20 and above
             }
 
+            // Add delivery as line item if applicable
+            if ($deliveryFee > 0) {
+
+                $lineItems[] = [
+                    "name"     => "Delivery Fee",
+                    "amount"   => intval($deliveryFee * 100),
+                    "currency" => "gbp",
+                    "quantity" => 1,
+                ];
+            }
 
             // Insert order into DB (status pending until webhook confirms)
             $orderData = [
@@ -80,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'county'       => $county,
                 'postcode'     => $postcode,
                 'order_notes'  => $notes,
-                'total_amount' => $total,
+                'total_amount' => $calculatedTotal,
                 'appointment_date' => $appointment_date,
                 'appointment_time' => $appointment_time,
                 'payment_status'       => 'pending'
@@ -106,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'subtotal'      => $item['price'] * $item['quantity']
                     ]);
                 }
-            } 
+            }
             if (!empty($serviceCartItems)) {
                 $cartItems = $serviceCartItems;
                 foreach ($cartItems as $item) {
@@ -120,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'subtotal'      => $item['price'] * $item['quantity']
                     ]);
                 }
-            } 
+            }
             // Clear cart
             $cart->clearCart();
             $_SESSION["orderId"] = $orderId;
