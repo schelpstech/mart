@@ -366,6 +366,7 @@ class User
 
                 $grandTotal += $total;
 
+
                 $itemsHtml .= "
                 <tr>
                     <td>{$productName}</td>
@@ -398,7 +399,7 @@ class User
                 </tbody>
             </table>
 
-            <h3 style='margin-top:20px;'>Grand Total: £" . number_format($grandTotal, 2) . "</h3>
+            <h3 style='margin-top:20px;'>Grand Total excluding delivery fee: £" . number_format($grandTotal, 2) . "</h3>
 
             <p>We will notify you once your order is shipped.</p>
             <p>Thank you for shopping with us.</p>
@@ -512,7 +513,7 @@ class User
                 </tbody>
             </table>
 
-            <h3>Total: ₦" . number_format($grandTotal, 2) . "</h3>
+            <h3>Total: £" . number_format($grandTotal, 2) . "</h3>
 
             <p>Please process this order immediately.</p>
         </div>
@@ -572,6 +573,7 @@ class User
                 <p>Hi {$order['firstname']},</p>
                 <p>We have successfully received your payment for Order #{$orderReference}.</p>
                 <p><strong>Order Reference:</strong> " . ($orderReference ?? 'N/A') . "</p>
+                <p><strong>Order Amount:</strong> £" . number_format($order['total_amount'], 2) . "</p>
                 <p>Your order is now being processed and will be shipped soon.</p>
                 <p>Thank you for shopping with Queenzy Stores.</p>
             ";
