@@ -98,6 +98,10 @@
 																		<a class="dropdown-item" href="editproduct.php?productSlug=<?= $utility->inputEncode($item['product_slug']) ?>">
 																			<i class="mdi mdi-pencil"></i> Edit
 																		</a>
+																		<!-- Duplicate -->
+																		<a class="dropdown-item" href="duplicateproduct.php?productSlug=<?= $utility->inputEncode($item['product_slug']) ?>">
+																			<i class="mdi mdi-content-copy"></i> Duplicate
+																		</a>
 
 																		<!-- Toggle Active/Inactive -->
 																		<form method="POST" action="../app/admin/productHandler.php"
