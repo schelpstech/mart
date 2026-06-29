@@ -8,13 +8,13 @@ $zones = qs_get_delivery_zones($model);
 $hasProducts = false;
 $hasServices = false;
 $requiresFulfilmentChoice = false;
-$defaultFulfilment = 'delivery';
+$selectedFulfilment = '';
 $totals = [
     'subtotal' => 0,
     'delivery_fee' => 0,
     'discount' => 0,
     'total' => 0,
-    'fulfilment_type' => 'delivery'
+    'fulfilment_type' => ''
 ];
 
 if ($isLoggedIn) {
@@ -22,8 +22,9 @@ if ($isLoggedIn) {
     $hasProducts = !empty($summary['product_items']);
     $hasServices = !empty($summary['service_items']);
     $requiresFulfilmentChoice = $hasProducts;
-    $defaultFulfilment = qs_normalize_fulfilment('', $settings, $hasProducts, $hasServices);
-    $totals = qs_calculate_order_totals($cart, $model, $defaultFulfilment);
+    $selectedFulfilment = $requiresFulfilmentChoice ? '' : qs_normalize_fulfilment('', $settings, $hasProducts, $hasServices);
+    $totalsFulfilment = $selectedFulfilment !== '' ? $selectedFulfilment : 'pickup';
+    $totals = qs_calculate_order_totals($cart, $model, $totalsFulfilment);
 }
 ?>
 
@@ -102,7 +103,7 @@ if ($isLoggedIn) {
                                             <span class="text-right" id="checkout-subtotal"><?= qs_money($totals['subtotal']) ?></span>
                                         </div>
                                         <div>
-                                            <span class="text-left">Delivery</span>
+                                            <span class="text-left">Delivery / Pickup</span>
                                             <span class="text-right" id="checkout-delivery"><?= qs_money($totals['delivery_fee']) ?></span>
                                         </div>
                                         <div>
@@ -163,22 +164,35 @@ if ($isLoggedIn) {
                                 </div>
                                 <div class="ec-sb-block-content">
                                     <?php if ($requiresFulfilmentChoice): ?>
-                                        <div class="ec-checkout-del">
+                                        <div class="fulfilment-choice-alert" id="fulfilment-choice-announcement" aria-live="polite">
+                                            <strong>Required before payment</strong>
+                                            <span id="fulfilment-selected-label">Choose delivery or pickup for the product items in your cart.</span>
+                                        </div>
+                                        <div class="ec-checkout-del fulfilment-options" role="radiogroup" aria-describedby="fulfilment-choice-announcement fulfilment-error">
                                             <?php if (!empty($settings['delivery_enabled'])): ?>
-                                                <label>
+                                                <label class="fulfilment-option-card">
                                                     <input type="radio" name="fulfilment_type" value="delivery" form="checkoutForm"
-                                                        <?= $defaultFulfilment === 'delivery' ? 'checked' : ''; ?>>
-                                                    Delivery
-                                                </label><br>
+                                                        class="fulfilment-radio" required>
+                                                    <span class="fulfilment-option-indicator" aria-hidden="true"></span>
+                                                    <span class="fulfilment-option-copy">
+                                                        <strong>Delivery</strong>
+                                                        <small>Send product items to my delivery address. Delivery fee is calculated below.</small>
+                                                    </span>
+                                                </label>
                                             <?php endif; ?>
                                             <?php if (!empty($settings['pickup_enabled'])): ?>
-                                                <label>
+                                                <label class="fulfilment-option-card">
                                                     <input type="radio" name="fulfilment_type" value="pickup" form="checkoutForm"
-                                                        <?= $defaultFulfilment === 'pickup' ? 'checked' : ''; ?>>
-                                                    Pickup
+                                                        class="fulfilment-radio" required>
+                                                    <span class="fulfilment-option-indicator" aria-hidden="true"></span>
+                                                    <span class="fulfilment-option-copy">
+                                                        <strong>Pickup</strong>
+                                                        <small>Collect from our pickup address. No delivery fee will be charged.</small>
+                                                    </span>
                                                 </label>
                                             <?php endif; ?>
                                         </div>
+                                        <small id="fulfilment-error" class="fulfilment-error-message">Please select delivery or pickup before proceeding to payment.</small>
 
                                         <?php if (!empty($zones)): ?>
                                             <div class="form-group mt-3 delivery-zone-wrap">
@@ -194,7 +208,7 @@ if ($isLoggedIn) {
                                             </div>
                                         <?php endif; ?>
 
-                                        <div class="pickup-instructions mt-3" id="pickup-instructions" style="<?= $defaultFulfilment === 'pickup' ? '' : 'display:none;'; ?>">
+                                        <div class="pickup-instructions mt-3" id="pickup-instructions" style="display:none;">
                                             <p><strong>Pickup Address:</strong><br><?= htmlspecialchars($settings['pickup_address']); ?></p>
                                             <?php if (!empty($settings['pickup_instruction'])): ?>
                                                 <p><?= nl2br(htmlspecialchars($settings['pickup_instruction'])); ?></p>
@@ -271,7 +285,7 @@ if ($isLoggedIn) {
                                             $firstname = $lastname = $email = $phone = '';
                                             $address1 = $address2 = $city = $county = $postcode = '';
                                         }
-                                        $deliveryRequired = $defaultFulfilment === 'delivery' ? 'required' : '';
+                                        $deliveryRequired = $selectedFulfilment === 'delivery' ? 'required' : '';
                                         ?>
                                         <div class="ec-check-bill-form">
                                             <form id="checkoutForm" action="../app/orderHandler.php" method="post">

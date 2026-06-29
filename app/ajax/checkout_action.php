@@ -12,7 +12,12 @@ if ($action !== 'calculate_totals') {
 $fulfilment = $_POST['fulfilment_type'] ?? '';
 $zoneId = $_POST['delivery_zone_id'] ?? null;
 $couponCode = $_POST['coupon_code'] ?? '';
-$totals = qs_calculate_order_totals($cart, $model, $fulfilment, $zoneId, $couponCode);
+$summary = $cart->getCartSummary();
+$hasProducts = !empty($summary['product_items']);
+$validFulfilments = ['delivery', 'pickup'];
+$needsFulfilmentChoice = $hasProducts && !in_array(strtolower(trim((string)$fulfilment)), $validFulfilments, true);
+$totalsFulfilment = $needsFulfilmentChoice ? 'pickup' : $fulfilment;
+$totals = qs_calculate_order_totals($cart, $model, $totalsFulfilment, $zoneId, $couponCode);
 
 if (!$totals['coupon']['valid']) {
     echo json_encode([
@@ -28,8 +33,8 @@ if (!$totals['coupon']['valid']) {
 
 echo json_encode([
     'status' => 'success',
-    'msg' => $totals['coupon']['message'],
-    'fulfilment_type' => $totals['fulfilment_type'],
+    'msg' => $needsFulfilmentChoice ? 'Please choose delivery or pickup before payment.' : $totals['coupon']['message'],
+    'fulfilment_type' => $needsFulfilmentChoice ? '' : $totals['fulfilment_type'],
     'subtotal' => qs_money($totals['subtotal']),
     'delivery_fee' => qs_money($totals['delivery_fee']),
     'discount' => qs_money($totals['discount']),

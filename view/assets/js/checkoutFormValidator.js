@@ -7,11 +7,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const couponInput = document.getElementById("coupon_code");
     const couponButton = document.getElementById("apply-coupon");
     const couponMessage = document.getElementById("coupon-message");
+    const fulfilmentOptions = document.querySelector(".fulfilment-options");
+    const fulfilmentError = document.getElementById("fulfilment-error");
+    const fulfilmentSelectedLabel = document.getElementById("fulfilment-selected-label");
 
     function selectedFulfilment() {
         const checked = document.querySelector('input[name="fulfilment_type"]:checked');
         const hidden = document.querySelector('input[name="fulfilment_type"][type="hidden"]');
-        return checked ? checked.value : (hidden ? hidden.value : "delivery");
+        return checked ? checked.value : (hidden ? hidden.value : "");
+    }
+
+    function displayFulfilmentLabel(value) {
+        return value === "delivery" ? "Delivery" : (value === "pickup" ? "Pickup" : "");
+    }
+
+    function updateFulfilmentAnnouncement(showError = false) {
+        const value = selectedFulfilment();
+
+        document.querySelectorAll(".fulfilment-option-card").forEach(function (card) {
+            const input = card.querySelector('input[name="fulfilment_type"]');
+            card.classList.toggle("is-selected", !!input && input.checked);
+        });
+
+        if (fulfilmentSelectedLabel) {
+            fulfilmentSelectedLabel.textContent = value
+                ? displayFulfilmentLabel(value) + " selected. You can now continue checkout."
+                : "Choose delivery or pickup for the product items in your cart.";
+        }
+
+        if (fulfilmentError) {
+            fulfilmentError.style.display = showError && !value ? "block" : "none";
+        }
     }
 
     function setAddressRequirements() {
@@ -37,10 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const zoneWrap = document.querySelector(".delivery-zone-wrap");
         if (zoneWrap) zoneWrap.style.display = isDelivery ? "" : "none";
+
+        updateFulfilmentAnnouncement();
     }
 
     function refreshTotals() {
         if (!window.jQuery) return;
+        const fulfilment = selectedFulfilment();
 
         $.ajax({
             url: "../app/ajax/checkout_action.php",
@@ -48,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
             dataType: "json",
             data: {
                 action: "calculate_totals",
-                fulfilment_type: selectedFulfilment(),
+                fulfilment_type: fulfilment || "pickup",
                 delivery_zone_id: deliveryZone ? deliveryZone.value : "",
                 coupon_code: couponInput ? couponInput.value : "",
             },
@@ -90,7 +119,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = form.email.value.trim();
         const phone = form.phone.value.trim();
         const consent = form.privacy_consent.checked;
-        const isDelivery = selectedFulfilment() === "delivery";
+        const fulfilment = selectedFulfilment();
+        const isDelivery = fulfilment === "delivery";
+
+        if (fulfilmentOptions && !fulfilment) {
+            valid = false;
+            messages.push("Please choose delivery or pickup before proceeding to payment.");
+            updateFulfilmentAnnouncement(true);
+        }
 
         if (firstname.length < 2) {
             valid = false;
@@ -141,8 +177,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!valid) {
             event.preventDefault();
             alert(messages.join("\n"));
+            if (fulfilmentOptions && !fulfilment) {
+                fulfilmentOptions.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
         }
     });
 
     setAddressRequirements();
+    updateFulfilmentAnnouncement();
 });

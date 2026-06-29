@@ -5,6 +5,7 @@ class Cart
     private $db;
     private $session_id;
     private $user_id;
+    private static $expiredCartCleanupRan = false;
 
     public function __construct($db, $user_id = null)
     {
@@ -118,9 +119,51 @@ class Cart
             return;
         }
 
+        $this->removeExpiredCartLines();
         $this->removeUnavailableCartLines($cart_id);
         $this->mergeDuplicateLineItems($cart_id, "cart_items", "cart_item_id", "product_id");
         $this->mergeDuplicateLineItems($cart_id, "service_cart_items", "service_cart_item_id", "service_id");
+    }
+
+    private function removeExpiredCartLines()
+    {
+        if (self::$expiredCartCleanupRan) {
+            return;
+        }
+
+        self::$expiredCartCleanupRan = true;
+
+        try {
+            $stmt = $this->db->prepare("DELETE FROM service_cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+            $stmt->execute();
+        } catch (Exception $e) {
+            try {
+                $stmt = $this->db->prepare("
+                    DELETE sct FROM service_cart_items sct
+                    INNER JOIN cart c ON sct.cart_id = c.cart_id
+                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                ");
+                $stmt->execute();
+            } catch (Exception $fallbackException) {
+                error_log("Expired service cart cleanup failed: " . $fallbackException->getMessage());
+            }
+        }
+
+        try {
+            $stmt = $this->db->prepare("DELETE FROM cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+            $stmt->execute();
+        } catch (Exception $e) {
+            try {
+                $stmt = $this->db->prepare("
+                    DELETE ci FROM cart_items ci
+                    INNER JOIN cart c ON ci.cart_id = c.cart_id
+                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                ");
+                $stmt->execute();
+            } catch (Exception $fallbackException) {
+                error_log("Expired product cart cleanup failed: " . $fallbackException->getMessage());
+            }
+        }
     }
 
     private function removeUnavailableCartLines($cart_id)

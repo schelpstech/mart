@@ -123,6 +123,106 @@
   min-height: 38px;
 }
 
+.fulfilment-choice-alert {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid #d7e5ff;
+  border-left: 4px solid #3478dc;
+  background: #f4f8ff;
+  color: #263a52;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.fulfilment-choice-alert strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #173b73;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.fulfilment-options {
+  display: grid;
+  gap: 12px;
+}
+
+.fulfilment-option-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  border: 2px solid #d8dde7;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #303642;
+  cursor: pointer;
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.fulfilment-option-card:hover,
+.fulfilment-option-card:focus-within {
+  border-color: #3478dc;
+  box-shadow: 0 8px 20px rgba(52, 120, 220, .12);
+}
+
+.fulfilment-option-card.is-selected {
+  border-color: #188754;
+  background: #f4fbf7;
+  box-shadow: 0 8px 20px rgba(24, 135, 84, .12);
+}
+
+.fulfilment-option-card .fulfilment-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fulfilment-option-indicator {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border: 2px solid #9ba6b6;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 5px #ffffff;
+}
+
+.fulfilment-radio:checked + .fulfilment-option-indicator {
+  border-color: #188754;
+  background: #188754;
+}
+
+.fulfilment-option-copy strong {
+  display: block;
+  color: #222831;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.fulfilment-option-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.fulfilment-error-message {
+  display: none;
+  margin-top: 10px;
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 @media only screen and (max-width: 767px) {
   body.cart_page {
     padding-bottom: 92px;

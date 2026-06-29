@@ -43,14 +43,14 @@ $couponCode = order_post('coupon_code');
 
 $settings = qs_get_delivery_settings($model);
 $summary = $cart->getCartSummary();
+$hasProducts = !empty($summary['product_items']);
+$hasServices = !empty($summary['service_items']);
 
 if (empty($summary['items'])) {
     $utility->setFlash("danger", "Your cart is empty.");
     header("Location: ../view/viewcart.php");
     exit;
 }
-
-$fulfilment = qs_normalize_fulfilment($fulfilment, $settings, !empty($summary['product_items']), !empty($summary['service_items']));
 
 $errors = [];
 if (strlen($firstname) < 2) $errors[] = "First name is required.";
@@ -59,29 +59,39 @@ if (!$email) $errors[] = "A valid email address is required.";
 if (!preg_match('/^\+44\s?\d{10}$/', $phone)) $errors[] = "A valid UK phone number is required.";
 if (empty($_POST['privacy_consent'])) $errors[] = "You must agree to the Privacy Policy.";
 
-if ($fulfilment === 'delivery') {
-    if (empty($settings['delivery_enabled'])) {
-        $errors[] = "Delivery is currently unavailable.";
-    }
-    if (strlen($address1) < 5) $errors[] = "Delivery address line 1 is required.";
-    if (strlen($city) < 2) $errors[] = "Delivery city is required.";
-    if (!preg_match('/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i', $postcode)) $errors[] = "A valid UK postcode is required for delivery.";
+$validFulfilments = ['delivery', 'pickup'];
+if ($hasProducts && !in_array($fulfilment, $validFulfilments, true)) {
+    $errors[] = "Please choose delivery or pickup before proceeding to payment.";
 } else {
-    if (empty($settings['pickup_enabled'])) {
-        $errors[] = "Pickup is currently unavailable.";
+    $fulfilment = qs_normalize_fulfilment($fulfilment, $settings, $hasProducts, $hasServices);
+
+    if ($fulfilment === 'delivery') {
+        if (empty($settings['delivery_enabled'])) {
+            $errors[] = "Delivery is currently unavailable.";
+        }
+        if (strlen($address1) < 5) $errors[] = "Delivery address line 1 is required.";
+        if (strlen($city) < 2) $errors[] = "Delivery city is required.";
+        if (!preg_match('/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i', $postcode)) $errors[] = "A valid UK postcode is required for delivery.";
+    } else {
+        if (empty($settings['pickup_enabled'])) {
+            $errors[] = "Pickup is currently unavailable.";
+        }
+        $address1 = $address2 = $city = $county = $postcode = '';
     }
-    $address1 = $address2 = $city = $county = $postcode = '';
 }
 
-if (!empty($summary['service_items'])) {
+if ($hasServices) {
     if (empty($appointmentDate) || empty($appointmentTime)) {
         $errors[] = "Appointment date and time are required for services.";
     }
 }
 
-$totals = qs_calculate_order_totals($cart, $model, $fulfilment, $deliveryZoneId, $couponCode);
-if (!$totals['coupon']['valid']) {
-    $errors[] = $totals['coupon']['message'];
+$totals = null;
+if (empty($errors)) {
+    $totals = qs_calculate_order_totals($cart, $model, $fulfilment, $deliveryZoneId, $couponCode);
+    if (!$totals['coupon']['valid']) {
+        $errors[] = $totals['coupon']['message'];
+    }
 }
 
 if (!empty($errors)) {
