@@ -1,37 +1,38 @@
 <?php
 header('Content-Type: application/json');
-require_once '../query.php'; // adjust path
+require_once '../query.php';
 
-$cartItems = $cart->getCartItems();
-$subTotal = 0;
+$summary = $cart->getCartSummary();
 $output = '';
 
-if ($cartItems) {
-    foreach ($cartItems as $item) {
-        $lineTotal = $item['price'] * $item['quantity'];
-        $subTotal += $lineTotal;
+if (!empty($summary['items'])) {
+    foreach ($summary['items'] as $item) {
+        $name = htmlspecialchars($item['name'] ?? 'Item', ENT_QUOTES, 'UTF-8');
+        $image = htmlspecialchars($item['image'] ?? '../view/assets/images/product/main/default.png', ENT_QUOTES, 'UTF-8');
+        $url = htmlspecialchars($item['url'] ?? 'viewcart.php', ENT_QUOTES, 'UTF-8');
+        $type = htmlspecialchars($item['item_type'] ?? 'product', ENT_QUOTES, 'UTF-8');
+        $itemId = (int)($item['item_id'] ?? $item['cart_item_id']);
+        $quantity = (int)($item['quantity'] ?? 1);
 
         $output .= '
         <li>
-            <a href="product.php?id='.$item['cart_id'].'" class="sidecart_pro_img">
-                <img src="../view/assets/images/product/main/'.htmlspecialchars($item['image_main']).'" alt="'.htmlspecialchars($item['name']).'">
+            <a href="' . $url . '" class="sidecart_pro_img">
+                <img src="' . $image . '" alt="' . $name . '">
             </a>
             <div class="ec-pro-content">
-                <a href="product.php?id='.$item['cart_id'].'" class="cart_pro_title">'.htmlspecialchars($item['name']).'</a>
-                <span class="cart-price"><span>£'.number_format($item['price'],2).'</span> x '.$item['quantity'].'</span>
-                
-                <a href="javascript:void(0)" class="removed" data-cartitemid="'.$item['cart_item_id'].'">remove</a>
+                <a href="' . $url . '" class="cart_pro_title">' . $name . '</a>
+                <small class="cart-item-type">' . ucfirst($type) . '</small>
+                <span class="cart-price"><span>' . qs_money($item['price'] ?? 0) . '</span> x ' . $quantity . '</span>
+                <a href="javascript:void(0)" class="removed" data-cartitemid="' . $itemId . '" data-itemtype="' . $type . '">remove</a>
             </div>
         </li>';
     }
 }
 
-$vat =  0;
-$total = $subTotal + $vat;
-
 echo json_encode([
-    'html'      => $output,
-    'subTotal'  => '£'.number_format($subTotal,2),
-    'vat'       => '£'.number_format($vat,2),
-    'total'     => '£'.number_format($total,2)
+    'html' => $output ?: '<li><p class="emp-cart-msg">Your cart is empty!</p></li>',
+    'subTotal' => qs_money($summary['subtotal']),
+    'vat' => qs_money(0),
+    'total' => qs_money($summary['subtotal']),
+    'count' => $summary['count']
 ]);

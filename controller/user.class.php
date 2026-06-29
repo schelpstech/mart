@@ -14,6 +14,41 @@ class User
         $this->model = new Model($db_conn);
     }
 
+    private function env($key, $default = '')
+    {
+        return function_exists('env_value') ? env_value($key, $default) : $default;
+    }
+
+    private function envBool($key, $default = false)
+    {
+        return function_exists('env_bool') ? env_bool($key, $default) : $default;
+    }
+
+    private function configureMailer(PHPMailer $mail)
+    {
+        $mail->isSMTP();
+        $mail->Host       = $this->env('SMTP_HOST', 'queenzystores.com');
+        $mail->SMTPAuth   = $this->envBool('SMTP_AUTH', true);
+        $mail->Username   = $this->env('SMTP_USERNAME', 'noreply@queenzystores.com');
+        $mail->Password   = $this->env('SMTP_PASSWORD', '');
+        $mail->Port       = (int) $this->env('SMTP_PORT', 465);
+
+        $smtpSecure = strtolower((string) $this->env('SMTP_SECURE', 'ssl'));
+        $mail->SMTPSecure = $smtpSecure === 'tls'
+            ? PHPMailer::ENCRYPTION_STARTTLS
+            : ($smtpSecure === 'none' || $smtpSecure === 'false' ? false : PHPMailer::ENCRYPTION_SMTPS);
+
+        $mail->setFrom(
+            $this->env('MAIL_FROM_ADDRESS', 'noreply@queenzystores.com'),
+            $this->env('MAIL_FROM_NAME', 'Queenzy Stores')
+        );
+    }
+
+    private function adminOrderEmail()
+    {
+        return $this->env('ADMIN_ORDER_EMAIL', 'orders@queenzystores.com');
+    }
+
     /**
      * Check if email already exists
      */
@@ -82,17 +117,7 @@ class User
             $verifyLink = "https://queenzystores.com/app/verify.php?token=" . $user["verification_token"];
 
             $mail = new PHPMailer(true);
-
-            // SMTP Settings
-            $mail->isSMTP();
-            $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreply@queenzystores.com';
-            $mail->Password   = '&YhzGPLtgtiP';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
-
-            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $this->configureMailer($mail);
             $mail->addAddress($email);
 
             $mail->isHTML(true);
@@ -353,13 +378,8 @@ class User
             $grandTotal = 0;
 
             foreach ($orderItems as $item) {
-
-                $product = $this->db->getRows("products", [
-                    "where" => ["product_id" => $item['product_id']],
-                    "return_type" => "single"
-                ]);
-
-                $productName = $product ? $product['product_name'] : "Product";
+                $productName = htmlspecialchars($item['product_name'] ?? "Item", ENT_QUOTES, "UTF-8");
+                $itemType = ucfirst($item['orderType'] ?? "product");
                 $quantity = $item['quantity'];
                 $price = $item['price'];
                 $total = $quantity * $price;
@@ -370,12 +390,17 @@ class User
                 $itemsHtml .= "
                 <tr>
                     <td>{$productName}</td>
+                    <td>{$itemType}</td>
                     <td>{$quantity}</td>
-                    <td>₦" . number_format($price, 2) . "</td>
-                    <td>₦" . number_format($total, 2) . "</td>
+                    <td>£" . number_format($price, 2) . "</td>
+                    <td>£" . number_format($total, 2) . "</td>
                 </tr>
             ";
             }
+            $financials = qs_order_financials($order, $grandTotal);
+            $fulfilmentMessage = strtolower($order['fulfilment_type'] ?? 'delivery') === 'pickup'
+                ? 'We will notify you when your order is ready for pickup.'
+                : 'We will notify you once your order is shipped.';
 
             // 5. Email HTML Template
             $emailBody = "
@@ -388,7 +413,8 @@ class User
             <table width='100%' border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse;'>
                 <thead>
                     <tr style='background:#f2f2f2;'>
-                        <th>Product</th>
+                        <th>Item</th>
+                        <th>Type</th>
                         <th>Qty</th>
                         <th>Price</th>
                         <th>Total</th>
@@ -399,9 +425,12 @@ class User
                 </tbody>
             </table>
 
-            <h3 style='margin-top:20px;'>Grand Total excluding delivery fee: £" . number_format($grandTotal, 2) . "</h3>
+            <h3 style='margin-top:20px;'>Order Total: £" . number_format($financials['total'], 2) . "</h3>
+            <p><strong>Fulfilment:</strong> " . qs_fulfilment_label($order['fulfilment_type'] ?? 'delivery') . "</p>
+            <p><strong>Delivery Fee:</strong> £" . number_format($financials['delivery_fee'], 2) . "</p>
+            <p><strong>Discount:</strong> £" . number_format($financials['discount'], 2) . "</p>
 
-            <p>We will notify you once your order is shipped.</p>
+            <p>{$fulfilmentMessage}</p>
             <p>Thank you for shopping with us.</p>
 
             <br>
@@ -411,16 +440,7 @@ class User
 
             // 6. Send Mail
             $mail = new PHPMailer(true);
-
-            $mail->isSMTP();
-            $mail->Host       = 'queenzystores.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreply@queenzystores.com';
-            $mail->Password   = '&YhzGPLtgtiP';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
-
-            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $this->configureMailer($mail);
             $mail->addAddress($order['email']);
 
             $mail->isHTML(true);
@@ -464,13 +484,8 @@ class User
             $grandTotal = 0;
 
             foreach ($orderItems as $item) {
-
-                $product = $this->db->getRows("products", [
-                    "where" => ["product_id" => $item['product_id']],
-                    "return_type" => "single"
-                ]);
-
-                $productName = $product ? $product['product_name'] : "Product";
+                $productName = htmlspecialchars($item['product_name'] ?? "Item", ENT_QUOTES, "UTF-8");
+                $itemType = ucfirst($item['orderType'] ?? "product");
                 $quantity = $item['quantity'];
                 $price = $item['price'];
                 $total = $quantity * $price;
@@ -480,12 +495,15 @@ class User
                 $itemsHtml .= "
                 <tr>
                     <td>{$productName}</td>
+                    <td>{$itemType}</td>
                     <td>{$quantity}</td>
-                    <td>₦" . number_format($price, 2) . "</td>
-                    <td>₦" . number_format($total, 2) . "</td>
+                    <td>£" . number_format($price, 2) . "</td>
+                    <td>£" . number_format($total, 2) . "</td>
                 </tr>
             ";
             }
+            $financials = qs_order_financials($order, $grandTotal);
+            $address = trim(($order['address1'] ?? '') . ' ' . ($order['address2'] ?? '') . ' ' . ($order['city'] ?? '') . ' ' . ($order['postcode'] ?? ''));
 
             $emailBody = "
         <div style='font-family: Arial, sans-serif;'>
@@ -495,14 +513,16 @@ class User
             <p><strong>Customer:</strong> {$order['firstname']} {$order['lastname']}</p>
             <p><strong>Email:</strong> {$order['email']}</p>
             <p><strong>Phone:</strong> {$order['phone']}</p>
-            <p><strong>Address:</strong> {$order['address']}</p>
+            <p><strong>Fulfilment:</strong> " . qs_fulfilment_label($order['fulfilment_type'] ?? 'delivery') . "</p>
+            <p><strong>Address:</strong> {$address}</p>
 
             <h3>Order Items</h3>
 
             <table width='100%' border='1' cellspacing='0' cellpadding='8' style='border-collapse: collapse;'>
                 <thead>
                     <tr style='background:#f2f2f2;'>
-                        <th>Product</th>
+                        <th>Item</th>
+                        <th>Type</th>
                         <th>Qty</th>
                         <th>Price</th>
                         <th>Total</th>
@@ -513,24 +533,17 @@ class User
                 </tbody>
             </table>
 
-            <h3>Total: £" . number_format($grandTotal, 2) . "</h3>
+            <h3>Total: £" . number_format($financials['total'], 2) . "</h3>
+            <p><strong>Delivery Fee:</strong> £" . number_format($financials['delivery_fee'], 2) . "</p>
+            <p><strong>Discount:</strong> £" . number_format($financials['discount'], 2) . "</p>
 
             <p>Please process this order immediately.</p>
         </div>
         ";
 
             $mail = new PHPMailer(true);
-
-            $mail->isSMTP();
-            $mail->Host       = 'queenzystores.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreply@queenzystores.com';
-            $mail->Password   = '&YhzGPLtgtiP';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
-
-            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
-            $mail->addAddress('orders@queenzystores.com');
+            $this->configureMailer($mail);
+            $mail->addAddress($this->adminOrderEmail());
 
             $mail->isHTML(true);
             $mail->CharSet = 'UTF-8';
@@ -560,6 +573,10 @@ class User
 
             $status = strtolower(trim($order['payment_status']));
             $orderReference = ($order['order_reference'] ?? "N/A");
+            $fulfilmentLabel = qs_fulfilment_label($order['fulfilment_type'] ?? 'delivery');
+            $fulfilmentMessage = strtolower($order['fulfilment_type'] ?? 'delivery') === 'pickup'
+                ? 'We will notify you when your order is ready for pickup.'
+                : 'Your order is now being processed and will be shipped soon.';
             // Default subject and message
             $subject = "";
             $messageContent = "";
@@ -574,7 +591,8 @@ class User
                 <p>We have successfully received your payment for Order #{$orderReference}.</p>
                 <p><strong>Order Reference:</strong> " . ($orderReference ?? 'N/A') . "</p>
                 <p><strong>Order Amount:</strong> £" . number_format($order['total_amount'], 2) . "</p>
-                <p>Your order is now being processed and will be shipped soon.</p>
+                <p><strong>Fulfilment:</strong> {$fulfilmentLabel}</p>
+                <p>{$fulfilmentMessage}</p>
                 <p>Thank you for shopping with Queenzy Stores.</p>
             ";
             } elseif ($status === "failed") {
@@ -628,16 +646,7 @@ class User
         ";
 
             $mail = new PHPMailer(true);
-
-            $mail->isSMTP();
-            $mail->Host       = 'queenzystores.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreply@queenzystores.com';
-            $mail->Password   = '&YhzGPLtgtiP';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = 465;
-
-            $mail->setFrom('noreply@queenzystores.com', 'Queenzy Stores');
+            $this->configureMailer($mail);
             $mail->addAddress($order['email']);
 
             $mail->isHTML(true);

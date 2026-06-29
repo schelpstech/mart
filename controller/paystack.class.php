@@ -3,13 +3,21 @@ class PaystackPayment
 {
     private $secretKey;
 
-    public function __construct()
+    public function __construct($secretKey = null)
     {
-        $this->secretKey = 'sk_test_5cfd6d4ebaaa28e178ca697148bbee69e9d86e65'; // Replace with your Paystack secret key
+        if ($secretKey === null && function_exists('env_value')) {
+            $secretKey = env_value('PAYSTACK_SECRET_KEY', '');
+        }
+
+        $this->secretKey = (string) $secretKey;
     }
 
     public function initializePayment($email, $amount, $callbackUrl, $reference = null)
     {
+        if (trim($this->secretKey) === '') {
+            throw new Exception("Paystack secret key is not configured.");
+        }
+
         $url = "https://api.paystack.co/transaction/initialize";
     
         // Generate a unique reference if none is provided
@@ -53,6 +61,10 @@ class PaystackPayment
     
     public function verifyTransaction($reference)
 {
+    if (trim($this->secretKey) === '') {
+        throw new Exception("Paystack secret key is not configured.");
+    }
+
     $url = "https://api.paystack.co/transaction/verify/$reference";
 
     $ch = curl_init();

@@ -73,6 +73,7 @@ $orders = $model->getRows("orders_mart", ["where" => ["user_id" => $userId],]);
                                             <th scope="col">Order Ref:</th>
                                             <th scope="col">Date</th>
                                             <th scope="col">Amount</th>
+                                            <th scope="col">Fulfilment</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Num of Items</th>
                                             <th scope="col">Action</th>
@@ -86,7 +87,8 @@ $orders = $model->getRows("orders_mart", ["where" => ["user_id" => $userId],]);
                                                     <th scope="row"><span><?php echo $count++; ?></span></th>
                                                     <td><span><b><?php echo strtoupper($order['order_reference'] ?? "N/A"); ?></b></span></td>
                                                     <td><span><b><?php echo date("d M Y", strtotime($order['created_at'])); ?></b></span></td>
-                                                    <td scope="col"><span><b>£<?php echo number_format($order['total_amount'], 2); ?></b></span></td>
+                                                    <td scope="col"><span><b><?php echo qs_money($order['total_amount']); ?></b></span></td>
+                                                    <td><span><b><?php echo qs_fulfilment_label($order['fulfilment_type'] ?? 'delivery'); ?></b></span></td>
                                                     <td>
                                                         <span class="<?php echo $order['payment_status'] === 'paid' ? 'text-success' : 'text-danger'; ?>"><b>
                                                                 <?php echo ucfirst($order['payment_status']); ?></b>
@@ -104,7 +106,7 @@ $orders = $model->getRows("orders_mart", ["where" => ["user_id" => $userId],]);
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="7" class="text-center">You have no orders yet.</td>
+                                                <td colspan="8" class="text-center">You have no orders yet.</td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>

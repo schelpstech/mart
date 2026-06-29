@@ -90,6 +90,8 @@ include './inc/header.php';
                                     <th class="d-none d-lg-table-cell">Units</th>
                                     <th class="d-none d-lg-table-cell">Order Date</th>
                                     <th class="d-none d-lg-table-cell">Order Cost</th>
+                                    <th class="d-none d-lg-table-cell">Fulfilment</th>
+                                    <th class="d-none d-lg-table-cell">Order Status</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -123,7 +125,13 @@ include './inc/header.php';
                                                 <?= date("M d, Y", strtotime($order['created_at'] ?? "now")); ?>
                                             </td>
                                             <td class="d-none d-lg-table-cell">
-                                                £<?= number_format($order['total_amount'] ?? 0, 2); ?>
+                                                <?= qs_money($order['total_amount'] ?? 0); ?>
+                                            </td>
+                                            <td class="d-none d-lg-table-cell">
+                                                <?= qs_fulfilment_label($order['fulfilment_type'] ?? 'delivery'); ?>
+                                            </td>
+                                            <td class="d-none d-lg-table-cell">
+                                                <?= ucwords(str_replace('_', ' ', $order['order_status'] ?? 'pending')); ?>
                                             </td>
                                             <td>
                                                 <?php
@@ -157,7 +165,7 @@ include './inc/header.php';
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">You have no orders yet.</td>
+                                        <td colspan="9" class="text-center">You have no orders yet.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

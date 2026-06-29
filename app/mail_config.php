@@ -2,6 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require_once __DIR__ . '/../controller/env.php';
 require_once 'query.php';
 function sendEmail($to, $subject, $htmlContent, $altContent = "") {
     $mail = new PHPMailer(true);
@@ -9,15 +10,21 @@ function sendEmail($to, $subject, $htmlContent, $altContent = "") {
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'queenzystores.com'; // e.g., smtp.gmail.com
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'noreply@queenzystores.com'; 
-        $mail->Password   = '&YhzGPLtgtiP'; 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; 
-        $mail->Port       = 465;
+        $mail->Host       = env_value('SMTP_HOST', 'queenzystores.com');
+        $mail->SMTPAuth   = env_bool('SMTP_AUTH', true);
+        $mail->Username   = env_value('SMTP_USERNAME', 'noreply@queenzystores.com');
+        $mail->Password   = env_value('SMTP_PASSWORD', '');
+        $smtpSecure       = strtolower((string) env_value('SMTP_SECURE', 'ssl'));
+        $mail->SMTPSecure = $smtpSecure === 'tls'
+            ? PHPMailer::ENCRYPTION_STARTTLS
+            : ($smtpSecure === 'none' || $smtpSecure === 'false' ? false : PHPMailer::ENCRYPTION_SMTPS);
+        $mail->Port       = (int) env_value('SMTP_PORT', 465);
 
         // Recipients
-        $mail->setFrom('noreply@queenzystores.com', 'Queenzy Store');
+        $mail->setFrom(
+            env_value('MAIL_FROM_ADDRESS', 'noreply@queenzystores.com'),
+            env_value('MAIL_FROM_NAME', 'Queenzy Stores')
+        );
         $mail->addAddress($to);
 
         // Content

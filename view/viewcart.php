@@ -16,25 +16,16 @@ include './inc/head.php';
     include './inc/header.php';
     include './inc/cart.php';
     include './inc/category.php';
-    ?>
 
-
-
-    <!-- Ec breadcrumb start -->
-
-    <!-- Ec breadcrumb end -->
-
-    <!-- Ec cart page -->
-    <?php
-    // Get all cart items for this session
-    $items = $cart->getCartItems();
-    $total = 0;
+    $summary = $cart->getCartSummary();
+    $items = $summary['items'];
+    $total = $summary['subtotal'];
     ?>
 
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
-                <div class="sticky-header-next-sec  ec-breadcrumb section-space-mb">
+                <div class="sticky-header-next-sec ec-breadcrumb section-space-mb">
                     <div class="container">
                         <div class="row">
                             <div class="col-12">
@@ -43,19 +34,18 @@ include './inc/head.php';
                                         <h2 class="ec-breadcrumb-title">Cart</h2>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
-                                        <!-- ec-breadcrumb-list start -->
                                         <ul class="ec-breadcrumb-list">
-                                            <li class="ec-breadcrumb-item"><a href="index.html">Home</a></li>
+                                            <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
                                             <li class="ec-breadcrumb-item active">Cart</li>
                                         </ul>
-                                        <!-- ec-breadcrumb-list end -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ec-cart-leftside col-lg-8 col-md-12 ">
+
+                <div class="ec-cart-leftside col-lg-8 col-md-12">
                     <div class="ec-cart-content">
                         <div class="ec-cart-inner">
                             <div class="row">
@@ -64,7 +54,7 @@ include './inc/head.php';
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>Product</th>
+                                                    <th>Item</th>
                                                     <th>Price</th>
                                                     <th style="text-align: center;">Quantity</th>
                                                     <th>Total</th>
@@ -74,39 +64,42 @@ include './inc/head.php';
                                             <tbody>
                                                 <?php if (!empty($items)) : ?>
                                                     <?php foreach ($items as $item) : ?>
-                                                        <?php $lineTotal = $item['price'] * $item['quantity']; ?>
-                                                        <?php $total += $lineTotal; ?>
-                                                        <tr id="cart-item-<?= $item['cart_item_id']; ?>">
-                                                            <td data-label="Product" class="ec-cart-pro-name">
-                                                                <a href="product.php?id=<?= $item['product_id']; ?>">
+                                                        <?php
+                                                        $lineTotal = (float)$item['price'] * (int)$item['quantity'];
+                                                        $type = $item['item_type'] ?? 'product';
+                                                        $itemId = (int)($item['item_id'] ?? $item['cart_item_id']);
+                                                        ?>
+                                                        <tr id="cart-item-<?= $type . '-' . $itemId; ?>">
+                                                            <td data-label="Item" class="ec-cart-pro-name">
+                                                                <a href="<?= htmlspecialchars($item['url'] ?? '#'); ?>">
                                                                     <img class="ec-cart-pro-img mr-4"
-                                                                        src="../view/assets/images/product/main/<?= $item['image_main']; ?>"
+                                                                        src="<?= htmlspecialchars($item['image'] ?? 'assets/images/product/main/default.png'); ?>"
                                                                         alt="<?= htmlspecialchars($item['name']); ?>" />
                                                                     <?= htmlspecialchars($item['name']); ?>
                                                                 </a>
+                                                                <span class="cart-item-type"><?= ucfirst($type); ?></span>
                                                             </td>
                                                             <td data-label="Price" class="ec-cart-pro-price">
-                                                                <span class="amount">$<?= number_format($item['price'], 2); ?></span>
+                                                                <span class="amount"><?= qs_money($item['price']); ?></span>
                                                             </td>
-                                                            <!-- Quantity -->
                                                             <td data-label="Quantity" class="ec-cart-pro-qty" style="text-align: center;">
                                                                 <div class="cart-qty-plus-minus">
                                                                     <input class="cart-plus-minus"
                                                                         type="number"
-                                                                        data-cartitemid="<?= $item['cart_item_id']; ?>"
-                                                                        value="<?= $item['quantity']; ?>"
+                                                                        data-cartitemid="<?= $itemId; ?>"
+                                                                        data-itemtype="<?= htmlspecialchars($type); ?>"
+                                                                        value="<?= (int)$item['quantity']; ?>"
                                                                         min="1" />
                                                                 </div>
                                                             </td>
-
-                                                            <!-- Line total -->
                                                             <td data-label="Total" class="ec-cart-pro-subtotal">
-                                                                <span class="line-total">£<?= number_format($lineTotal, 2); ?></span>
+                                                                <span class="line-total"><?= qs_money($lineTotal); ?></span>
                                                             </td>
                                                             <td data-label="Remove" class="ec-cart-pro-remove">
                                                                 <a href="javascript:void(0);"
                                                                     class="remove-from-cart"
-                                                                    data-cartitemid="<?= $item['cart_item_id']; ?>">
+                                                                    data-cartitemid="<?= $itemId; ?>"
+                                                                    data-itemtype="<?= htmlspecialchars($type); ?>">
                                                                     <i class="ecicon eci-trash-o"></i>
                                                                 </a>
                                                             </td>
@@ -118,15 +111,16 @@ include './inc/head.php';
                                                     </tr>
                                                 <?php endif; ?>
                                             </tbody>
-                                            </thead>
                                         </table>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="ec-cart-update-bottom">
-                                                <a href="shop.php">Continue Shopping</a>
-                                                <a href="checkout.php" class="btn btn-success" style="color: white;">Check Out</a>
+                                            <div class="ec-cart-update-bottom cart-action-row">
+                                                <a href="shop.php" class="cart-action-button">Continue Shopping</a>
+                                                <?php if (!empty($items)): ?>
+                                                    <a href="checkout.php" class="btn btn-success cart-action-button" style="color: white;">Check Out</a>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -136,7 +130,6 @@ include './inc/head.php';
                     </div>
                 </div>
 
-                <!-- Sidebar -->
                 <div class="ec-cart-rightside col-lg-4 col-md-12">
                     <div class="ec-sidebar-wrap">
                         <div class="ec-sidebar-block">
@@ -148,15 +141,15 @@ include './inc/head.php';
                                     <div class="ec-cart-summary">
                                         <div>
                                             <span class="text-left">Sub-Total</span>
-                                            <span class="text-right cart-subtotal">£<?= number_format($total, 2); ?></span>
+                                            <span class="text-right cart-subtotal"><?= qs_money($total); ?></span>
                                         </div>
                                         <div>
-                                            <span class="text-left">Delivery Charges</span>
-                                            <span class="text-right">£<?= $total < 100 ? 10.00 : 0.00 ?></span>
+                                            <span class="text-left">Delivery / Pickup</span>
+                                            <span class="text-right">Checkout</span>
                                         </div>
                                         <div class="ec-cart-summary-total">
-                                            <span class="text-left">Total Amount</span>
-                                            <span class="text-right cart-grandtotal">£<?= number_format($total < 100 ? $total + 10.00 : $total, 2); ?></span>
+                                            <span class="text-left">Current Total</span>
+                                            <span class="text-right cart-grandtotal"><?= qs_money($total); ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -164,11 +157,8 @@ include './inc/head.php';
                         </div>
                     </div>
                 </div>
-                <!-- Sidebar End -->
             </div>
         </div>
     </section>
 
-
-    <!-- New Product end -->
     <?php include './inc/footer.php'; ?>

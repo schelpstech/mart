@@ -48,6 +48,7 @@ if (!empty($orders)) {
 
 $currency = "£";
 $subtotal = 0;
+$deliverySettings = qs_get_delivery_settings($model);
 
 // Generate HTML
 ob_start();
@@ -95,6 +96,10 @@ ob_start();
 
     <h2>Invoice - <?= htmlspecialchars($orders["order_reference"]) ?></h2>
     <p><strong>Date:</strong> <?= htmlspecialchars($orders["created_at"]) ?></p>
+    <p><strong>Fulfilment:</strong> <?= htmlspecialchars(qs_fulfilment_label($orders["fulfilment_type"] ?? "delivery")) ?></p>
+    <?php if (($orders["fulfilment_type"] ?? "delivery") === "pickup"): ?>
+        <p><strong>Pickup Address:</strong> <?= htmlspecialchars($deliverySettings['pickup_address']) ?></p>
+    <?php endif; ?>
     <p><strong>Name:</strong> <?= htmlspecialchars($orders["firstname"] . " " . $orders["lastname"]) ?><br>
         <strong>Address:</strong> <?= htmlspecialchars(($orders["address1"] ?? "") . " " . ($orders["address2"] ?? "")) ?><br>
         <strong>City:</strong> <?= htmlspecialchars($orders["city"] ?? "") ?><br>
@@ -106,7 +111,8 @@ ob_start();
         <thead>
             <tr>
                 <th>#</th>
-                <th>Product</th>
+                <th>Item</th>
+                <th>Type</th>
                 <th>Qty</th>
                 <th>Price</th>
                 <th>Amount</th>
@@ -119,24 +125,32 @@ ob_start();
                 <tr>
                     <td><?= $count++ ?></td>
                     <td><?= htmlspecialchars($item['product_name'] ?? "N/A") ?></td>
+                    <td><?= htmlspecialchars(ucfirst($item['orderType'] ?? "product")) ?></td>
                     <td><?= htmlspecialchars($item['quantity'] ?? "0") ?></td>
                     <td><?= $currency . number_format($item['price'], 2) ?></td>
                     <td><?= $currency . number_format($item['subtotal'], 2) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
+        <?php $financials = qs_order_financials($orders, $subtotal); ?>
         <tfoot>
             <tr class="total-row">
-                <td colspan="4">Subtotal</td>
-                <td><?= $currency . number_format($subtotal, 2) ?></td>
+                <td colspan="5">Subtotal</td>
+                <td><?= qs_money($financials['subtotal']) ?></td>
             </tr>
             <tr class="total-row">
-                <td colspan="4">Delivery Fee</td>
-                <td><?= $currency . number_format(($orders['total_amount'] - $subtotal), 2) ?></td>
+                <td colspan="5">Delivery Fee</td>
+                <td><?= qs_money($financials['delivery_fee']) ?></td>
             </tr>
+            <?php if ($financials['discount'] > 0): ?>
+                <tr class="total-row">
+                    <td colspan="5">Discount <?= !empty($orders['coupon_code']) ? '(' . htmlspecialchars($orders['coupon_code']) . ')' : ''; ?></td>
+                    <td>-<?= qs_money($financials['discount']) ?></td>
+                </tr>
+            <?php endif; ?>
             <tr class="total-row">
-                <td colspan="4">Total</td>
-                <td><?= $currency . number_format($orders['total_amount'], 2) ?></td>
+                <td colspan="5">Total</td>
+                <td><?= qs_money($financials['total']) ?></td>
             </tr>
         </tfoot>
     </table>

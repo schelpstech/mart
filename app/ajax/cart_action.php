@@ -1,141 +1,148 @@
 <?php
 header('Content-Type: application/json');
-require_once '../query.php'; // adjust path
-// Identify user or session
-$session_id = session_id();
-$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+require_once '../query.php';
 
+function cart_json_summary($cart)
+{
+    $summary = $cart->getCartSummary();
+    return [
+        'count' => $summary['count'],
+        'subTotal' => qs_money($summary['subtotal']),
+        'total' => qs_money($summary['subtotal']),
+        'cart_subtotal' => qs_money($summary['subtotal']),
+        'cart_grandtotal' => qs_money($summary['subtotal'])
+    ];
+}
+
+function cart_side_html(array $items)
+{
+    if (empty($items)) {
+        return '<li><p class="emp-cart-msg">Your cart is empty!</p></li>';
+    }
+
+    $output = '';
+    foreach ($items as $item) {
+        $name = htmlspecialchars($item['name'] ?? 'Item', ENT_QUOTES, 'UTF-8');
+        $image = htmlspecialchars($item['image'] ?? '../view/assets/images/product/main/default.png', ENT_QUOTES, 'UTF-8');
+        $url = htmlspecialchars($item['url'] ?? 'viewcart.php', ENT_QUOTES, 'UTF-8');
+        $type = htmlspecialchars($item['item_type'] ?? 'product', ENT_QUOTES, 'UTF-8');
+        $itemId = (int)($item['item_id'] ?? $item['cart_item_id']);
+        $price = qs_money($item['price'] ?? 0);
+        $quantity = (int)($item['quantity'] ?? 1);
+        $label = $type === 'service' ? '<small class="cart-item-type">Service</small>' : '<small class="cart-item-type">Product</small>';
+
+        $output .= '
+        <li>
+            <a href="' . $url . '" class="sidecart_pro_img">
+                <img src="' . $image . '" alt="' . $name . '">
+            </a>
+            <div class="ec-pro-content">
+                <a href="' . $url . '" class="cart_pro_title">' . $name . '</a>
+                ' . $label . '
+                <span class="cart-price"><span>' . $price . '</span> x ' . $quantity . '</span>
+                <a href="javascript:void(0)" class="removed" data-cartitemid="' . $itemId . '" data-itemtype="' . $type . '">remove</a>
+            </div>
+        </li>';
+    }
+
+    return $output;
+}
 
 $action = $_POST['action'] ?? null;
-
 $response = ["status" => "error", "msg" => "Invalid action"];
 
 if ($action === "add") {
-    $product_id = intval($_POST['product_id'] ?? 0);
-    $quantity   = intval($_POST['quantity'] ?? 1);
+    $product_id = (int)($_POST['product_id'] ?? 0);
+    $quantity = max(1, (int)($_POST['quantity'] ?? 1));
 
     $product = $model->getRows("products", [
-        "where" => ["product_id" => $product_id],
+        "where" => ["product_id" => $product_id, "status" => "Active"],
         "return_type" => "single"
     ]);
 
-    if ($product) {
-        $price = $product['price'];
-
-        // This now gives us the cart_item_id directly
-        $addtocart = $cart->addToCart($product_id, $quantity, $price);
-        $cartinfo = $cart->getCartItemID($product_id);
-        $item_id = $cartinfo['cart_item_id'];
-        $count = $cart->getCartCount();
-
-        $response = [
-            "status"       => "success",
-            "msg"          => "Added to cart",
-            "count"        => $count,
-            "item_id" => $item_id
-        ];
-    } else {
-        $response = ["status" => "error", "msg" => "Product not found"];
+    if (!$product) {
+        echo json_encode(["status" => "error", "msg" => "Product not found"]);
+        exit;
     }
 
-    echo json_encode($response);
+    $price = !empty($product['discount_price']) ? (float)$product['discount_price'] : (float)$product['price'];
+    $item_id = $cart->addToCart($product_id, $quantity, $price);
+    $summary = cart_json_summary($cart);
+
+    echo json_encode(array_merge([
+        "status" => "success",
+        "msg" => "Added to cart",
+        "item_id" => $item_id
+    ], $summary));
     exit;
 }
-
-
 
 if ($action === "count") {
-    $count = $cart->getCartCount();
-    $response = ["status" => "success", "count" => $count];
-    echo json_encode($response);
+    echo json_encode(array_merge(["status" => "success"], cart_json_summary($cart)));
     exit;
 }
 
-if ($_POST['action'] === 'get_cart_items') {
-    $items = $cart->getCartItems(); // or session
-    $ids = array_column($items, 'product_id');
+if ($action === "get_cart_items") {
+    $productItems = $cart->getCartItems();
+    $summary = $cart->getCartSummary();
     echo json_encode([
         'status' => 'success',
-        'items'  => $ids
+        'items' => array_map(function ($item) {
+            return [
+                'product_id' => (int)$item['product_id'],
+                'cart_item_id' => (int)$item['cart_item_id'],
+                'item_type' => 'product'
+            ];
+        }, $productItems),
+        'all_items' => $summary['items'],
+        'count' => $summary['count']
     ]);
     exit;
 }
 
-
-if ($action === 'remove') {
-    $cartItemId = intval($_POST['cart_item_id'] ?? null);
-
-    if ($cartItemId && $cart->removeFromCart($cartItemId)) {
-        // Re-fetch items safely
-        $items = $cart->getCartItems();
-        if (!$items) {
-            $items = [];
-        }
-
-        // Recalculate totals
-        $subTotal = 0.00;
-        foreach ($items as $item) {
-            $subTotal += ((float)$item['price']) * ((int)$item['quantity']);
-        }
-        $vat   = $subTotal * 0.20;
-        $total = $subTotal + $vat;
-
-        $response = [
-            'status'   => 'success',
-            // If you prefer the "unique items" count, use count($items).
-            // If you have a method that sums quantities, you can swap it in here.
-            'count'    => count($items),
-            'subTotal' => '£' . number_format($subTotal, 2),
-            'vat'      => '£' . number_format($vat, 2),
-            'total'    => '£' . number_format($total, 2),
-        ];
-    } else {
-        $cartItemId = $_POST['cart_item_id'] ?? "nothing";
-        $response = [
-            'status'  => 'error',
-            'message' => 'Failed to remove itemaa.' . $_POST['cart_item_id']
-        ];
-    }
-
-    echo json_encode($response);
+if ($action === "get_cart_html") {
+    echo cart_side_html($cart->getAllCartItems());
     exit;
 }
 
-if ($_POST['action'] === "update_quantity") {
-    $cart_item_id = intval($_POST['cart_item_id']);
-    $quantity = intval($_POST['quantity']);
-    if ($cart_item_id && $quantity > 0) {
-        // Update quantity
-        $updateQty = $model->update("cart_items", ["quantity" => $quantity], ["cart_item_id" => $cart_item_id]);
+if ($action === 'remove') {
+    $cartItemId = (int)($_POST['cart_item_id'] ?? 0);
+    $itemType = strtolower(trim($_POST['item_type'] ?? 'product')) === 'service' ? 'service' : 'product';
 
-        $line = $model->getRows("cart_items", [
-            "where" => ["cart_item_id" => $cart_item_id],
-            "return_type" => "single"
-        ]);
-
-        $linetotal = $line['quantity'] * $line['price'];
-
-        $items = $cart->getCartItems();
-        if (!$items) {
-            $items = [];
-        }
-
-        // Recalculate totals
-        $subTotal = 0.00;
-        foreach ($items as $item) {
-            $subTotal += ((float)$item['price']) * ((int)$item['quantity']);
-        }
-        $vat   = $subTotal * 0.20;
-        $total = $subTotal + $vat;
-        echo json_encode([
-            "status" => "success",
-            "line_total" => '£' .number_format($linetotal, 2),
-            "cart_subtotal" => '£' .number_format($subTotal, 2),
-            "cart_grandtotal" => '£' .number_format($total, 2)
-        ]);
-    } else {
-        echo json_encode(["status" => "error", "msg" => "Invalid update"]);
+    if ($cartItemId && $cart->removeFromCart($cartItemId, $itemType)) {
+        echo json_encode(array_merge([
+            'status' => 'success',
+            'msg' => 'Item removed from cart'
+        ], cart_json_summary($cart)));
+        exit;
     }
+
+    echo json_encode([
+        'status' => 'error',
+        'msg' => 'Failed to remove item.'
+    ]);
+    exit;
+}
+
+if ($action === "update_quantity") {
+    $cartItemId = (int)($_POST['cart_item_id'] ?? 0);
+    $quantity = max(1, (int)($_POST['quantity'] ?? 1));
+    $itemType = strtolower(trim($_POST['item_type'] ?? 'product')) === 'service' ? 'service' : 'product';
+
+    if (!$cartItemId) {
+        echo json_encode(["status" => "error", "msg" => "Invalid item."]);
+        exit;
+    }
+
+    $cart->updateQuantity($cartItemId, $quantity, $itemType);
+    $line = $cart->getLineItem($cartItemId, $itemType);
+    $lineTotal = $line ? (float)$line['quantity'] * (float)$line['price'] : 0.00;
+
+    echo json_encode(array_merge([
+        "status" => "success",
+        "msg" => "Quantity updated successfully",
+        "line_total" => qs_money($lineTotal)
+    ], cart_json_summary($cart)));
     exit;
 }
 

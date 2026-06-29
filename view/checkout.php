@@ -1,5 +1,28 @@
 <?php
 include './inc/head.php';
+
+$isLoggedIn = !empty($_SESSION['user_id']);
+$summary = ['items' => [], 'product_items' => [], 'service_items' => [], 'subtotal' => 0, 'count' => 0];
+$settings = qs_get_delivery_settings($model);
+$zones = qs_get_delivery_zones($model);
+$hasProducts = false;
+$hasServices = false;
+$defaultFulfilment = 'delivery';
+$totals = [
+    'subtotal' => 0,
+    'delivery_fee' => 0,
+    'discount' => 0,
+    'total' => 0,
+    'fulfilment_type' => 'delivery'
+];
+
+if ($isLoggedIn) {
+    $summary = $cart->getCartSummary();
+    $hasProducts = !empty($summary['product_items']);
+    $hasServices = !empty($summary['service_items']);
+    $defaultFulfilment = qs_normalize_fulfilment('', $settings, $hasProducts, $hasServices);
+    $totals = qs_calculate_order_totals($cart, $model, $defaultFulfilment);
+}
 ?>
 
 <body class="checkout_page">
@@ -17,15 +40,10 @@ include './inc/head.php';
     include './inc/category.php';
     ?>
 
-    <!-- Ec breadcrumb start -->
-
-    <!-- Ec breadcrumb end -->
-
-
     <section class="ec-page-content section-space-p">
         <div class="container">
             <div class="row">
-                <div class="sticky-header-next-sec  ec-breadcrumb section-space-mb">
+                <div class="sticky-header-next-sec ec-breadcrumb section-space-mb">
                     <div class="container">
                         <div class="row">
                             <div class="col-12">
@@ -34,27 +52,25 @@ include './inc/head.php';
                                         <h2 class="ec-breadcrumb-title">Checkout</h2>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
-                                        <!-- ec-breadcrumb-list start -->
                                         <ul class="ec-breadcrumb-list">
                                             <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
                                             <li class="ec-breadcrumb-item active">Checkout</li>
                                         </ul>
-                                        <!-- ec-breadcrumb-list end -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <?php if (empty($_SESSION['user_id'])): ?>
-                    <!-- Ec Login on Checkout page -->
-                    <div class="ec-checkout col-lg-8 offset-2 col-md-12 ">
+
+                <?php if (!$isLoggedIn): ?>
+                    <div class="ec-checkout col-lg-8 offset-2 col-md-12">
                         <?php $utility->displayFlash(); ?>
                         <div class="ec-checkout-content">
                             <div class="ec-checkout-inner">
                                 <div class="ec-checkout-wrap margin-bottom-30">
                                     <div class="ec-checkout-block ec-check-new">
-                                        <h3 class="ec-checkout-title"> Customer</h3>
+                                        <h3 class="ec-checkout-title">Customer</h3>
                                         <div class="ec-check-block-content">
                                             <div class="ec-check-subtitle">Checkout Options</div>
                                             <div class="ec-new-desc">
@@ -71,119 +87,88 @@ include './inc/head.php';
                         </div>
                     </div>
                 <?php else: ?>
-                    <!-- Sidebar -->
                     <div class="ec-checkout-leftside col-lg-4 col-md-12">
                         <div class="ec-sidebar-wrap">
-                            <!-- Sidebar Summary Block -->
                             <div class="ec-sidebar-block">
                                 <div class="ec-sb-title">
                                     <h3 class="ec-sidebar-title">Summary</h3>
                                 </div>
-                                <?php
-                                $subtotal = 0;
-                                $delivery = 10.00; // Default delivery cost
-                                $button = '
-                                        <div class="ec-bg-swipe">
-                                            <button class="ec-btn-bg-swipe">
-                                                    <span class="circle" aria-hidden="true">
-                                                        <span class="icon arrow"></span>
-                                                    </span>
-                                                    <span class="button-text">Start Shopping</span>
-                                            </button>
-                                        </div>
-                                '; // default button
-
-                                if (!empty($_SESSION['user_id'])) {
-                                    // Initialize
-                                    $productItems = $cart->getCartItems();
-                                    $serviceItems = $cart->getServiceCartItems();
-                                    $subtotal = 0;
-                                    $hasProducts = !empty($productItems);
-                                    $hasServices = !empty($serviceItems);
-
-                                    // Combine subtotals separately
-                                    $productSubtotal = 0;
-                                    foreach ($productItems as $item) {
-                                        $productSubtotal += $item['line_total'];
-                                    }
-
-                                    $serviceSubtotal = 0;
-                                    foreach ($serviceItems as $srv) {
-                                        $serviceSubtotal += $srv['line_total'];
-                                    }
-
-                                    // Overall subtotal
-                                    $subtotal = $productSubtotal + $serviceSubtotal;
-
-                                    // Delivery: 0 for services-only, normal for product orders
-                                    if ($hasProducts && !$hasServices) {
-                                        $delivery = ($subtotal >= 99) ? 0 : 10.00;
-                                    } elseif ($hasProducts && $hasServices) {
-                                        // Mixed order: apply delivery for product portion only
-                                        $delivery = ($productSubtotal >= 99) ? 0 : 10.00;
-                                    } else {
-                                        // Services only — no delivery
-                                        $delivery = 0;
-                                    }
-
-                                    // Total
-                                    $total = $subtotal + $delivery;
-
-                                    // Checkout button
-                                    if ($subtotal > 0) {
-                                        $button = '
-            <button class="btn btn-lg btn-success btn-jittery" name="action" value="' . $utility->inputEncode('place_order') . '" type="submit">
-                Proceed to Payment
-            </button>';
-                                    } else {
-                                        $subtotal = $delivery = $total = 0;
-                                        $button = '
-            <div class="ec-bg-swipe">
-                <button class="ec-btn-bg-swipe">
-                    <span class="circle" aria-hidden="true">
-                        <span class="icon arrow"></span>
-                    </span>
-                    <span class="button-text">Start Shopping</span>
-                </button>
-            </div>';
-                                    }
-                                }
-
-
-                                ?>
-
-
                                 <div class="ec-sb-block-content">
                                     <div class="ec-checkout-summary">
                                         <div>
                                             <span class="text-left">Sub-Total</span>
-                                            <span class="text-right">£<?= number_format($subtotal, 2) ?></span>
+                                            <span class="text-right" id="checkout-subtotal"><?= qs_money($totals['subtotal']) ?></span>
                                         </div>
                                         <div>
                                             <span class="text-left">Delivery</span>
-                                            <span class="text-right">£<?= number_format($delivery, 2) ?></span>
+                                            <span class="text-right" id="checkout-delivery"><?= qs_money($totals['delivery_fee']) ?></span>
+                                        </div>
+                                        <div>
+                                            <span class="text-left">Discount</span>
+                                            <span class="text-right" id="checkout-discount"><?= qs_money($totals['discount']) ?></span>
                                         </div>
                                         <div class="ec-checkout-summary-total">
                                             <span class="text-left">Total Amount</span>
-                                            <span class="text-right">£<?= number_format($total, 2) ?></span>
+                                            <span class="text-right" id="checkout-total"><?= qs_money($totals['total']) ?></span>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
-                            <!-- Sidebar Summary Block -->
                         </div>
+
                         <div class="ec-sidebar-wrap ec-checkout-del-wrap">
-                            <!-- Sidebar Summary Block -->
                             <div class="ec-sidebar-block">
                                 <div class="ec-sb-title">
-                                    <h3 class="ec-sidebar-title">Delivery Method</h3>
+                                    <h3 class="ec-sidebar-title">Fulfilment</h3>
                                 </div>
                                 <div class="ec-sb-block-content">
                                     <div class="ec-checkout-del">
-                                        <label><input type="radio" name="delivery" checked /> Standard Delivery (2-4 working days)</label><br>
-                                        <label><input type="radio" name="delivery" /> Paid Delivery - Orders below £99</label><br>
-                                        <label><input type="radio" name="delivery" /> Free Delivery - Orders over £100</label>
+                                        <?php if (!empty($settings['delivery_enabled'])): ?>
+                                            <label>
+                                                <input type="radio" name="fulfilment_type" value="delivery" form="checkoutForm"
+                                                    <?= $defaultFulfilment === 'delivery' ? 'checked' : ''; ?>>
+                                                Delivery
+                                            </label><br>
+                                        <?php endif; ?>
+                                        <?php if (!empty($settings['pickup_enabled'])): ?>
+                                            <label>
+                                                <input type="radio" name="fulfilment_type" value="pickup" form="checkoutForm"
+                                                    <?= $defaultFulfilment === 'pickup' ? 'checked' : ''; ?>>
+                                                Pickup
+                                            </label>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <?php if (!empty($zones)): ?>
+                                        <div class="form-group mt-3 delivery-zone-wrap">
+                                            <label for="delivery_zone_id">Delivery Location</label>
+                                            <select name="delivery_zone_id" id="delivery_zone_id" class="form-control" form="checkoutForm">
+                                                <option value="">Default Delivery</option>
+                                                <?php foreach ($zones as $zone): ?>
+                                                    <option value="<?= (int)$zone['zone_id']; ?>">
+                                                        <?= htmlspecialchars($zone['zone_name']); ?> - <?= qs_money($zone['delivery_fee']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="pickup-instructions mt-3" id="pickup-instructions" style="<?= $defaultFulfilment === 'pickup' ? '' : 'display:none;'; ?>">
+                                        <p><strong>Pickup Address:</strong><br><?= htmlspecialchars($settings['pickup_address']); ?></p>
+                                        <?php if (!empty($settings['pickup_instruction'])): ?>
+                                            <p><?= nl2br(htmlspecialchars($settings['pickup_instruction'])); ?></p>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="coupon-box">
+                                        <label for="coupon_code">Coupon Code</label>
+                                        <div class="input-group">
+                                            <input type="text" name="coupon_code" id="coupon_code" class="form-control" form="checkoutForm" placeholder="Code">
+                                            <button class="btn btn-primary" type="button" id="apply-coupon">Apply</button>
+                                        </div>
+                                        <small id="coupon-message" class="d-block mt-2"></small>
                                     </div>
 
                                     <hr>
@@ -198,95 +183,51 @@ include './inc/head.php';
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Sidebar Summary Block -->
                         </div>
+
                         <div class="ec-sidebar-wrap ec-checkout-pay-wrap">
-                            <!-- Sidebar Payment Block -->
                             <div class="ec-sidebar-block">
                                 <div class="ec-sb-title">
                                     <h3 class="ec-sidebar-title">Payment Method</h3>
                                 </div>
                                 <div class="ec-sb-block-content">
                                     <div class="ec-checkout-pay">
-                                        <div class="ec-pay-desc">Please select the preferred payment method to use on this
-                                            order.</div>
-                                        <form action="#">
-                                            <span class="ec-pay-option">
-                                                <span>
-                                                    <input type="radio" id="pay1" name="radio-group" checked>
-                                                    <label for="pay1">Online Payment</label>
-                                                </span>
+                                        <div class="ec-pay-desc">Please select the preferred payment method to use on this order.</div>
+                                        <span class="ec-pay-option">
+                                            <span>
+                                                <input type="radio" id="pay1" name="radio-group" checked>
+                                                <label for="pay1">Online Payment</label>
                                             </span>
-                                        </form>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Sidebar Payment Block -->
-                        </div>
-                        <div class="ec-sidebar-wrap ec-check-pay-img-wrap">
-                            <!-- Sidebar Payment Block -->
-                            <div class="ec-sidebar-block">
-                                <div class="ec-sb-title">
-                                    <h3 class="ec-sidebar-title">Supported Payment Method</h3>
-                                </div>
-                                <div class="ec-sb-block-content">
-                                    <div class="ec-check-pay-img-inner">
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment1.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment2.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment3.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment4.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment5.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment6.png" alt="">
-                                        </div>
-                                        <div class="ec-check-pay-img">
-                                            <img src="assets/images/icons/payment7.png" alt="">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Sidebar Payment Block -->
                         </div>
                     </div>
-                    <!-- Ec checkout page for Logged in User -->
+
                     <div class="ec-checkout-rightside col-lg-8 col-md-12">
                         <div class="ec-checkout-content">
                             <div class="ec-checkout-inner">
-                                <!-- Billing Details -->
                                 <div class="ec-checkout-wrap margin-bottom-30 padding-bottom-3">
                                     <div class="ec-checkout-block ec-check-bill">
                                         <h3 class="ec-checkout-title">Billing & Delivery Details</h3>
                                         <?php
                                         try {
                                             $profile = $user->getUserProfile($_SESSION['user_id']);
-
-                                            // fallback values if no profile row yet
-                                            $firstname   = $profile['firstname']   ?? '';
-                                            $lastname    = $profile['lastname']    ?? '';
-                                            $email       = $profile['email']       ?? '';
-                                            $phone       = $profile['phone']       ?? '';
-                                            $phone2      = $profile['phone2']      ?? '';
-                                            $address1    = $profile['address1']    ?? '';
-                                            $address2    = $profile['address2']    ?? '';
-                                            $city        = $profile['city']        ?? '';
-                                            $county      = $profile['county']      ?? '';
-                                            $postcode    = $profile['postcode']    ?? '';
+                                            $firstname = $profile['firstname'] ?? '';
+                                            $lastname = $profile['lastname'] ?? '';
+                                            $email = $profile['email'] ?? '';
+                                            $phone = $profile['phone'] ?? '';
+                                            $address1 = $profile['address1'] ?? '';
+                                            $address2 = $profile['address2'] ?? '';
+                                            $city = $profile['city'] ?? '';
+                                            $county = $profile['county'] ?? '';
+                                            $postcode = $profile['postcode'] ?? '';
                                         } catch (Exception $e) {
-                                            // If DB lookup fails, fall back to empty values
-                                            $firstname = $lastname = $email = $phone = $phone2 = '';
+                                            $firstname = $lastname = $email = $phone = '';
                                             $address1 = $address2 = $city = $county = $postcode = '';
                                         }
+                                        $deliveryRequired = $defaultFulfilment === 'delivery' ? 'required' : '';
                                         ?>
                                         <div class="ec-check-bill-form">
                                             <form id="checkoutForm" action="../app/orderHandler.php" method="post">
@@ -310,34 +251,34 @@ include './inc/head.php';
                                                     <input type="tel" name="phone" id="phone" placeholder="+44 7123 456789"
                                                         value="<?= htmlspecialchars($phone) ?>" required tabindex="4" />
                                                 </span>
-                                                <span class="ec-bill-wrap">
-                                                    <label>Address Line 1*</label>
+                                                <span class="ec-bill-wrap delivery-address-field">
+                                                    <label>Address Line 1<span class="delivery-required-marker">*</span></label>
                                                     <input type="text" name="address1" id="address1" placeholder="123 High Street"
-                                                        value="<?= htmlspecialchars($address1) ?>" required tabindex="5" />
+                                                        value="<?= htmlspecialchars($address1) ?>" <?= $deliveryRequired; ?> tabindex="5" />
                                                 </span>
-                                                <span class="ec-bill-wrap">
+                                                <span class="ec-bill-wrap delivery-address-field">
                                                     <label>Address Line 2 (optional)</label>
                                                     <input type="text" name="address2" id="address2"
                                                         placeholder="Apartment, suite, etc. (optional)"
                                                         value="<?= htmlspecialchars($address2) ?>" />
                                                 </span>
-                                                <span class="ec-bill-wrap ec-bill-half">
-                                                    <label>Town / City*</label>
+                                                <span class="ec-bill-wrap ec-bill-half delivery-address-field">
+                                                    <label>Town / City<span class="delivery-required-marker">*</span></label>
                                                     <input type="text" name="city" id="city" placeholder="London"
-                                                        value="<?= htmlspecialchars($city) ?>" required tabindex="6" />
+                                                        value="<?= htmlspecialchars($city) ?>" <?= $deliveryRequired; ?> tabindex="6" />
                                                 </span>
-                                                <span class="ec-bill-wrap ec-bill-half">
+                                                <span class="ec-bill-wrap ec-bill-half delivery-address-field">
                                                     <label>County (optional)</label>
                                                     <input type="text" name="county" id="county" placeholder="Greater London"
                                                         value="<?= htmlspecialchars($county) ?>" />
                                                 </span>
-                                                <span class="ec-bill-wrap ec-bill-half">
-                                                    <label>Postcode*</label>
+                                                <span class="ec-bill-wrap ec-bill-half delivery-address-field">
+                                                    <label>Postcode<span class="delivery-required-marker">*</span></label>
                                                     <input type="text" name="postcode" id="postcode" placeholder="SW1A 1AA"
-                                                        value="<?= htmlspecialchars($postcode) ?>" required tabindex="7" />
+                                                        value="<?= htmlspecialchars($postcode) ?>" <?= $deliveryRequired; ?> tabindex="7" />
                                                 </span>
                                                 <span class="ec-bill-wrap ec-bill-half">
-                                                    <label>Country*</label>
+                                                    <label>Country</label>
                                                     <input type="text" value="United Kingdom" disabled />
                                                 </span>
                                                 <?php if ($hasServices): ?>
@@ -356,39 +297,39 @@ include './inc/head.php';
                                                         <div class="ec-checkout-block">
                                                             <h3 class="ec-checkout-title">Order Notes (optional)</h3>
                                                             <textarea name="order-notes" id="order-notes"
-                                                                placeholder="Notes about your order, e.g. delivery instructions."
+                                                                placeholder="Notes about your order."
                                                                 rows="3"></textarea>
                                                         </div>
                                                     </div>
                                                 </span>
                                                 <div class="ec-bill-wrap">
                                                     <label>
-                                                        <input type="checkbox" name="privacy_consent" required tabindex="8" />
+                                                        <input type="checkbox" name="privacy_consent" required tabindex="10" />
                                                         I agree to the processing of my personal data in accordance with the
                                                         <a href="privacy-policy.php" target="_blank"><b>Privacy Policy</b></a>.
                                                     </label>
                                                 </div>
                                                 <div class="ec-bill-wrap">
                                                     <span class="ec-check-order-btn">
-                                                        <?= $button ?>
+                                                        <?php if ($summary['subtotal'] > 0): ?>
+                                                            <button class="btn btn-lg btn-success btn-jittery" name="action" value="<?= $utility->inputEncode('place_order') ?>" type="submit">
+                                                                Proceed to Payment
+                                                            </button>
+                                                        <?php else: ?>
+                                                            <a href="shop.php" class="btn btn-lg btn-primary">Start Shopping</a>
+                                                        <?php endif; ?>
                                                     </span>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
-
                                 </div>
-                                <!-- Place Order Button -->
-
                             </div>
                         </div>
                     </div>
-
-
                 <?php endif; ?>
             </div>
         </div>
     </section>
-
 
     <?php include './inc/footer.php'; ?>

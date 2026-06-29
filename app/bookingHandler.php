@@ -17,17 +17,11 @@ if (empty($serviceIds)) {
 }
 
 try {
-    $cartid =  $cart->getCartId();
-    // Store selected services
     foreach ($serviceIds as $srvId) {
         $srv = $model->getById('services', $srvId);
         if (!$srv) continue;
 
-        $model->insert('service_cart_items', [
-            'cart_id' => $cartid,
-            'service_id'=> $srvId,
-            'price'=> $srv['base_price']
-        ]);
+        $cart->addServiceToCart((int)$srvId, 1, (float)$srv['base_price']);
     }
 
     // Redirect to checkout page
@@ -37,7 +31,6 @@ try {
     exit;
 
 } catch (Exception $e) {
-    $model->rollBack();
      $utility->setFlash('error',  "Booking failed: " . $e->getMessage());
     
     header("Location: ../view/booking.php");

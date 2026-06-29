@@ -1,4 +1,5 @@
 <?php
+
 class Cart
 {
     private $db;
@@ -8,73 +9,115 @@ class Cart
     public function __construct($db, $user_id = null)
     {
         $this->db = $db;
-        $this->session_id = session_id();  // PHP’s session ID
+        $this->session_id = session_id();
         $this->user_id = $_SESSION["user_id"] ?? $user_id;
     }
+
     public function getCartId()
     {
         $identifier = !empty($this->user_id) ? 'user_id' : 'session_id';
         $value = !empty($this->user_id) ? $this->user_id : $this->session_id;
 
-        // Check if cart exists
-        $row = $this->db->getRows("cart", [
+        $rows = $this->db->getRows("cart", [
             "where" => [$identifier => $value],
-            "return_type" => "single"
+            "order_by" => "cart_id ASC",
+            "return_type" => "all"
         ]);
 
-        if ($row) {
-            return $row['cart_id'];
+        if (!empty($rows)) {
+            $primaryId = (int)$rows[0]['cart_id'];
+            if (count($rows) > 1) {
+                $this->mergeDuplicateCarts($primaryId, array_slice($rows, 1));
+            }
+            return $primaryId;
         }
 
-        // Prepare new cart data
         $cartData = [
             "session_id" => $this->session_id,
             "created_at" => date("Y-m-d H:i:s")
         ];
+
         if (!empty($this->user_id)) {
             $cartData["user_id"] = $this->user_id;
         }
 
-        // Create new cart
         $inserted = $this->db->insert("cart", $cartData);
-
         if ($inserted) {
             return $this->db->lastInsertId();
         }
 
-        // If insert fails
         throw new Exception("Failed to create cart.");
     }
 
-
-    public function getLatestCartItemId($product_id)
+    private function mergeDuplicateCarts($primaryId, array $duplicateRows)
     {
-        // Fetch latest cart_item_id for this session and product
-        $row = $this->db->getRows("cart_items", [
-            "join" => [
-                "cart" => "ON cart.cart_id = cart_items.cart_id"
-            ],
-            "where" => [
-                "cart.session_id" => $this->session_id,
-                "cart_items.product_id" => $product_id
-            ],
-            "order_by" => "cart_items.cart_item_id DESC",
-            "return_type" => "single"
-        ]);
+        foreach ($duplicateRows as $row) {
+            $duplicateId = (int)$row['cart_id'];
+            if ($duplicateId <= 0 || $duplicateId === (int)$primaryId) {
+                continue;
+            }
 
-        if ($row) {
-            return $row['cart_item_id'];
+            $productItems = $this->db->getRows("cart_items", [
+                "where" => ["cart_id" => $duplicateId],
+                "return_type" => "all"
+            ]);
+            foreach ($productItems as $item) {
+                $existing = $this->db->getRows("cart_items", [
+                    "where" => [
+                        "cart_id" => $primaryId,
+                        "product_id" => $item['product_id']
+                    ],
+                    "return_type" => "single"
+                ]);
+
+                if ($existing) {
+                    $this->db->update(
+                        "cart_items",
+                        ["quantity" => (int)$existing['quantity'] + (int)$item['quantity']],
+                        ["cart_item_id" => $existing['cart_item_id']]
+                    );
+                    $this->db->delete("cart_items", ["cart_item_id" => $item['cart_item_id']]);
+                } else {
+                    $this->db->update("cart_items", ["cart_id" => $primaryId], ["cart_item_id" => $item['cart_item_id']]);
+                }
+            }
+
+            $serviceItems = $this->db->getRows("service_cart_items", [
+                "where" => ["cart_id" => $duplicateId],
+                "return_type" => "all"
+            ]);
+            foreach ($serviceItems as $item) {
+                $existing = $this->db->getRows("service_cart_items", [
+                    "where" => [
+                        "cart_id" => $primaryId,
+                        "service_id" => $item['service_id']
+                    ],
+                    "return_type" => "single"
+                ]);
+
+                if ($existing) {
+                    $this->db->update(
+                        "service_cart_items",
+                        ["quantity" => (int)$existing['quantity'] + (int)$item['quantity']],
+                        ["service_cart_item_id" => $existing['service_cart_item_id']]
+                    );
+                    $this->db->delete("service_cart_items", ["service_cart_item_id" => $item['service_cart_item_id']]);
+                } else {
+                    $this->db->update("service_cart_items", ["cart_id" => $primaryId], ["service_cart_item_id" => $item['service_cart_item_id']]);
+                }
+            }
+
+            $this->db->delete("cart", ["cart_id" => $duplicateId]);
         }
-
-        return null; // No matching record found
     }
-
 
     public function addToCart($product_id, $quantity, $price)
     {
-        $cart_id = $this->getCartId(); // ensures cart exists for this session
+        $cart_id = $this->getCartId();
+        $product_id = (int)$product_id;
+        $quantity = max(1, (int)$quantity);
+        $price = max(0, (float)$price);
 
-        // Check if product already exists in cart_items
         $row = $this->db->getRows("cart_items", [
             "where" => [
                 "cart_id" => $cart_id,
@@ -84,127 +127,202 @@ class Cart
         ]);
 
         if ($row) {
-            // Update quantity
-            $newQty = $row['quantity'] + $quantity;
-            $this->db->update("cart_items", ["quantity" => $newQty], ["cart_item_id" => $row['cart_item_id']]);
-            return $row['cart_item_id']; // return the existing ID
-        } else {
-            // Insert new product into cart_items
-            $this->db->insert("cart_items", [
-                "cart_id"    => $cart_id,
-                "product_id" => $product_id,
-                "quantity"   => $quantity,
-                "price"      => $price
-            ]);
-
-            return $this->db->lastInsertId(); // return the new cart_item_id
+            $newQty = (int)$row['quantity'] + $quantity;
+            $this->db->update("cart_items", ["quantity" => $newQty, "price" => $price], ["cart_item_id" => $row['cart_item_id']]);
+            return $row['cart_item_id'];
         }
+
+        $this->db->insert("cart_items", [
+            "cart_id" => $cart_id,
+            "product_id" => $product_id,
+            "quantity" => $quantity,
+            "price" => $price
+        ]);
+
+        return $this->db->lastInsertId();
     }
 
+    public function addServiceToCart($service_id, $quantity, $price)
+    {
+        $cart_id = $this->getCartId();
+        $service_id = (int)$service_id;
+        $quantity = max(1, (int)$quantity);
+        $price = max(0, (float)$price);
+
+        $row = $this->db->getRows("service_cart_items", [
+            "where" => [
+                "cart_id" => $cart_id,
+                "service_id" => $service_id
+            ],
+            "return_type" => "single"
+        ]);
+
+        if ($row) {
+            $newQty = (int)$row['quantity'] + $quantity;
+            $this->db->update(
+                "service_cart_items",
+                ["quantity" => $newQty, "price" => $price],
+                ["service_cart_item_id" => $row['service_cart_item_id']]
+            );
+            return $row['service_cart_item_id'];
+        }
+
+        $this->db->insert("service_cart_items", [
+            "cart_id" => $cart_id,
+            "service_id" => $service_id,
+            "quantity" => $quantity,
+            "price" => $price
+        ]);
+
+        return $this->db->lastInsertId();
+    }
 
     public function getCartCount()
     {
-        $cart_id = $this->getCartId();
-        $row = $this->db->getRows("cart_items", [
-            "where" => ["cart_id" => $cart_id],
-            "return_type" => "count"
-        ]);
-        return $row;
+        $summary = $this->getCartSummary();
+        return $summary['count'];
     }
 
     public function getCartItems()
     {
-        if (!empty($this->user_id)) {
-            $user = $this->user_id;
-            $check = "user_id";
-        } else {
-            $user  = $this->session_id;
-            $check = "session_id";
-        }
-
-        $conditions = [
-            "select"   => "ct.cart_item_id, c.cart_id, ct.product_id, ct.quantity, ct.price,
+        $cart_id = $this->getCartId();
+        $rows = $this->db->getRows("cart c", [
+            "select" => "ct.cart_item_id, c.cart_id, ct.product_id, ct.quantity, ct.price,
                        (ct.quantity * ct.price) AS line_total,
-                       p.product_name AS name, p.image_main",
-            "join"    => [
+                       p.product_name AS name, p.product_slug, p.image_main",
+            "join" => [
                 "cart_items ct" => " ON c.cart_id = ct.cart_id",
-                "products p"    => " ON ct.product_id = p.product_id"
+                "products p" => " ON ct.product_id = p.product_id"
             ],
-            "where" => [$check => $user],
+            "where_raw" => "c.cart_id = " . (int)$cart_id,
             "order_by" => "ct.cart_item_id DESC",
             "return_type" => "all"
-        ];
+        ]);
 
-        $rows = $this->db->getRows("cart c", $conditions);
+        foreach ($rows as &$row) {
+            $row['item_type'] = 'product';
+            $row['item_id'] = (int)$row['cart_item_id'];
+            $row['source_id'] = (int)$row['product_id'];
+            $row['image'] = "../view/assets/images/product/main/" . ($row['image_main'] ?: 'default.png');
+            $row['url'] = "viewproduct.php?slug=" . urlencode($row['product_slug'] ?? '');
+        }
+
         return $rows ?: [];
     }
+
     public function getServiceCartItems()
     {
-        if (!empty($this->user_id)) {
-            $user = $this->user_id;
-            $check = "user_id";
-        } else {
-            $user  = $this->session_id;
-            $check = "session_id";
-        }
-        $conditions = [
-            "select"   => "sct.service_cart_item_id, c.cart_id, sct.service_id, sct.quantity, sct.price,
+        $cart_id = $this->getCartId();
+        $rows = $this->db->getRows("cart c", [
+            "select" => "sct.service_cart_item_id, c.cart_id, sct.service_id, sct.quantity, sct.price,
                        (sct.quantity * sct.price) AS line_total,
-                       s.name AS name, s.image",
-            "join"    => [
+                       s.name AS name, s.slug, s.image",
+            "join" => [
                 "service_cart_items sct" => " ON c.cart_id = sct.cart_id",
-                "services s"    => " ON sct.service_id = s.id"
+                "services s" => " ON sct.service_id = s.id"
             ],
-            "where" => [$check => $user],
+            "where_raw" => "c.cart_id = " . (int)$cart_id,
             "order_by" => "sct.service_cart_item_id DESC",
             "return_type" => "all"
-        ];
-        $rows = $this->db->getRows("cart c", $conditions);
+        ]);
+
+        foreach ($rows as &$row) {
+            $row['item_type'] = 'service';
+            $row['item_id'] = (int)$row['service_cart_item_id'];
+            $row['cart_item_id'] = (int)$row['service_cart_item_id'];
+            $row['source_id'] = (int)$row['service_id'];
+            $row['image'] = "../view/assets/images" . ($row['image'] ?: '/services/default.png');
+            $row['url'] = "viewservice.php?slug=" . urlencode($row['slug'] ?? '');
+        }
+
         return $rows ?: [];
     }
 
+    public function getAllCartItems()
+    {
+        return array_merge($this->getCartItems(), $this->getServiceCartItems());
+    }
 
+    public function getCartSummary()
+    {
+        $productItems = $this->getCartItems();
+        $serviceItems = $this->getServiceCartItems();
+        $items = array_merge($productItems, $serviceItems);
+        $subtotal = 0.00;
+        $count = 0;
+
+        foreach ($items as $item) {
+            $subtotal += (float)$item['price'] * (int)$item['quantity'];
+            $count += (int)$item['quantity'];
+        }
+
+        return [
+            'product_items' => $productItems,
+            'service_items' => $serviceItems,
+            'items' => $items,
+            'subtotal' => round($subtotal, 2),
+            'count' => $count
+        ];
+    }
 
     public function getCartItemID($product_id)
     {
-        $cart_id = $this->getCartId(); // ensures cart exists for this session
-        // Check if product already exists in cart_items
-        $row = $this->db->getRows("cart_items", [
+        $cart_id = $this->getCartId();
+        return $this->db->getRows("cart_items", [
             "where" => [
                 "cart_id" => $cart_id,
-                "product_id" => $product_id
+                "product_id" => (int)$product_id
             ],
             "return_type" => "single"
         ]);
-        return $row;
     }
-    public function removeFromCart($cart_item_id)
+
+    public function removeFromCart($cart_item_id, $itemType = 'product')
     {
-        // Validate input
-        if (!$cart_item_id) return false;
-        // Use model->delete to remove item
-        $row = $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
-        return $row;
+        $cart_item_id = (int)$cart_item_id;
+        if ($cart_item_id <= 0) {
+            return false;
+        }
+
+        if ($itemType === 'service') {
+            return $this->db->delete("service_cart_items", ["service_cart_item_id" => $cart_item_id]);
+        }
+
+        return $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
+    }
+
+    public function updateQuantity($cart_item_id, $quantity, $itemType = 'product')
+    {
+        $cart_item_id = (int)$cart_item_id;
+        $quantity = max(1, (int)$quantity);
+
+        if ($itemType === 'service') {
+            return $this->db->update("service_cart_items", ["quantity" => $quantity], ["service_cart_item_id" => $cart_item_id]);
+        }
+
+        return $this->db->update("cart_items", ["quantity" => $quantity], ["cart_item_id" => $cart_item_id]);
+    }
+
+    public function getLineItem($cart_item_id, $itemType = 'product')
+    {
+        if ($itemType === 'service') {
+            return $this->db->getRows("service_cart_items", [
+                "where" => ["service_cart_item_id" => (int)$cart_item_id],
+                "return_type" => "single"
+            ]);
+        }
+
+        return $this->db->getRows("cart_items", [
+            "where" => ["cart_item_id" => (int)$cart_item_id],
+            "return_type" => "single"
+        ]);
     }
 
     public function clearCart()
     {
-        if (!empty($this->user_id)) {
-            $user = $this->user_id;
-            $check = "user_id";
-        } else {
-            $user  = $this->session_id;
-            $check = "session_id";
-        }
-
-        $row = $this->db->getRows("cart", [
-            "where" => [$check => $user],
-            "return_type" => "single"
-        ]);
-        // Validate input
-        if (!$row) return false;
-        // Use model->delete to remove items
-        $action = $this->db->delete("cart_items", ["cart_id" => $row['cart_id']]);
-        return $action;
+        $cart_id = $this->getCartId();
+        $this->db->delete("cart_items", ["cart_id" => $cart_id]);
+        $this->db->delete("service_cart_items", ["cart_id" => $cart_id]);
+        return true;
     }
 }

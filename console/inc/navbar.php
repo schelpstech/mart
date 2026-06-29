@@ -71,6 +71,20 @@
 							</a>
 						</li>
 
+						<li>
+							<a class="sidenav-item-link" href="coupon_mgr.php">
+								<i class="mdi mdi-ticket-percent"></i>
+								<span class="nav-text">Coupons</span>
+							</a>
+						</li>
+
+						<li>
+							<a class="sidenav-item-link" href="delivery_mgr.php">
+								<i class="mdi mdi-truck-delivery"></i>
+								<span class="nav-text">Delivery</span>
+							</a>
+						</li>
+
 						<!-- Reviews -->
 						<li>
 							<a class="sidenav-item-link" href="reviews.php">

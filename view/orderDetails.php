@@ -32,6 +32,7 @@ if (!empty($orders)) {
         ]
     ]);
     $currency = "£";
+    $deliverySettings = qs_get_delivery_settings($model);
 } else {
     header("Location: login.php");
 }
@@ -152,6 +153,12 @@ if (!empty($orders)) {
 
                                                         <div class="my-2"><span class="text-600 text-90">Order No :
                                                             </span><?= $orders["order_reference"] ?? "" ?></div>
+                                                        <div class="my-2"><span class="text-600 text-90">Fulfilment :
+                                                            </span><?= qs_fulfilment_label($orders["fulfilment_type"] ?? "delivery") ?></div>
+                                                        <?php if (($orders["fulfilment_type"] ?? "delivery") === "pickup"): ?>
+                                                            <div class="my-2"><span class="text-600 text-90">Pickup :
+                                                                </span><?= htmlspecialchars($deliverySettings['pickup_address']) ?></div>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                                 <!-- /.col -->
@@ -166,6 +173,7 @@ if (!empty($orders)) {
                                                                 <tr>
                                                                     <th scope="col">ID</th>
                                                                     <th scope="col">Name</th>
+                                                                    <th scope="col">Type</th>
                                                                     <th scope="col">Qty</th>
                                                                     <th scope="col">Price</th>
                                                                     <th scope="col">Amount</th>
@@ -183,6 +191,7 @@ if (!empty($orders)) {
                                                                         <tr>
                                                                             <th scope="row"><span><?php echo $count++; ?></span></th>
                                                                             <td><span><b><?php echo strtoupper($items['product_name'] ?? "N/A"); ?></b></span></td>
+                                                                            <td><span><b><?php echo ucfirst($items['orderType'] ?? "product"); ?></b></span></td>
                                                                             <td><span><b><?php echo strtoupper($items['quantity'] ?? "N/A"); ?></b></span></td>
                                                                             <td><span><b><?php echo strtoupper($items['price'] ?? "N/A"); ?></b></span></td>
                                                                             <td><span><b><?php echo $currency . number_format($items['subtotal'], 2) ?? "N/A"; ?></b></span></td>
@@ -190,42 +199,53 @@ if (!empty($orders)) {
                                                                     <?php endforeach; ?>
                                                                 <?php else: ?>
                                                                     <tr>
-                                                                        <td colspan="7" class="text-center">You have no orders yet.</td>
+                                                                        <td colspan="6" class="text-center">You have no orders yet.</td>
                                                                     </tr>
                                                                 <?php endif; ?>
                                                             </tbody>
+                                                            <?php $financials = qs_order_financials($orders, $subtotal); ?>
                                                             <tfoot>
                                                                 <tr>
-                                                                    <td class="border-none" colspan="3">
+                                                                    <td class="border-none" colspan="4">
                                                                         <span></span>
                                                                     </td>
                                                                     <td class="border-color" colspan="1">
                                                                         <span><strong>Sub Total</strong></span>
                                                                     </td>
                                                                     <td class="border-color">
-                                                                        <span><b><?php
-                                                                                    echo   $currency . number_format($subtotal, 2) ?? "N/A"; ?></b></span>
+                                                                        <span><b><?php echo qs_money($financials['subtotal']); ?></b></span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="border-none" colspan="3">
+                                                                    <td class="border-none" colspan="4">
                                                                         <span></span>
                                                                     </td>
                                                                     <td class="border-color" colspan="1">
                                                                         <span><strong>Delivery Fee </strong></span>
                                                                     </td>
                                                                     <td class="border-color">
-                                                                        <span><b><?php echo  $currency . number_format(($orders['total_amount'] - $subtotal), 2) ?? "N/A"; ?></b></span>
+                                                                        <span><b><?php echo qs_money($financials['delivery_fee']); ?></b></span>
                                                                     </td>
                                                                 </tr>
+                                                                <?php if ($financials['discount'] > 0): ?>
+                                                                    <tr>
+                                                                        <td class="border-none" colspan="4"><span></span></td>
+                                                                        <td class="border-color" colspan="1">
+                                                                            <span><strong>Discount <?= !empty($orders['coupon_code']) ? '(' . htmlspecialchars($orders['coupon_code']) . ')' : ''; ?></strong></span>
+                                                                        </td>
+                                                                        <td class="border-color">
+                                                                            <span><b>-<?= qs_money($financials['discount']); ?></b></span>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php endif; ?>
                                                                 <tr>
                                                                     <td class="border-none m-m15"
-                                                                        colspan="3"><span class="note-text-color"></span></td>
+                                                                        colspan="4"><span class="note-text-color"></span></td>
                                                                     <td class="border-color m-m15"
                                                                         colspan="1"><span><strong>Total</strong></span>
                                                                     </td>
                                                                     <td class="border-color m-m15">
-                                                                        <span><b><?php echo  $currency . number_format($orders['total_amount'], 2) ?? "N/A"; ?></b></span>
+                                                                        <span><b><?php echo qs_money($financials['total']); ?></b></span>
                                                                     </td>
                                                                 </tr>
                                                             </tfoot>

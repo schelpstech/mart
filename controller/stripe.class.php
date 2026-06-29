@@ -98,6 +98,10 @@ class StripePayment
      */
     private function sendRequest($url, $data = [], $method = "POST")
     {
+        if (trim($this->secretKey) === '') {
+            return ["success" => false, "error" => "Stripe secret key is not configured."];
+        }
+
         $ch = curl_init();
 
         curl_setopt_array($ch, [
