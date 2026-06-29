@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "return_type" => "single"
                 ]);
 
-                if ($admin && password_verify($password, $admin['admin_password'])) {
+                $isActiveAdmin = $admin && (!array_key_exists('admin_status', $admin) || strtolower((string)$admin['admin_status']) === 'active');
+
+                if ($admin && $isActiveAdmin && password_verify($password, $admin['admin_password'])) {
                     $_SESSION['admin_id']   = $admin['admin_id'];
                     $_SESSION['admin_name'] = $admin['admin_name'];
                     $_SESSION['admin_role'] = $admin['role'];

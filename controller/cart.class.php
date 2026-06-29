@@ -133,15 +133,17 @@ class Cart
 
         self::$expiredCartCleanupRan = true;
 
+        $expiryDays = $this->getCartExpiryDays();
+
         try {
-            $stmt = $this->db->prepare("DELETE FROM service_cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+            $stmt = $this->db->prepare("DELETE FROM service_cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL {$expiryDays} DAY)");
             $stmt->execute();
         } catch (Exception $e) {
             try {
                 $stmt = $this->db->prepare("
                     DELETE sct FROM service_cart_items sct
                     INNER JOIN cart c ON sct.cart_id = c.cart_id
-                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL {$expiryDays} DAY)
                 ");
                 $stmt->execute();
             } catch (Exception $fallbackException) {
@@ -150,19 +152,40 @@ class Cart
         }
 
         try {
-            $stmt = $this->db->prepare("DELETE FROM cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)");
+            $stmt = $this->db->prepare("DELETE FROM cart_items WHERE added_at < DATE_SUB(NOW(), INTERVAL {$expiryDays} DAY)");
             $stmt->execute();
         } catch (Exception $e) {
             try {
                 $stmt = $this->db->prepare("
                     DELETE ci FROM cart_items ci
                     INNER JOIN cart c ON ci.cart_id = c.cart_id
-                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                    WHERE c.created_at < DATE_SUB(NOW(), INTERVAL {$expiryDays} DAY)
                 ");
                 $stmt->execute();
             } catch (Exception $fallbackException) {
                 error_log("Expired product cart cleanup failed: " . $fallbackException->getMessage());
             }
+        }
+    }
+
+    private function getCartExpiryDays()
+    {
+        $defaultDays = 30;
+
+        try {
+            $stmt = $this->db->prepare('SHOW TABLES LIKE :table_name');
+            $stmt->execute([':table_name' => 'site_settings']);
+            if (!$stmt->fetch(PDO::FETCH_NUM)) {
+                return $defaultDays;
+            }
+
+            $stmt = $this->db->prepare("SELECT setting_value FROM site_settings WHERE setting_key = :setting_key LIMIT 1");
+            $stmt->execute([':setting_key' => 'cart_expiry_days']);
+            $value = (int)$stmt->fetchColumn();
+
+            return $value > 0 ? min($value, 365) : $defaultDays;
+        } catch (Exception $e) {
+            return $defaultDays;
         }
     }
 

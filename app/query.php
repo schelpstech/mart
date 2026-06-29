@@ -7,6 +7,8 @@ if (file_exists('../../controller/start.inc.php')) {
     include './controller/start.inc.php';
 }
 
+include_once __DIR__ . '/../controller/admin_helpers.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -59,8 +61,43 @@ $products_in_salon_hair = $model->getRows("products", [
 ]);
 
 
-// Get the latest 10 Testimonials
-$latest_testimonials = $model->getRows("testimonials", [
-    "order_by" => "testimonial_created_at DESC", // optional ordering
-    "limit" => "5", // optional limit
-]);
+// Get the latest testimonials, supporting both legacy and migrated review schemas.
+$latest_testimonials = [];
+if (isset($model) && qs_admin_table_exists($model, 'testimonials')) {
+    $testimonialColumns = qs_admin_table_columns($model, 'testimonials');
+    $testimonialNameCandidates = ['name', 'testimonial_name', 'customer_name', 'client_name'];
+    $testimonialLocationCandidates = ['location', 'testimonial_role', 'role', 'designation'];
+    $testimonialMessageCandidates = ['message', 'testimonial_message', 'content', 'review', 'testimonial'];
+    $testimonialNameCol = qs_admin_pick_column($testimonialColumns, $testimonialNameCandidates);
+    $testimonialMessageCol = qs_admin_pick_column($testimonialColumns, $testimonialMessageCandidates);
+    $testimonialStatusCol = qs_admin_pick_column($testimonialColumns, ['testimonial_status', 'status']);
+    $testimonialCreatedCol = qs_admin_pick_column($testimonialColumns, ['testimonial_created_at', 'created_at']);
+
+    if ($testimonialNameCol && $testimonialMessageCol) {
+        $testimonialSelect = [
+            qs_admin_coalesce_select($testimonialColumns, $testimonialNameCandidates, 'name', "'Customer'"),
+            qs_admin_coalesce_select($testimonialColumns, $testimonialLocationCandidates, 'location'),
+            qs_admin_coalesce_select($testimonialColumns, $testimonialMessageCandidates, 'message')
+        ];
+
+        $testimonialParams = [
+            'select' => implode(', ', $testimonialSelect),
+            'limit' => 5,
+            'return_type' => 'all'
+        ];
+
+        if ($testimonialStatusCol && qs_admin_safe_identifier($testimonialStatusCol)) {
+            $testimonialParams['where_raw'] = "LOWER(`{$testimonialStatusCol}`) = 'active'";
+        }
+
+        if ($testimonialCreatedCol) {
+            $testimonialParams['order_by'] = $testimonialCreatedCol . ' DESC';
+        }
+
+        try {
+            $latest_testimonials = $model->getRows("testimonials", $testimonialParams);
+        } catch (\Exception $e) {
+            $latest_testimonials = [];
+        }
+    }
+}
