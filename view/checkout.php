@@ -393,4 +393,240 @@ if ($isLoggedIn) {
         </div>
     </section>
 
+    <style>
+        .fulfilment-choice-alert {
+            background: #fff8e6;
+            border: 1px solid #ffe0a3;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #5f4b20;
+        }
+
+        .fulfilment-choice-alert strong {
+            display: block;
+            color: #2f3542;
+            margin-bottom: 4px;
+        }
+
+        .fulfilment-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .fulfilment-option-card {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0;
+        }
+
+        .fulfilment-option-card:hover {
+            border-color: #3474d4;
+            box-shadow: 0 8px 20px rgba(52, 116, 212, 0.12);
+        }
+
+        .fulfilment-option-card.active,
+        .fulfilment-option-card:has(.fulfilment-radio:checked) {
+            border-color: #3474d4;
+            background: #f4f8ff;
+            box-shadow: 0 8px 20px rgba(52, 116, 212, 0.15);
+        }
+
+        .fulfilment-radio {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fulfilment-option-indicator {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-top: 2px;
+            background: #ffffff;
+            position: relative;
+        }
+
+        .fulfilment-option-card.active .fulfilment-option-indicator,
+        .fulfilment-option-card:has(.fulfilment-radio:checked) .fulfilment-option-indicator {
+            border-color: #3474d4;
+            background: #3474d4;
+        }
+
+        .fulfilment-option-card.active .fulfilment-option-indicator::after,
+        .fulfilment-option-card:has(.fulfilment-radio:checked) .fulfilment-option-indicator::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid #ffffff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .fulfilment-option-copy strong {
+            display: block;
+            font-size: 16px;
+            color: #2f3542;
+            margin-bottom: 4px;
+        }
+
+        .fulfilment-option-copy small {
+            display: block;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #6b7280;
+        }
+
+        .fulfilment-error-message {
+            display: none;
+            color: #dc3545;
+            margin-top: 8px;
+        }
+
+        .fulfilment-error-message.show {
+            display: block;
+        }
+
+        .pickup-instructions {
+            background: #f7fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px;
+            color: #374151;
+        }
+
+        @media (min-width: 576px) {
+            .fulfilment-options {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 575px) {
+            .fulfilment-option-card {
+                padding: 14px;
+            }
+
+            .fulfilment-option-copy strong {
+                font-size: 15px;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const radios = document.querySelectorAll('input[name="fulfilment_type"]');
+            const cards = document.querySelectorAll(".fulfilment-option-card");
+            const selectedLabel = document.getElementById("fulfilment-selected-label");
+            const pickupBox = document.getElementById("pickup-instructions");
+            const deliveryZoneWrap = document.querySelector(".delivery-zone-wrap");
+            const deliveryFields = document.querySelectorAll(".delivery-address-field input");
+            const checkoutForm = document.getElementById("checkoutForm");
+            const errorMessage = document.getElementById("fulfilment-error");
+
+            function setDeliveryFieldsRequired(isDelivery) {
+                deliveryFields.forEach(function(input) {
+                    const fieldName = input.getAttribute("name");
+
+                    if (["address1", "city", "postcode"].includes(fieldName)) {
+                        input.required = isDelivery;
+                    }
+
+                    input.closest(".delivery-address-field").style.display = isDelivery ? "" : "none";
+                });
+            }
+
+            function updateFulfilmentUI(value) {
+                cards.forEach(function(card) {
+                    const radio = card.querySelector('input[name="fulfilment_type"]');
+                    card.classList.toggle("active", radio && radio.value === value);
+                });
+
+                if (errorMessage) {
+                    errorMessage.classList.remove("show");
+                }
+
+                if (value === "delivery") {
+                    if (selectedLabel) {
+                        selectedLabel.textContent = "Delivery selected. Please confirm your delivery details below.";
+                    }
+
+                    if (pickupBox) {
+                        pickupBox.style.display = "none";
+                    }
+
+                    if (deliveryZoneWrap) {
+                        deliveryZoneWrap.style.display = "";
+                    }
+
+                    setDeliveryFieldsRequired(true);
+                }
+
+                if (value === "pickup") {
+                    if (selectedLabel) {
+                        selectedLabel.textContent = "Pickup selected. No delivery fee will be charged.";
+                    }
+
+                    if (pickupBox) {
+                        pickupBox.style.display = "";
+                    }
+
+                    if (deliveryZoneWrap) {
+                        deliveryZoneWrap.style.display = "none";
+                    }
+
+                    setDeliveryFieldsRequired(false);
+                }
+            }
+
+            radios.forEach(function(radio) {
+                radio.addEventListener("change", function() {
+                    updateFulfilmentUI(this.value);
+                });
+
+                if (radio.checked) {
+                    updateFulfilmentUI(radio.value);
+                }
+            });
+
+            if (checkoutForm && radios.length > 0) {
+                checkoutForm.addEventListener("submit", function(event) {
+                    const selected = document.querySelector('input[name="fulfilment_type"]:checked');
+
+                    if (!selected) {
+                        event.preventDefault();
+
+                        if (errorMessage) {
+                            errorMessage.classList.add("show");
+                        }
+
+                        if (selectedLabel) {
+                            selectedLabel.textContent = "Please choose how you want to receive your order before proceeding to payment.";
+                        }
+
+                        document.querySelector(".fulfilment-options").scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+
     <?php include './inc/footer.php'; ?>
