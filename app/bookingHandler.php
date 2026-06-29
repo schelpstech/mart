@@ -17,11 +17,23 @@ if (empty($serviceIds)) {
 }
 
 try {
+    $addedServices = 0;
+
     foreach ($serviceIds as $srvId) {
-        $srv = $model->getById('services', $srvId);
+        $srv = $model->getRows('services', [
+            'where' => ['id' => (int)$srvId, 'status' => 'active'],
+            'return_type' => 'single'
+        ]);
         if (!$srv) continue;
 
         $cart->addServiceToCart((int)$srvId, 1, (float)$srv['base_price']);
+        $addedServices++;
+    }
+
+    if ($addedServices === 0) {
+        $utility->setFlash('error', "Selected services are no longer available.");
+        header("Location: ../view/booking.php");
+        exit;
     }
 
     // Redirect to checkout page

@@ -111,9 +111,84 @@ class Cart
         }
     }
 
+    private function prepareCartLines($cart_id)
+    {
+        $cart_id = (int)$cart_id;
+        if ($cart_id <= 0) {
+            return;
+        }
+
+        $this->removeUnavailableCartLines($cart_id);
+        $this->mergeDuplicateLineItems($cart_id, "cart_items", "cart_item_id", "product_id");
+        $this->mergeDuplicateLineItems($cart_id, "service_cart_items", "service_cart_item_id", "service_id");
+    }
+
+    private function removeUnavailableCartLines($cart_id)
+    {
+        try {
+            $stmt = $this->db->prepare("
+                DELETE ci FROM cart_items ci
+                LEFT JOIN products p ON ci.product_id = p.product_id
+                WHERE ci.cart_id = :cart_id
+                  AND (p.product_id IS NULL OR LOWER(p.status) <> 'active')
+            ");
+            $stmt->execute([':cart_id' => (int)$cart_id]);
+        } catch (Exception $e) {
+            error_log("Product cart cleanup failed: " . $e->getMessage());
+        }
+
+        try {
+            $stmt = $this->db->prepare("
+                DELETE sct FROM service_cart_items sct
+                LEFT JOIN services s ON sct.service_id = s.id
+                WHERE sct.cart_id = :cart_id
+                  AND (s.id IS NULL OR LOWER(s.status) <> 'active')
+            ");
+            $stmt->execute([':cart_id' => (int)$cart_id]);
+        } catch (Exception $e) {
+            error_log("Service cart cleanup failed: " . $e->getMessage());
+        }
+    }
+
+    private function mergeDuplicateLineItems($cart_id, $table, $primaryKey, $sourceKey)
+    {
+        try {
+            $items = $this->db->getRows($table, [
+                "where" => ["cart_id" => (int)$cart_id],
+                "order_by" => $sourceKey . " ASC, " . $primaryKey . " ASC",
+                "return_type" => "all"
+            ]);
+        } catch (Exception $e) {
+            error_log("Cart duplicate lookup failed: " . $e->getMessage());
+            return;
+        }
+
+        $seen = [];
+
+        foreach ($items as $item) {
+            $sourceId = (int)($item[$sourceKey] ?? 0);
+            if ($sourceId <= 0) {
+                continue;
+            }
+
+            if (!isset($seen[$sourceId])) {
+                $seen[$sourceId] = $item;
+                continue;
+            }
+
+            $primary = $seen[$sourceId];
+            $newQuantity = (int)$primary['quantity'] + (int)$item['quantity'];
+
+            $this->db->update($table, ["quantity" => max(1, $newQuantity)], [$primaryKey => $primary[$primaryKey]]);
+            $this->db->delete($table, [$primaryKey => $item[$primaryKey]]);
+            $seen[$sourceId]['quantity'] = max(1, $newQuantity);
+        }
+    }
+
     public function addToCart($product_id, $quantity, $price)
     {
         $cart_id = $this->getCartId();
+        $this->prepareCartLines($cart_id);
         $product_id = (int)$product_id;
         $quantity = max(1, (int)$quantity);
         $price = max(0, (float)$price);
@@ -145,6 +220,7 @@ class Cart
     public function addServiceToCart($service_id, $quantity, $price)
     {
         $cart_id = $this->getCartId();
+        $this->prepareCartLines($cart_id);
         $service_id = (int)$service_id;
         $quantity = max(1, (int)$quantity);
         $price = max(0, (float)$price);
@@ -186,6 +262,7 @@ class Cart
     public function getCartItems()
     {
         $cart_id = $this->getCartId();
+        $this->prepareCartLines($cart_id);
         $rows = $this->db->getRows("cart c", [
             "select" => "ct.cart_item_id, c.cart_id, ct.product_id, ct.quantity, ct.price,
                        (ct.quantity * ct.price) AS line_total,
@@ -194,7 +271,7 @@ class Cart
                 "cart_items ct" => " ON c.cart_id = ct.cart_id",
                 "products p" => " ON ct.product_id = p.product_id"
             ],
-            "where_raw" => "c.cart_id = " . (int)$cart_id,
+            "where_raw" => "c.cart_id = " . (int)$cart_id . " AND LOWER(p.status) = 'active'",
             "order_by" => "ct.cart_item_id DESC",
             "return_type" => "all"
         ]);
@@ -213,6 +290,7 @@ class Cart
     public function getServiceCartItems()
     {
         $cart_id = $this->getCartId();
+        $this->prepareCartLines($cart_id);
         $rows = $this->db->getRows("cart c", [
             "select" => "sct.service_cart_item_id, c.cart_id, sct.service_id, sct.quantity, sct.price,
                        (sct.quantity * sct.price) AS line_total,
@@ -221,7 +299,7 @@ class Cart
                 "service_cart_items sct" => " ON c.cart_id = sct.cart_id",
                 "services s" => " ON sct.service_id = s.id"
             ],
-            "where_raw" => "c.cart_id = " . (int)$cart_id,
+            "where_raw" => "c.cart_id = " . (int)$cart_id . " AND LOWER(s.status) = 'active'",
             "order_by" => "sct.service_cart_item_id DESC",
             "return_type" => "all"
         ]);
@@ -284,36 +362,101 @@ class Cart
             return false;
         }
 
+        $cart_id = (int)$this->getCartId();
+
         if ($itemType === 'service') {
-            return $this->db->delete("service_cart_items", ["service_cart_item_id" => $cart_item_id]);
+            $line = $this->db->getRows("service_cart_items", [
+                "where" => ["service_cart_item_id" => $cart_item_id, "cart_id" => $cart_id],
+                "return_type" => "single"
+            ]);
+
+            if (!$line) {
+                return false;
+            }
+
+            return $this->db->delete("service_cart_items", [
+                "cart_id" => $cart_id,
+                "service_id" => $line['service_id']
+            ]);
         }
 
-        return $this->db->delete("cart_items", ["cart_item_id" => $cart_item_id]);
+        $line = $this->db->getRows("cart_items", [
+            "where" => ["cart_item_id" => $cart_item_id, "cart_id" => $cart_id],
+            "return_type" => "single"
+        ]);
+
+        if (!$line) {
+            return false;
+        }
+
+        return $this->db->delete("cart_items", [
+            "cart_id" => $cart_id,
+            "product_id" => $line['product_id']
+        ]);
     }
 
     public function updateQuantity($cart_item_id, $quantity, $itemType = 'product')
     {
         $cart_item_id = (int)$cart_item_id;
         $quantity = max(1, (int)$quantity);
+        $cart_id = (int)$this->getCartId();
 
         if ($itemType === 'service') {
+            $line = $this->db->getRows("service_cart_items", [
+                "where" => ["service_cart_item_id" => $cart_item_id, "cart_id" => $cart_id],
+                "return_type" => "single"
+            ]);
+
+            if (!$line) {
+                return false;
+            }
+
+            $this->removeDuplicateLineItems($cart_id, "service_cart_items", "service_cart_item_id", "service_id", (int)$line['service_id'], $cart_item_id);
             return $this->db->update("service_cart_items", ["quantity" => $quantity], ["service_cart_item_id" => $cart_item_id]);
         }
 
+        $line = $this->db->getRows("cart_items", [
+            "where" => ["cart_item_id" => $cart_item_id, "cart_id" => $cart_id],
+            "return_type" => "single"
+        ]);
+
+        if (!$line) {
+            return false;
+        }
+
+        $this->removeDuplicateLineItems($cart_id, "cart_items", "cart_item_id", "product_id", (int)$line['product_id'], $cart_item_id);
         return $this->db->update("cart_items", ["quantity" => $quantity], ["cart_item_id" => $cart_item_id]);
+    }
+
+    private function removeDuplicateLineItems($cart_id, $table, $primaryKey, $sourceKey, $sourceId, $keepId)
+    {
+        $stmt = $this->db->prepare("
+            DELETE FROM {$table}
+            WHERE cart_id = :cart_id
+              AND {$sourceKey} = :source_id
+              AND {$primaryKey} <> :keep_id
+        ");
+
+        $stmt->execute([
+            ':cart_id' => (int)$cart_id,
+            ':source_id' => (int)$sourceId,
+            ':keep_id' => (int)$keepId
+        ]);
     }
 
     public function getLineItem($cart_item_id, $itemType = 'product')
     {
+        $cart_id = (int)$this->getCartId();
+
         if ($itemType === 'service') {
             return $this->db->getRows("service_cart_items", [
-                "where" => ["service_cart_item_id" => (int)$cart_item_id],
+                "where" => ["service_cart_item_id" => (int)$cart_item_id, "cart_id" => $cart_id],
                 "return_type" => "single"
             ]);
         }
 
         return $this->db->getRows("cart_items", [
-            "where" => ["cart_item_id" => (int)$cart_item_id],
+            "where" => ["cart_item_id" => (int)$cart_item_id, "cart_id" => $cart_id],
             "return_type" => "single"
         ]);
     }

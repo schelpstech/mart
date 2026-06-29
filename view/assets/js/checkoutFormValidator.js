@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function selectedFulfilment() {
         const checked = document.querySelector('input[name="fulfilment_type"]:checked');
-        return checked ? checked.value : "delivery";
+        const hidden = document.querySelector('input[name="fulfilment_type"][type="hidden"]');
+        return checked ? checked.value : (hidden ? hidden.value : "delivery");
     }
 
     function setAddressRequirements() {
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelectorAll(".delivery-address-field").forEach(function (wrap) {
             wrap.classList.toggle("pickup-optional", !isDelivery);
+            wrap.style.display = isDelivery ? "" : "none";
         });
 
         const pickupBox = document.getElementById("pickup-instructions");

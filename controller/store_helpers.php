@@ -86,6 +86,10 @@ if (!function_exists('qs_normalize_fulfilment')) {
         $deliveryEnabled = !empty($settings['delivery_enabled']);
         $pickupEnabled = !empty($settings['pickup_enabled']);
 
+        if (!$hasProducts) {
+            return $pickupEnabled ? 'pickup' : 'delivery';
+        }
+
         if (!in_array($fulfilment, ['delivery', 'pickup'], true)) {
             $fulfilment = ($hasProducts && $deliveryEnabled) ? 'delivery' : 'pickup';
         }

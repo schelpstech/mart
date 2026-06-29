@@ -7,6 +7,7 @@ $settings = qs_get_delivery_settings($model);
 $zones = qs_get_delivery_zones($model);
 $hasProducts = false;
 $hasServices = false;
+$requiresFulfilmentChoice = false;
 $defaultFulfilment = 'delivery';
 $totals = [
     'subtotal' => 0,
@@ -20,6 +21,7 @@ if ($isLoggedIn) {
     $summary = $cart->getCartSummary();
     $hasProducts = !empty($summary['product_items']);
     $hasServices = !empty($summary['service_items']);
+    $requiresFulfilmentChoice = $hasProducts;
     $defaultFulfilment = qs_normalize_fulfilment('', $settings, $hasProducts, $hasServices);
     $totals = qs_calculate_order_totals($cart, $model, $defaultFulfilment);
 }
@@ -116,49 +118,91 @@ if ($isLoggedIn) {
                             </div>
                         </div>
 
+                        <div class="ec-sidebar-wrap ec-checkout-items-wrap">
+                            <div class="ec-sidebar-block">
+                                <div class="ec-sb-title">
+                                    <h3 class="ec-sidebar-title">Cart Items</h3>
+                                </div>
+                                <div class="ec-sb-block-content">
+                                    <?php if (!empty($summary['items'])): ?>
+                                        <div class="checkout-cart-items">
+                                            <?php foreach ($summary['items'] as $item): ?>
+                                                <?php
+                                                $itemType = ucfirst($item['item_type'] ?? 'product');
+                                                $itemQuantity = (int)($item['quantity'] ?? 1);
+                                                $lineTotal = (float)($item['price'] ?? 0) * $itemQuantity;
+                                                ?>
+                                                <div class="checkout-cart-item">
+                                                    <a href="<?= htmlspecialchars($item['url'] ?? 'viewcart.php'); ?>" class="checkout-cart-item-image">
+                                                        <img src="<?= htmlspecialchars($item['image'] ?? 'assets/images/product/main/default.png'); ?>"
+                                                            alt="<?= htmlspecialchars($item['name'] ?? 'Item'); ?>">
+                                                    </a>
+                                                    <div class="checkout-cart-item-main">
+                                                        <a href="<?= htmlspecialchars($item['url'] ?? 'viewcart.php'); ?>" class="checkout-cart-item-title">
+                                                            <?= htmlspecialchars($item['name'] ?? 'Item'); ?>
+                                                        </a>
+                                                        <small><?= $itemType; ?> &times; <?= $itemQuantity; ?></small>
+                                                    </div>
+                                                    <strong><?= qs_money($lineTotal); ?></strong>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <p class="checkout-cart-edit-note">Need to remove or update an item? Please go back to your cart before payment.</p>
+                                        <a href="viewcart.php" class="btn btn-primary btn-sm checkout-edit-cart-btn">Edit Cart</a>
+                                    <?php else: ?>
+                                        <p>Your cart is empty.</p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="ec-sidebar-wrap ec-checkout-del-wrap">
                             <div class="ec-sidebar-block">
                                 <div class="ec-sb-title">
-                                    <h3 class="ec-sidebar-title">Fulfilment</h3>
+                                    <h3 class="ec-sidebar-title"><?= $requiresFulfilmentChoice ? 'Delivery / Pickup' : 'Service Booking'; ?></h3>
                                 </div>
                                 <div class="ec-sb-block-content">
-                                    <div class="ec-checkout-del">
-                                        <?php if (!empty($settings['delivery_enabled'])): ?>
-                                            <label>
-                                                <input type="radio" name="fulfilment_type" value="delivery" form="checkoutForm"
-                                                    <?= $defaultFulfilment === 'delivery' ? 'checked' : ''; ?>>
-                                                Delivery
-                                            </label><br>
-                                        <?php endif; ?>
-                                        <?php if (!empty($settings['pickup_enabled'])): ?>
-                                            <label>
-                                                <input type="radio" name="fulfilment_type" value="pickup" form="checkoutForm"
-                                                    <?= $defaultFulfilment === 'pickup' ? 'checked' : ''; ?>>
-                                                Pickup
-                                            </label>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <?php if (!empty($zones)): ?>
-                                        <div class="form-group mt-3 delivery-zone-wrap">
-                                            <label for="delivery_zone_id">Delivery Location</label>
-                                            <select name="delivery_zone_id" id="delivery_zone_id" class="form-control" form="checkoutForm">
-                                                <option value="">Default Delivery</option>
-                                                <?php foreach ($zones as $zone): ?>
-                                                    <option value="<?= (int)$zone['zone_id']; ?>">
-                                                        <?= htmlspecialchars($zone['zone_name']); ?> - <?= qs_money($zone['delivery_fee']); ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                    <?php if ($requiresFulfilmentChoice): ?>
+                                        <div class="ec-checkout-del">
+                                            <?php if (!empty($settings['delivery_enabled'])): ?>
+                                                <label>
+                                                    <input type="radio" name="fulfilment_type" value="delivery" form="checkoutForm"
+                                                        <?= $defaultFulfilment === 'delivery' ? 'checked' : ''; ?>>
+                                                    Delivery
+                                                </label><br>
+                                            <?php endif; ?>
+                                            <?php if (!empty($settings['pickup_enabled'])): ?>
+                                                <label>
+                                                    <input type="radio" name="fulfilment_type" value="pickup" form="checkoutForm"
+                                                        <?= $defaultFulfilment === 'pickup' ? 'checked' : ''; ?>>
+                                                    Pickup
+                                                </label>
+                                            <?php endif; ?>
                                         </div>
-                                    <?php endif; ?>
 
-                                    <div class="pickup-instructions mt-3" id="pickup-instructions" style="<?= $defaultFulfilment === 'pickup' ? '' : 'display:none;'; ?>">
-                                        <p><strong>Pickup Address:</strong><br><?= htmlspecialchars($settings['pickup_address']); ?></p>
-                                        <?php if (!empty($settings['pickup_instruction'])): ?>
-                                            <p><?= nl2br(htmlspecialchars($settings['pickup_instruction'])); ?></p>
+                                        <?php if (!empty($zones)): ?>
+                                            <div class="form-group mt-3 delivery-zone-wrap">
+                                                <label for="delivery_zone_id">Delivery Location</label>
+                                                <select name="delivery_zone_id" id="delivery_zone_id" class="form-control" form="checkoutForm">
+                                                    <option value="">Default Delivery</option>
+                                                    <?php foreach ($zones as $zone): ?>
+                                                        <option value="<?= (int)$zone['zone_id']; ?>">
+                                                            <?= htmlspecialchars($zone['zone_name']); ?> - <?= qs_money($zone['delivery_fee']); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
                                         <?php endif; ?>
-                                    </div>
+
+                                        <div class="pickup-instructions mt-3" id="pickup-instructions" style="<?= $defaultFulfilment === 'pickup' ? '' : 'display:none;'; ?>">
+                                            <p><strong>Pickup Address:</strong><br><?= htmlspecialchars($settings['pickup_address']); ?></p>
+                                            <?php if (!empty($settings['pickup_instruction'])): ?>
+                                                <p><?= nl2br(htmlspecialchars($settings['pickup_instruction'])); ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <p class="service-only-checkout-note">Your cart contains services only, so no delivery fee or delivery address is required.</p>
+                                    <?php endif; ?>
 
                                     <hr>
 
@@ -210,7 +254,7 @@ if ($isLoggedIn) {
                             <div class="ec-checkout-inner">
                                 <div class="ec-checkout-wrap margin-bottom-30 padding-bottom-3">
                                     <div class="ec-checkout-block ec-check-bill">
-                                        <h3 class="ec-checkout-title">Billing & Delivery Details</h3>
+                                        <h3 class="ec-checkout-title"><?= $requiresFulfilmentChoice ? 'Billing & Delivery Details' : 'Booking Details'; ?></h3>
                                         <?php
                                         try {
                                             $profile = $user->getUserProfile($_SESSION['user_id']);
@@ -231,6 +275,9 @@ if ($isLoggedIn) {
                                         ?>
                                         <div class="ec-check-bill-form">
                                             <form id="checkoutForm" action="../app/orderHandler.php" method="post">
+                                                <?php if (!$requiresFulfilmentChoice): ?>
+                                                    <input type="hidden" name="fulfilment_type" value="pickup">
+                                                <?php endif; ?>
                                                 <span class="ec-bill-wrap ec-bill-half">
                                                     <label>First Name*</label>
                                                     <input type="text" name="firstname" id="firstname" placeholder="John"
@@ -277,7 +324,7 @@ if ($isLoggedIn) {
                                                     <input type="text" name="postcode" id="postcode" placeholder="SW1A 1AA"
                                                         value="<?= htmlspecialchars($postcode) ?>" <?= $deliveryRequired; ?> tabindex="7" />
                                                 </span>
-                                                <span class="ec-bill-wrap ec-bill-half">
+                                                <span class="ec-bill-wrap ec-bill-half delivery-address-field">
                                                     <label>Country</label>
                                                     <input type="text" value="United Kingdom" disabled />
                                                 </span>

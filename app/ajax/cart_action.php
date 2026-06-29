@@ -134,7 +134,14 @@ if ($action === "update_quantity") {
         exit;
     }
 
-    $cart->updateQuantity($cartItemId, $quantity, $itemType);
+    if (!$cart->updateQuantity($cartItemId, $quantity, $itemType)) {
+        echo json_encode([
+            "status" => "error",
+            "msg" => "Cart item was not found."
+        ]);
+        exit;
+    }
+
     $line = $cart->getLineItem($cartItemId, $itemType);
     $lineTotal = $line ? (float)$line['quantity'] * (float)$line['price'] : 0.00;
 
