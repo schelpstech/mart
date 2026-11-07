@@ -287,8 +287,9 @@ include './inc/mainhead.php';
                                                         $productImage = htmlspecialchars($product['image_main']);
                                                         $productCategory = htmlspecialchars($product['category_name'] ?? '');
                                                         $categoryId = htmlspecialchars($product['category_id'] ?? '');
-                                                        $priceNew = number_format($product['price'], 2);
-                                                        $priceOld = $product['discount_price'] ? number_format($product['discount_price'], 2) : '';
+                                                        $displayPrices = qs_product_prices($product);
+                                                        $priceNew = number_format($displayPrices['current'], 2);
+                                                        $priceOld = $displayPrices['original'] !== null ? number_format($displayPrices['original'], 2) : '';
 
                                                         // Check if product is already in cart
                                                         $inCart = isset($cartLookup[$productId]);
@@ -333,8 +334,9 @@ include './inc/mainhead.php';
                                                                 $productImage = htmlspecialchars($productd['image_main']);
                                                                 $productCategory = htmlspecialchars($productd['category_name'] ?? '');
                                                                 $categoryId = htmlspecialchars($productd['category_id'] ?? '');
-                                                                $priceNew = number_format($productd['price'], 2);
-                                                                $priceOld = $product['discount_price'] ? number_format($product['discount_price'], 2) : '';
+                                                                $displayPrices = qs_product_prices($productd);
+                                                                $priceNew = number_format($displayPrices['current'], 2);
+                                                                $priceOld = $displayPrices['original'] !== null ? number_format($displayPrices['original'], 2) : '';
 
                                                                 // Check if product is already in cart
                                                                 $inCart = isset($cartLookup[$productId]);

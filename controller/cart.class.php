@@ -332,7 +332,7 @@ class Cart
         $rows = $this->db->getRows("cart c", [
             "select" => "ct.cart_item_id, c.cart_id, ct.product_id, ct.quantity, ct.price,
                        (ct.quantity * ct.price) AS line_total,
-                       p.product_name AS name, p.product_slug, p.image_main",
+                       p.product_name AS name, p.product_slug, p.image_main, p.sku",
             "join" => [
                 "cart_items ct" => " ON c.cart_id = ct.cart_id",
                 "products p" => " ON ct.product_id = p.product_id"
@@ -347,7 +347,7 @@ class Cart
             $row['item_id'] = (int)$row['cart_item_id'];
             $row['source_id'] = (int)$row['product_id'];
             $row['image'] = "../view/assets/images/product/main/" . ($row['image_main'] ?: 'default.png');
-            $row['url'] = "viewproduct.php?slug=" . urlencode($row['product_slug'] ?? '');
+            $row['url'] = "viewproduct.php?id=" . (int)$row['product_id'];
         }
 
         return $rows ?: [];

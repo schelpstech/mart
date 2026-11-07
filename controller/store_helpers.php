@@ -1,5 +1,15 @@
 <?php
 
+if (!function_exists('qs_product_prices')) {
+    function qs_product_prices(array $product)
+    {
+        $regular = max(0.00, (float)($product['price'] ?? 0));
+        $discount = (float)($product['discount_price'] ?? 0);
+        $onSale = $discount > 0 && $discount < $regular;
+        return ['current' => $onSale ? $discount : $regular, 'original' => $onSale ? $regular : null];
+    }
+}
+
 if (!function_exists('qs_money')) {
     function qs_money($amount)
     {
@@ -254,7 +264,7 @@ if (!function_exists('qs_calculate_order_totals')) {
             !empty($summary['service_items'])
         );
 
-        $deliveryFee = qs_delivery_fee($model, $fulfilment, $summary['subtotal'], $zoneId);
+        $deliveryFee = !empty($summary['product_items']) ? qs_delivery_fee($model, $fulfilment, $summary['subtotal'], $zoneId) : 0.00;
         $coupon = qs_validate_coupon($model, $couponCode, $summary['subtotal']);
         $discount = $coupon['valid'] ? (float)$coupon['discount'] : 0.00;
         $total = max(0.00, (float)$summary['subtotal'] + $deliveryFee - $discount);

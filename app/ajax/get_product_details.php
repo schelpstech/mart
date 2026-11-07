@@ -10,14 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     ]);
 
     if ($product) {
+        $displayPrices = qs_product_prices($product);
         $images = 'assets/images/product/main/' . $product['image_main'];
         echo json_encode([
             'success' => true,
             'data' => [
                 'name' => $product['product_name'],
                 'description' => $product['description'],
-                'new_price' => $product['price'],
-                'old_price' => $product['discount_price'],
+                'new_price' => $displayPrices['current'],
+                'old_price' => $displayPrices['original'],
                 'images' => $images
             ]
         ]);

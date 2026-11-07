@@ -67,13 +67,14 @@ if ($isLoggedIn) {
                 </div>
 
                 <?php if (!$isLoggedIn): ?>
-                    <div class="ec-checkout col-lg-8 offset-2 col-md-12">
+                    <div class="ec-checkout col-lg-8 offset-lg-2 col-md-12">
                         <?php $utility->displayFlash(); ?>
                         <div class="ec-checkout-content">
                             <div class="ec-checkout-inner">
                                 <div class="ec-checkout-wrap margin-bottom-30">
                                     <div class="ec-checkout-block ec-check-new">
                                         <h3 class="ec-checkout-title">Customer</h3>
+                                        <?php $cartShareContext = 'cart'; include __DIR__ . '/inc/cartShare.php'; ?>
                                         <div class="ec-check-block-content">
                                             <div class="ec-check-subtitle">Checkout Options</div>
                                             <div class="ec-new-desc">
@@ -115,6 +116,7 @@ if ($isLoggedIn) {
                                             <span class="text-right" id="checkout-total"><?= qs_money($totals['total']) ?></span>
                                         </div>
                                     </div>
+                                    <?php $cartShareContext = 'checkout'; include __DIR__ . '/inc/cartShare.php'; ?>
                                 </div>
                             </div>
                         </div>
@@ -528,105 +530,5 @@ if ($isLoggedIn) {
             }
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const radios = document.querySelectorAll('input[name="fulfilment_type"]');
-            const cards = document.querySelectorAll(".fulfilment-option-card");
-            const selectedLabel = document.getElementById("fulfilment-selected-label");
-            const pickupBox = document.getElementById("pickup-instructions");
-            const deliveryZoneWrap = document.querySelector(".delivery-zone-wrap");
-            const deliveryFields = document.querySelectorAll(".delivery-address-field input");
-            const checkoutForm = document.getElementById("checkoutForm");
-            const errorMessage = document.getElementById("fulfilment-error");
-
-            function setDeliveryFieldsRequired(isDelivery) {
-                deliveryFields.forEach(function(input) {
-                    const fieldName = input.getAttribute("name");
-
-                    if (["address1", "city", "postcode"].includes(fieldName)) {
-                        input.required = isDelivery;
-                    }
-
-                    input.closest(".delivery-address-field").style.display = isDelivery ? "" : "none";
-                });
-            }
-
-            function updateFulfilmentUI(value) {
-                cards.forEach(function(card) {
-                    const radio = card.querySelector('input[name="fulfilment_type"]');
-                    card.classList.toggle("active", radio && radio.value === value);
-                });
-
-                if (errorMessage) {
-                    errorMessage.classList.remove("show");
-                }
-
-                if (value === "delivery") {
-                    if (selectedLabel) {
-                        selectedLabel.textContent = "Delivery selected. Please confirm your delivery details below.";
-                    }
-
-                    if (pickupBox) {
-                        pickupBox.style.display = "none";
-                    }
-
-                    if (deliveryZoneWrap) {
-                        deliveryZoneWrap.style.display = "";
-                    }
-
-                    setDeliveryFieldsRequired(true);
-                }
-
-                if (value === "pickup") {
-                    if (selectedLabel) {
-                        selectedLabel.textContent = "Pickup selected. No delivery fee will be charged.";
-                    }
-
-                    if (pickupBox) {
-                        pickupBox.style.display = "";
-                    }
-
-                    if (deliveryZoneWrap) {
-                        deliveryZoneWrap.style.display = "none";
-                    }
-
-                    setDeliveryFieldsRequired(false);
-                }
-            }
-
-            radios.forEach(function(radio) {
-                radio.addEventListener("change", function() {
-                    updateFulfilmentUI(this.value);
-                });
-
-                if (radio.checked) {
-                    updateFulfilmentUI(radio.value);
-                }
-            });
-
-            if (checkoutForm && radios.length > 0) {
-                checkoutForm.addEventListener("submit", function(event) {
-                    const selected = document.querySelector('input[name="fulfilment_type"]:checked');
-
-                    if (!selected) {
-                        event.preventDefault();
-
-                        if (errorMessage) {
-                            errorMessage.classList.add("show");
-                        }
-
-                        if (selectedLabel) {
-                            selectedLabel.textContent = "Please choose how you want to receive your order before proceeding to payment.";
-                        }
-
-                        document.querySelector(".fulfilment-options").scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
-                        });
-                    }
-                });
-            }
-        });
-    </script>
 
     <?php include './inc/footer.php'; ?>

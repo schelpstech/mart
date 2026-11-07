@@ -44,7 +44,7 @@ if ($userId) {
                     </div>
                 </div>
 
-                <div class="col-lg-10 offset-1 col-md-12">
+                <div class="col-lg-10 offset-lg-1 col-md-12">
                     <div class="ec-checkout-content">
                         <div class="ec-checkout-inner">
                             <div class="ec-checkout-wrap">

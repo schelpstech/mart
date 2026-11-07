@@ -30,6 +30,7 @@ if (!empty($summary['items'])) {
 }
 
 echo json_encode([
+    'items' => array_map(function ($item) { return ['product_id' => (int)$item['product_id'], 'cart_item_id' => (int)$item['cart_item_id']]; }, $summary['product_items']),
     'html' => $output ?: '<li><p class="emp-cart-msg">Your cart is empty!</p></li>',
     'subTotal' => qs_money($summary['subtotal']),
     'vat' => qs_money(0),

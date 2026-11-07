@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     document.getElementById(containerId).insertAdjacentHTML("beforeend", data);
                     offset += limit;
+                    if (window.jQuery) $(document).trigger('catalog:loaded');
                 }
             })
             .finally(() => {

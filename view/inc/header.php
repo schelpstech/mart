@@ -22,7 +22,7 @@
                 </div>
                 <!-- Header Top social End -->
                 <!-- Header Top Category Toggle Start -->
-                <a href="#ec-mobile-sidebar" class="ec-header-btn ec-sidebar-toggle d-lg-none">
+                <a href="#ec-mobile-sidebar" class="ec-header-btn ec-sidebar-toggle d-lg-none" aria-label="Browse categories">
                     <i class="fi fi-rr-apps"></i>
                 </a>
                 <!-- Header Top Category Toggle End -->
@@ -39,32 +39,21 @@
                     <div class="ec-header-bottons">
                         <!-- Header User Start -->
                         <div class="ec-header-user dropdown">
-                            <button class="dropdown-toggle" data-bs-toggle="dropdown"><i class="fi-rr-user"></i></button>
+                            <button type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-label="Account menu" aria-expanded="false"><i class="fi-rr-user"></i></button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <?php if (!empty($_SESSION['user_id'])): ?>
-                                    <li><a href="#"
-                                            class="dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                            Logout
-                                        </a></li>
-                                    <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                                <?php else: ?>
-                                    <li><a class="dropdown-item" href="register.php">Register</a></li>
-                                    <li><a class="dropdown-item" href="login.php">Login</a></li>
-                                    <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                                <?php endif; ?>
-                            </ul>
+                                    <?php include __DIR__ . '/accountMenu.php'; ?>
+                                </ul>
                         </div>
                         <!-- Header User End -->
 
                         <!-- Header Cart Start -->
-                        <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                        <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle" aria-label="Open cart" aria-controls="ec-side-cart" aria-expanded="false">
                             <div class="header-icon"><i class="fi-rr-shopping-basket"></i></div>
-                            <span id="cart-count" class="ec-header-count ec-cart-count cart-count-lable">0</span>
+                            <span  class="ec-header-count ec-cart-count cart-count-lable">0</span>
                         </a>
                         <!-- Header Cart End -->
                         <!-- Header menu Start -->
-                        <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none">
+                        <a href="#ec-mobile-menu" class="ec-header-btn ec-side-toggle d-lg-none" aria-label="Open menu" aria-controls="ec-mobile-menu" aria-expanded="false">
                             <i class="fi-rr-menu-burger"></i>
                         </a>
                         <!-- Header menu End -->
@@ -83,7 +72,7 @@
                     <!-- Ec Header Logo Start -->
                     <div class="align-self-center">
                         <div class="header-logo" style="background-color: #FFFF;">
-                            <a href="index.html"><img src="assets/images/logo/nlogo.png" alt="Site Logo" /><img
+                            <a href="index.php"><img src="assets/images/logo/nlogo.png" alt="Site Logo" /><img
                                     class="dark-logo" src="assets/images/logo/nlogo.png" alt="Site Logo"
                                     style="display: none;" /></a>
                         </div>
@@ -94,8 +83,8 @@
                     <div class="align-self-center">
                         <div class="header-search">
                             <form class="ec-btn-group-form" action="search.php" method="get">
-                                <input class="form-control" name="q" placeholder="Enter Your Product Name..." type="text">
-                                <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
+                                <input class="form-control" name="q" placeholder="Enter Your Product Name..." aria-label="Search products" type="text">
+                                <button class="submit" type="submit" aria-label="Search products"><i class="fi-rr-search"></i></button>
                             </form>
                         </div>
                     </div>
@@ -107,29 +96,16 @@
 
                             <!-- Header User Start -->
                             <div class="ec-header-user dropdown">
-                                <button class="dropdown-toggle" data-bs-toggle="dropdown"><i class="fi-rr-user"></i></button>
+                                <button type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-label="Account menu" aria-expanded="false"><i class="fi-rr-user"></i></button>
                                 <ul class="dropdown-menu dropdown-menu-right">
-                                    <?php if (!empty($_SESSION['user_id'])): ?>
-                                        <li><a href="#"
-                                                class="dropdown-item"
-                                                data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                                Logout
-                                            </a></li>
-                                        <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                                        <li><a class="dropdown-item" href="order.php">Order History</a></li>
-                                        <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                                    <?php else: ?>
-                                        <li><a class="dropdown-item" href="register.php">Register</a></li>
-                                        <li><a class="dropdown-item" href="login.php">Login</a></li>
-                                        <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                                    <?php endif; ?>
+                                    <?php include __DIR__ . '/accountMenu.php'; ?>
                                 </ul>
                             </div>
                             <!-- Header User End -->
                             <!-- Header Cart Start -->
-                            <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle">
+                            <a href="#ec-side-cart" class="ec-header-btn ec-side-toggle" aria-label="Open cart" aria-controls="ec-side-cart" aria-expanded="false">
                                 <div class="header-icon"><i class="fi-rr-shopping-basket"></i></div>
-                                <span id="cart-count" class="ec-header-count ec-cart-count cart-count-lable">0</span>
+                                <span  class="ec-header-count ec-cart-count cart-count-lable">0</span>
                             </a>
 
                             <!-- Header Cart End -->
@@ -149,7 +125,7 @@
                 <!-- Ec Header Logo Start -->
                 <div class="col">
                     <div class="header-logo">
-                        <a href="index.html"><img src="assets/images/logo/nlogo.png" alt="Site Logo" /><img
+                        <a href="index.php"><img src="assets/images/logo/nlogo.png" alt="Site Logo" /><img
                                 class="dark-logo" src="assets/images/logo/nlogo.png" alt="Site Logo"
                                 style="display: none;" /></a>
                     </div>
@@ -159,8 +135,8 @@
                 <div class="col">
                     <div class="header-search">
                         <form class="ec-btn-group-form" action="search.php" method="get">
-                            <input class="form-control" name="q" placeholder="Enter Your Product Name..." type="text">
-                            <button class="submit" type="submit"><i class="fi-rr-search"></i></button>
+                            <input class="form-control" name="q" placeholder="Enter Your Product Name..." aria-label="Search products" type="text">
+                            <button class="submit" type="submit" aria-label="Search products"><i class="fi-rr-search"></i></button>
                         </form>
                     </div>
                 </div>
@@ -235,10 +211,10 @@
     <!-- Ec Main Menu End -->
     <!-- ekka Mobile Menu Start -->
     <!-- ec Mobile Menu Start -->
-    <div id="ec-mobile-menu" class="ec-side-cart ec-mobile-menu">
+    <div id="ec-mobile-menu" class="ec-side-cart ec-mobile-menu" role="dialog" aria-modal="true" aria-label="Main menu" aria-hidden="true" inert>
         <div class="ec-menu-title">
             <span class="menu_title">Menu</span>
-            <button class="ec-close">×</button>
+            <button type="button" class="ec-close" aria-label="Close menu">×</button>
         </div>
         <div class="ec-menu-inner">
             <div class="ec-menu-content">
@@ -255,10 +231,10 @@
                         foreach ($sections as $section) {
                     ?>
                             <li class="dropdown">
-                                <a href="javascript:void(0)">
+                                <button type="button" class="qs-menu-section" aria-expanded="false" aria-controls="mobile-section-<?= (int)$section['id']; ?>">
                                     <?= htmlspecialchars($section['section_name']) ?>
-                                </a>
-                                <ul class="sub-menu">
+                                </button>
+                                <ul class="sub-menu" id="mobile-section-<?= (int)$section['id']; ?>" hidden>
                                     <?php
                                     // Fetch categories under this section
                                     $categories = $model->getRows("categories", [
@@ -311,3 +287,4 @@
     <!-- ekka mobile Menu End -->
 </header>
 <!-- Header End  -->
+<?php include_once __DIR__ . '/cart.php'; ?>

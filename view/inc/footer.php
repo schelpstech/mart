@@ -139,17 +139,12 @@
                     <!-- Company Info -->
                     <div class="col-sm-12 col-lg-4 ec-footer-account">
                         <div class="ec-footer-widget">
-                            <h4 class="ec-footer-heading text-white">
-                                <p><strong>Delivery & Policies:</strong></p>
-                            </h4>
+                            <h4 class="ec-footer-heading text-white">Delivery &amp; Policies</h4>
                             <div class="ec-footer-links">
                                 <ul class="align-items-center">
-
-                                    <ul style="padding-left: 18px; margin-top: 5px;">
-                                        <li><a href="delivery-policy.php"><strong>Delivery Policy</strong></a></li><br>
-                                        <li><a href="return-policy.php"><strong>Return & Refund Policy</strong></a></li><br>
-                                        <li><a href="privacy-policy.php"><strong>Privacy Policy</strong></a></li>
-                                    </ul>
+                                    <li><a href="delivery-policy.php">Delivery Policy</a></li>
+                                    <li><a href="return-policy.php">Return &amp; Refund Policy</a></li>
+                                    <li><a href="privacy-policy.php">Privacy Policy</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -338,34 +333,23 @@
     <div class="container">
         <div class="ec-nav-panel">
             <div class="ec-nav-panel-icons">
-                <a href="#ec-mobile-menu" class="navbar-toggler-btn ec-header-btn ec-side-toggle"><i
-                        class="fi fi-rr-menu-burger"></i></a>
+                <a href="#ec-mobile-menu" class="navbar-toggler-btn ec-header-btn ec-side-toggle" aria-label="Open menu" aria-controls="ec-mobile-menu" aria-expanded="false"><i
+                        class="fi fi-rr-menu-burger" aria-hidden="true"></i><span class="nav-label">Menu</span></a>
             </div>
             <div class="ec-nav-panel-icons">
-                <a href="#ec-side-cart" class="toggle-cart ec-header-btn ec-side-toggle"><i
-                        class="fi-rr-shopping-basket"></i><span id="cart-count"
-                        class="ec-cart-noti ec-header-count cart-count-lable">0</span></a>
+                <a href="#ec-side-cart" class="toggle-cart ec-header-btn ec-side-toggle" aria-label="Open cart" aria-controls="ec-side-cart" aria-expanded="false"><i
+                        class="fi-rr-shopping-basket"></i><span
+                        class="ec-cart-noti ec-header-count cart-count-lable">0</span><span class="nav-label">Cart</span></a>
             </div>
             <div class="ec-nav-panel-icons">
-                <a href="index.php" class="ec-header-btn"><i class="fi-rr-home"></i></a>
+                <a href="index.php" class="ec-header-btn" aria-label="Home"><i class="fi-rr-home" aria-hidden="true"></i><span class="nav-label">Home</span></a>
             </div>
             <div class="ec-nav-panel-icons dropdown dropup footer-dropup">
-                <button class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static">
-                    <i class="fi-rr-user"></i>
+                <button type="button" class="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-label="Account menu" aria-expanded="false">
+                    <i class="fi-rr-user" aria-hidden="true"></i><span class="nav-label">Account</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <?php if (!empty($_SESSION['user_id'])): ?>
-                        <li>
-                            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                Logout
-                            </a>
-                        </li>
-                        <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                    <?php else: ?>
-                        <li><a class="dropdown-item" href="register.php">Register</a></li>
-                        <li><a class="dropdown-item" href="login.php">Login</a></li>
-                        <li><a class="dropdown-item" href="checkout.php">Checkout</a></li>
-                    <?php endif; ?>
+                    <?php include __DIR__ . '/accountMenu.php'; ?>
                 </ul>
             </div>
         </div>
@@ -461,6 +445,8 @@
 <div class="ec-cursor"></div>
 <div class="ec-cursor-2"></div>
 
+<?php include __DIR__ . '/cartShareDialog.php'; ?>
+
 <!-- Vendor JS -->
 <script src="assets/js/vendor/jquery-3.5.1.min.js"></script>
 <script src="assets/js/vendor/popper.min.js"></script>
@@ -484,13 +470,14 @@
 <!-- Main Js -->
 <script src="assets/js/vendor/jquery.magnific-popup.min.js"></script>
 <script src="assets/js/vendor/index.js"></script>
-<script src="assets/js/demo-9.js"></script>
+<script src="assets/js/demo-9.js?v=20261107"></script>
 <script src="assets/js/populateQuickView.js"></script>
-<script src="assets/js/manageCart.js"></script>
-<script src="assets/js/renderCart.js"></script>
+<script src="assets/js/manageCart.js?v=20261107"></script>
+<script src="assets/js/storefront.js?v=20261107"></script>
+<script src="assets/js/cartShare.js?v=20261107"></script>
 <script src="assets/js/register.js"></script>
-<script src="assets/js/checkoutFormValidator.js"></script>
-<script src="assets/js/fetchproduct.js"></script>
+<script src="assets/js/checkoutFormValidator.js?v=20261107"></script>
+<script src="assets/js/fetchproduct.js?v=20261107"></script>
 <script src="assets/js/userprofile.js"></script>
 <script src="assets/js/forgotpassword.js"></script>
 <script src="assets/js/validatepwdresetpage.js"></script>

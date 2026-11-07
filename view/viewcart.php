@@ -137,6 +137,7 @@ include './inc/head.php';
                                 <h3 class="ec-sidebar-title">Summary</h3>
                             </div>
                             <div class="ec-sb-block-content">
+                                <?php $cartShareContext = 'cart'; include __DIR__ . '/inc/cartShare.php'; ?>
                                 <div class="ec-cart-summary-bottom">
                                     <div class="ec-cart-summary">
                                         <div>
@@ -148,7 +149,7 @@ include './inc/head.php';
                                             <span class="text-right">Checkout</span>
                                         </div>
                                         <div class="ec-cart-summary-total">
-                                            <span class="text-left">Current Total</span>
+                                            <span class="text-left">Items Total</span>
                                             <span class="text-right cart-grandtotal"><?= qs_money($total); ?></span>
                                         </div>
                                     </div>

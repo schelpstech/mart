@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".fulfilment-option-card").forEach(function (card) {
             const input = card.querySelector('input[name="fulfilment_type"]');
             card.classList.toggle("is-selected", !!input && input.checked);
+            card.classList.toggle("active", !!input && input.checked);
         });
 
         if (fulfilmentSelectedLabel) {
@@ -77,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             dataType: "json",
             data: {
                 action: "calculate_totals",
-                fulfilment_type: fulfilment || "pickup",
+                fulfilment_type: fulfilment,
                 delivery_zone_id: deliveryZone ? deliveryZone.value : "",
                 coupon_code: couponInput ? couponInput.value : "",
             },

@@ -106,7 +106,7 @@ include './inc/head.php';
                                         <div class="ec-single-price-stoke">
                                             <div class="ec-single-price">
                                                 <span class="ec-single-ps-title">As low as</span>
-                                                <span class="new-price">£ <?php echo number_format($product['price'], 2); ?></span>
+                                                <span class="new-price">£ <?php echo number_format(qs_product_prices($product)['current'], 2); ?></span>
                                             </div>
                                             <div class="ec-single-stoke">
                                                 <span class="ec-single-ps-title">IN STOCK</span>
@@ -121,7 +121,7 @@ include './inc/head.php';
                                             <div class="ec-single-cart ">
                                                 <button class="btn btn-primary add-to-cart"
                                                     data-productid="<?= $product['product_id']; ?>"
-                                                    data-price="<?= $product['price']; ?>">Add To Cart</button>
+                                                    data-price="<?= qs_product_prices($product)['current']; ?>">Add To Cart</button>
                                             </div>
                                             <div class=" ec-single-quickview">
                                                 <a href="#" class="ec-btn-group quickview" data-link-action="quickview"

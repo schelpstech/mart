@@ -65,7 +65,7 @@ if ($action === "add") {
         exit;
     }
 
-    $price = !empty($product['discount_price']) ? (float)$product['discount_price'] : (float)$product['price'];
+    $price = qs_product_prices($product)['current'];
     $item_id = $cart->addToCart($product_id, $quantity, $price);
     $summary = cart_json_summary($cart);
 
