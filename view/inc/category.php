@@ -7,7 +7,7 @@
                 <!-- Sidebar Category Block -->
                 <div class="ec-sidebar-block">
                     <div class="ec-sb-title">
-                        <h3 class="ec-sidebar-title">Category<button class="ec-close">×</button></h3>
+                        <h3 class="ec-sidebar-title">Category<button type="button" class="ec-close" aria-label="Close categories">×</button></h3>
                     </div>
                     <div class="ec-sb-block-content">
                         <ul>
@@ -23,7 +23,7 @@
                             ?>
                                     <li>
                                         <div class="ec-sidebar-block-item">
-                                            <img src="../view/assets/images<?= $cat['icon'] ?>" class="svg_img" alt="<?= $catName ?>" />
+                                            <?php include __DIR__ . '/categoryImage.php'; ?>
                                             <?= $catName ?> 
                                         </div>
 

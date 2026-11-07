@@ -4,6 +4,8 @@ Verified against the local source and `mart_a99_queenzy` database on 2026-11-07.
 
 **Subsequent implementation:** see [Cart sharing and mobile navigation](CART_WHATSAPP_RELEASE.md) for the WhatsApp feature, mobile fixes, local identity-key repairs, and verified guest/authenticated cart behaviour completed after this original learning snapshot. The historical missing-key and pricing/routing observations below have been addressed to the extent documented in that release note.
 
+**Booking update:** see [Salon booking redesign](BOOKING_REDESIGN.md) for the simpler service selection, mobile summary, preferred-time retention, CSRF protection, and booking/checkout validation completed after this snapshot.
+
 ## 1. Product and business model
 
 Queenzy African Stores & Braids Salon combines retail shopping and salon bookings. The local catalog has four sections: Queenzy African Store, Queenzy Fashion Store, Queenzy Beauty and Hair Store, and Queenzy Salon. Categories belong to sections; products and services belong to categories.

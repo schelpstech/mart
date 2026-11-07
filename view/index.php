@@ -179,13 +179,12 @@ include './inc/mainhead.php';
                             <div class="ec_cat_content ec_cat_content_<?= $cat['categoryTbl_id'] ?>">
                                 <div class="ec_cat_inner ec_cat_inner-<?= $cat['categoryTbl_id'] ?>">
                                     <div class="ec-category-image">
-                                        <img src="assets/images<?= $cat['icon'] ?? 'default.png' ?>" class="svg_img"
-                                            alt="<?= $cat['category_name'] ?>" />
+                                        <?php include __DIR__ . '/inc/categoryImage.php'; ?>
                                     </div>
                                     <div class="ec-category-desc">
-                                        <h3><?= $cat['category_name'] ?> <span title="Category Items">(<?= $productCount ?>)</span>
+                                        <h3><?= htmlspecialchars($cat['category_name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?> <span title="Category Items">(<?= $productCount ?>)</span>
                                         </h3>
-                                        <a href="viewcategory.php?category=<?= $cat['categoryTbl_id'] ?>"
+                                        <a href="viewcategory.php?id=<?= (int)$cat['categoryTbl_id']; ?>"
                                             class="cat-show-all">
                                             Show All <i class="ecicon eci-angle-double-right" aria-hidden="true"></i>
                                         </a>
@@ -528,13 +527,12 @@ include './inc/mainhead.php';
                             foreach ($productImgs as $product) {
                                 $productId = htmlspecialchars($product['product_id']);
                                 $productImage = htmlspecialchars($product['image_main']);
+                                $productName = htmlspecialchars($product['product_name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
                         ?>
                                 <!-- instagram item -->
                                 <div class="ec-insta-item">
                                     <div class="ec-insta-inner">
-                                        <a href="viewproduct.php?id=<?= $productId ?>" target="_blank">
-                                            <img src="../view/assets/images/product/main/<?= $productImage ?>" alt="Product">
-                                        </a>
+                                        <?php include __DIR__ . '/inc/productImage.php'; ?>
                                     </div>
                                 </div>
                         <?php

@@ -1076,7 +1076,7 @@ function ecCheckCookie()
         $('.insta-auto').infiniteslide({
             direction: 'left',
             speed: 50,
-            clone: 10
+            clone: 1
         });
         $('[data-toggle="tooltip"]').tooltip();
     });

@@ -527,11 +527,42 @@ class Cart
         ]);
     }
 
+    public function setBookingServices(array $services)
+    {
+        $cartId = (int)$this->getCartId();
+        $this->prepareCartLines($cartId);
+        $existing = $this->db->getRows('service_cart_items', ['where' => ['cart_id' => $cartId]]);
+        $quantities = [];
+        foreach ($existing as $line) $quantities[(int)$line['service_id']] = max(1, (int)$line['quantity']);
+        $selectedIds = array_map(function ($service) { return (int)$service['id']; }, $services);
+        $this->db->beginTransaction();
+        try {
+            foreach ($existing as $line) {
+                if (!in_array((int)$line['service_id'], $selectedIds, true)) {
+                    $this->db->delete('service_cart_items', ['cart_id' => $cartId, 'service_cart_item_id' => $line['service_cart_item_id']]);
+                }
+            }
+            foreach ($services as $service) {
+                $serviceId = (int)$service['id'];
+                if (isset($quantities[$serviceId])) {
+                    $this->db->update('service_cart_items', ['price' => (float)$service['base_price']], ['cart_id' => $cartId, 'service_id' => $serviceId]);
+                } else {
+                    $this->db->insert('service_cart_items', ['cart_id' => $cartId, 'service_id' => $serviceId, 'quantity' => 1, 'price' => (float)$service['base_price']]);
+                }
+            }
+            $this->db->commit();
+        } catch (Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     public function clearCart()
     {
         $cart_id = $this->getCartId();
         $this->db->delete("cart_items", ["cart_id" => $cart_id]);
         $this->db->delete("service_cart_items", ["cart_id" => $cart_id]);
+        unset($_SESSION['booking_draft'], $_SESSION['booking_form'], $_SESSION['booking_errors']);
         return true;
     }
 }

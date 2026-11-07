@@ -1,13 +1,13 @@
 <?php
 require_once "../query.php";
 
-$limit  = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
-$offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+$limit  = max(1, min(48, (int)($_GET['limit'] ?? 8)));
+$offset = max(0, (int)($_GET['offset'] ?? 0));
 
-// ✅ Fetch randomized products with categories joined
+// Stable ordering prevents duplicate/skipped products between infinite-scroll pages.
 $allproducts = $model->getRows("products", [
     'where' => ['status' => 'Active'],
-    "order_by" => "RAND()",  // 👈 randomize product order
+    "order_by" => "product_tbl_record_time DESC, product_id DESC",
     "limit" => $limit,
     "offset" => $offset,
     'left_join' => [

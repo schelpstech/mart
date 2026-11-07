@@ -1,5 +1,7 @@
 <?php
 include './inc/head.php';
+require_once __DIR__ . '/../controller/booking_helpers.php';
+$bookingDraft = $_SESSION['booking_draft'] ?? [];
 
 $isLoggedIn = !empty($_SESSION['user_id']);
 $summary = ['items' => [], 'product_items' => [], 'service_items' => [], 'subtotal' => 0, 'count' => 0];
@@ -291,6 +293,7 @@ if ($isLoggedIn) {
                                         ?>
                                         <div class="ec-check-bill-form">
                                             <form id="checkoutForm" action="../app/orderHandler.php" method="post">
+                                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(qs_booking_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
                                                 <?php if (!$requiresFulfilmentChoice): ?>
                                                     <input type="hidden" name="fulfilment_type" value="pickup">
                                                 <?php endif; ?>
@@ -346,12 +349,12 @@ if ($isLoggedIn) {
                                                 </span>
                                                 <?php if ($hasServices): ?>
                                                     <span class="ec-bill-wrap ec-bill-half">
-                                                        <label>Appointment Date*</label>
-                                                        <input type="date" name="appointment_date" id="appointment_date" required tabindex="8" />
+                                                        <label for="appointment_date">Preferred Appointment Date*</label>
+                                                        <input type="date" name="appointment_date" id="appointment_date" min="<?= qs_booking_now()->format('Y-m-d'); ?>" value="<?= htmlspecialchars($bookingDraft['appointment_date'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required tabindex="8" />
                                                     </span>
                                                     <span class="ec-bill-wrap ec-bill-half">
-                                                        <label>Appointment Time*</label>
-                                                        <input type="time" name="appointment_time" id="appointment_time" required tabindex="9" />
+                                                        <label for="appointment_time">Preferred Time (UK time)*</label>
+                                                        <input type="time" name="appointment_time" id="appointment_time" value="<?= htmlspecialchars($bookingDraft['appointment_time'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required tabindex="9" />
                                                     </span>
                                                 <?php endif; ?>
 

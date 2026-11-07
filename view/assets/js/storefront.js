@@ -1,3 +1,17 @@
+// Capture errors for future AJAX cards too; check images whose errors preceded this script.
+(function () {
+    function showProductFallback(image) {
+        if (image.matches('img[data-product-image]')) image.closest('.qs-product-visual')?.classList.add('is-placeholder');
+        if (image.matches('img[data-category-image]')) image.closest('.qs-category-visual')?.classList.add('is-placeholder');
+    }
+    document.addEventListener('error', function (event) {
+        if (event.target instanceof HTMLImageElement) showProductFallback(event.target);
+    }, true);
+    document.querySelectorAll('img[data-product-image], img[data-category-image]').forEach(function (image) {
+        if (image.complete && image.naturalWidth === 0) showProductFallback(image);
+    });
+}());
+
 $(function () {
     const panels = $('#ec-mobile-menu, #ec-side-cart');
     const overlay = $('.ec-side-cart-overlay');

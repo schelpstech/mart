@@ -470,18 +470,18 @@
 <!-- Main Js -->
 <script src="assets/js/vendor/jquery.magnific-popup.min.js"></script>
 <script src="assets/js/vendor/index.js"></script>
-<script src="assets/js/demo-9.js?v=20261107"></script>
+<script src="assets/js/demo-9.js?v=20261107d"></script>
 <script src="assets/js/populateQuickView.js"></script>
 <script src="assets/js/manageCart.js?v=20261107"></script>
-<script src="assets/js/storefront.js?v=20261107"></script>
+<script src="assets/js/storefront.js?v=20261107d"></script>
 <script src="assets/js/cartShare.js?v=20261107"></script>
 <script src="assets/js/register.js"></script>
 <script src="assets/js/checkoutFormValidator.js?v=20261107"></script>
-<script src="assets/js/fetchproduct.js?v=20261107"></script>
+<script src="assets/js/fetchproduct.js?v=20261107d"></script>
 <script src="assets/js/userprofile.js"></script>
 <script src="assets/js/forgotpassword.js"></script>
 <script src="assets/js/validatepwdresetpage.js"></script>
-<script src="assets/js/bookingform.js"></script>
+<script src="assets/js/bookingform.js?v=20261107b"></script>
 </body>
 
 </html>

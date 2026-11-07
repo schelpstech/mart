@@ -1,12 +1,13 @@
 <?php
 require_once "../query.php";
 
-$limit  = isset($_GET['limit']) ? (int)$_GET['limit'] : 8;
-$offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+$limit  = max(1, min(48, (int)($_GET['limit'] ?? 8)));
+$offset = max(0, (int)($_GET['offset'] ?? 0));
+$listingCategoryId = max(0, (int)($_GET['category_id'] ?? $_SESSION['categoryId'] ?? 0));
 
 $allproducts = $model->getRows("products", [
-    'where' => ["category_id" => $_SESSION['categoryId'], 'status' => 'Active'],
-    "order_by" => "product_tbl_record_time DESC", // optional ordering
+    'where' => ["category_id" => $listingCategoryId, 'status' => 'Active'],
+    "order_by" => "product_tbl_record_time DESC, product_id DESC",
     "limit" => $limit, // ✅ MySQL LIMIT with offset
     "offset" => $offset, // ✅ MySQL LIMIT with offset
     'left_join' => [

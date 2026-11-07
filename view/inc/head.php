@@ -43,5 +43,6 @@ include '../app/query.php';
    <!-- Background css -->
    <link rel="stylesheet" id="bg-switcher-css" href="assets/css/backgrounds/bg-4.css">
 
-   <link rel="stylesheet" href="assets/css/storefront.css?v=20261107" />
+   <link rel="stylesheet" href="assets/css/storefront.css?v=20261107d" />
+   <?php if (!empty($bookingStyles)): ?><link rel="stylesheet" href="assets/css/booking.css?v=20261107b"><?php endif; ?>
 </head>

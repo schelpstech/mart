@@ -97,8 +97,11 @@ try {
     // Exercise mixed and service-only cart messages through the real booking endpoint.
     $serviceId = (int)$pdo->query("SELECT id FROM services WHERE status='active' ORDER BY id LIMIT 1")->fetchColumn();
     expect($serviceId > 0, 'Active service fixture is available.');
-    [$status] = request('app/bookingHandler.php', ['service_ids' => [$serviceId]], false);
-    expect($status === 302, 'Booking adds a service.');
+    [$status, $bookingPage] = request('view/booking.php', null, false);
+    preg_match('/name="csrf_token" value="([a-f0-9]+)"/', $bookingPage, $bookingToken);
+    $bookingDate = (new DateTimeImmutable('tomorrow', new DateTimeZone('Europe/London')))->format('Y-m-d');
+    [$status] = request('app/bookingHandler.php', ['service_ids' => [$serviceId], 'csrf_token' => $bookingToken[1] ?? '', 'appointment_date' => $bookingDate, 'appointment_time' => '14:30', 'privacy_consent' => '1'], false);
+    expect($status === 303, 'Booking adds a service.');
     [$status, $mixed] = request('app/ajax/cart_share.php', ['context' => 'checkout', 'fulfilment_type' => 'pickup', 'appointment_date' => '2030-01-15', 'appointment_time' => '14:30']);
     expect($status === 200 && strpos($mixed['message'], '(Service)') !== false && strpos($mixed['message'], '2030-01-15 at 14:30') !== false, 'Mixed cart includes service and requested appointment.');
     request('app/ajax/cart_action.php', ['action' => 'remove', 'cart_item_id' => $lineId, 'item_type' => 'product']);

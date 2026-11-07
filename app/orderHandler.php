@@ -1,5 +1,6 @@
 <?php
 require_once "./query.php";
+require_once __DIR__ . '/../controller/booking_helpers.php';
 
 function order_post($key, $default = '')
 {
@@ -22,6 +23,12 @@ if ($action !== 'place_order') {
 if (empty($_SESSION['user_id'])) {
     $utility->setFlash("danger", "Please login before checkout.");
     header("Location: ../view/login.php");
+    exit;
+}
+
+if (!qs_booking_valid_csrf($_POST['csrf_token'] ?? null)) {
+    $utility->setFlash('danger', 'Your checkout form has expired. Please review the checkout page and try again.');
+    header('Location: ../view/checkout.php');
     exit;
 }
 
@@ -81,8 +88,13 @@ if ($hasProducts && !in_array($fulfilment, $validFulfilments, true)) {
 }
 
 if ($hasServices) {
-    if (empty($appointmentDate) || empty($appointmentTime)) {
-        $errors[] = "Appointment date and time are required for services.";
+    try {
+        $appointment = qs_booking_appointment($appointmentDate, $appointmentTime);
+        $appointmentDate = $appointment['appointment_date'];
+        $appointmentTime = $appointment['appointment_time'];
+        $_SESSION['booking_draft'] = $appointment;
+    } catch (InvalidArgumentException $e) {
+        $errors[] = $e->getMessage();
     }
 }
 

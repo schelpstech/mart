@@ -1,6 +1,7 @@
 <?php
 include './inc/head.php';
 $_SESSION['categoryId'] = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$listingCategoryId = $_SESSION['categoryId'];
 
 $categoryname = $model->getRows("categories", [
     "where" => [
@@ -36,13 +37,13 @@ $categoryname = $model->getRows("categories", [
                                 <div class="col-12">
                                     <div class="row ec_breadcrumb_inner">
                                         <div class="col-md-6 col-sm-12">
-                                            <h2 class="ec-breadcrumb-title"><?= htmlspecialchars($categoryname['category_name']) ?></h2>
+                                            <h2 class="ec-breadcrumb-title"><?= htmlspecialchars($categoryname['category_name'] ?? 'Category not found', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></h2>
                                         </div>
                                         <div class="col-md-6 col-sm-12">
                                             <!-- ec-breadcrumb-list start -->
                                             <ul class="ec-breadcrumb-list">
                                                 <li class="ec-breadcrumb-item"><a href="index.php">Home</a></li>
-                                                <li class="ec-breadcrumb-item active"><?= htmlspecialchars($categoryname['category_name']) ?></li>
+                                                <li class="ec-breadcrumb-item active"><?= htmlspecialchars($categoryname['category_name'] ?? 'Category not found', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></li>
                                             </ul>
                                             <!-- ec-breadcrumb-list end -->
                                         </div>
@@ -55,7 +56,7 @@ $categoryname = $model->getRows("categories", [
                     <!-- Shop content Start -->
                     <div class="shop-pro-content">
                         <div class="shop-pro-inner">
-                            <div class="row" id="product-category-container">
+                            <div class="row" id="product-category-container" data-category-id="<?= (int)$listingCategoryId; ?>">
                                 <!-- 🚀 Products will be injected here by loadproduct.js -->
                             </div>
                             <div id="loader" style="text-align:center; display:none;">

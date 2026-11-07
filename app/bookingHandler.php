@@ -1,50 +1,64 @@
 <?php
-include "./query.php"; // load session + db + model
+require_once __DIR__ . '/query.php';
+require_once __DIR__ . '/../controller/booking_helpers.php';
 
-// Ensure it’s a POST request
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-     $utility->setFlash('error', "Invalid Action");
-    header("Location: ../view/booking.php");
+function booking_redirect()
+{
+    header('Location: ../view/booking.php', true, 303);
     exit;
 }
 
-$serviceIds = $_POST['service_ids'] ?? [];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $utility->setFlash('danger', 'Please choose your services on the booking page.');
+    booking_redirect();
+}
+if (!qs_booking_valid_csrf($_POST['csrf_token'] ?? null)) {
+    $utility->setFlash('danger', 'Your booking form has expired. Please review your choices and try again.');
+    booking_redirect();
+}
 
-if (empty($serviceIds)) {
-     $utility->setFlash('error', "Please complete all required fields and select at least one service.");
-    header("Location: ../view/booking.php");
-    exit;
+$errors = [];
+$ids = [];
+$services = [];
+$appointment = null;
+try {
+    $ids = qs_booking_service_ids($_POST['service_ids'] ?? null);
+    $services = $model->getRows('services', ['where' => ['id' => $ids, 'status' => 'active'], 'order_by' => 'name ASC']);
+    if (count($services) !== count($ids)) $errors['services'] = 'A selected service is no longer available. Please review your choices.';
+} catch (InvalidArgumentException $e) {
+    $errors['services'] = $e->getMessage();
+} catch (Throwable $e) {
+    error_log('Booking catalog lookup failed: ' . $e->getMessage());
+    $errors['services'] = 'We could not check the service list. Please try again.';
+}
+try {
+    $appointment = qs_booking_appointment($_POST['appointment_date'] ?? null, $_POST['appointment_time'] ?? null);
+} catch (InvalidArgumentException $e) {
+    $errors['appointment'] = $e->getMessage();
+}
+if (($_POST['privacy_consent'] ?? '') !== '1') $errors['privacy'] = 'Please agree to the Privacy Policy to continue.';
+
+$_SESSION['booking_form'] = [
+    'service_ids' => $ids,
+    'appointment_date' => is_string($_POST['appointment_date'] ?? null) ? substr($_POST['appointment_date'], 0, 10) : '',
+    'appointment_time' => is_string($_POST['appointment_time'] ?? null) ? substr($_POST['appointment_time'], 0, 5) : ''
+];
+if ($errors) {
+    $_SESSION['booking_errors'] = $errors;
+    booking_redirect();
 }
 
 try {
-    $addedServices = 0;
-
-    foreach ($serviceIds as $srvId) {
-        $srv = $model->getRows('services', [
-            'where' => ['id' => (int)$srvId, 'status' => 'active'],
-            'return_type' => 'single'
-        ]);
-        if (!$srv) continue;
-
-        $cart->addServiceToCart((int)$srvId, 1, (float)$srv['base_price']);
-        $addedServices++;
-    }
-
-    if ($addedServices === 0) {
-        $utility->setFlash('error', "Selected services are no longer available.");
-        header("Location: ../view/booking.php");
-        exit;
-    }
-
-    // Redirect to checkout page
-     $utility->setFlash('success', "Booking created successfully. Proceed to payment.");
-     $_SESSION['order_type']  = "service";
-    header("Location: ../view/checkout.php");
+    // Services and prices come exclusively from the current active catalog.
+    $cart->setBookingServices($services);
+    $_SESSION['booking_draft'] = $appointment;
+    unset($_SESSION['booking_form'], $_SESSION['booking_errors']);
+    $_SESSION['order_type'] = 'service';
+    $utility->setFlash('success', 'Your services and preferred time are ready. Review your details at checkout.');
+    header('Location: ../view/checkout.php', true, 303);
     exit;
-
-} catch (Exception $e) {
-     $utility->setFlash('error',  "Booking failed: " . $e->getMessage());
-    
-    header("Location: ../view/booking.php");
-    exit;
+} catch (Throwable $e) {
+    error_log('Booking selection failed: ' . $e->getMessage());
+    $utility->setFlash('danger', 'We could not save your selection. Your choices are kept below. Please try again.');
+    booking_redirect();
 }

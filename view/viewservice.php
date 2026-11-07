@@ -110,7 +110,7 @@ include './inc/head.php';
                                         <!-- Book Appointment -->
                                         <div class="ec-single-qty mt-4">
                                             <div class="ec-single-cart">
-                                                <a href="booking.php?>"
+                                                <a href="booking.php?service=<?= (int)$serviceData['id']; ?>"
                                                    class="btn btn-primary">
                                                    <i class="fi-rr-calendar"></i> Book Appointment
                                                 </a>
